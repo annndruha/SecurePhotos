@@ -33,6 +33,6 @@ def decrypt_image(path: str, key: str) -> None:
     data_bytes: bytes = cipher.decrypt(img_bytes)
     idx = data_bytes.rindex(b'.')
     original_ext = str(data_bytes[idx:].decode(UTF_8))
-    img_bytes = data_bytes[:(idx + 1)]
+    img_bytes = data_bytes[:idx]
     new_path = os.path.splitext(path)[0] + '_1' + original_ext
     write_image(new_path, img_bytes)
