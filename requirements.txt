@@ -1,3 +1,4 @@
 Pillow==8.4.0
 imagehash==4.2.1
 pyqt5==5.15.6
+pycryptodome==3.15.0

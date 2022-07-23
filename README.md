@@ -22,9 +22,10 @@ TBD
 ![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/assets/encrypt.drawio.svg)
 
 ### Technologies:
-* Python 3
+* Python3
+* pip==21.3.1
 * Libs:
-  * Python Cryptography Toolkit (pycrypto)
+  * PyCryptodome
   * Qt5
 
 ### Contact
