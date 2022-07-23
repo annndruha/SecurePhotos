@@ -1,4 +1,3 @@
-import base64
 import hashlib
 from Crypto.Cipher import AES
 from Crypto import Random
@@ -23,10 +22,9 @@ class AESCipher:
         data = self.__pad(data)
         iv = Random.new().read(AES.block_size)
         aes = AES.new(self.key, AES.MODE_CBC, iv)
-        return base64.b64encode(iv + aes.encrypt(data))
+        return iv + aes.encrypt(data)
 
     def decrypt(self, enc: bytes) -> bytes:
-        enc = base64.b64decode(enc)
-        iv = enc[:16]
+        iv = enc[:AES.block_size]
         aes = AES.new(self.key, AES.MODE_CBC, iv)
-        return self.__unpad(aes.decrypt(enc[16:]))
+        return self.__unpad(aes.decrypt(enc[AES.block_size:]))

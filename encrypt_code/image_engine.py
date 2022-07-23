@@ -1,6 +1,5 @@
 import os
-from cipher import AESCipher
-from exceptions import ExtensionError
+from encrypt_code.cipher import AESCipher
 
 ENCODED_EXTENSION = '.cipher'
 UTF_8 = 'utf-8'
@@ -28,10 +27,7 @@ def encrypt_image(path: str, key: str) -> None:
 
 
 def decrypt_image(path: str, key: str) -> None:
-    ext = os.path.splitext(path)[1]
     old_ext: str
-    if ext != ENCODED_EXTENSION:
-        raise ExtensionError
     img_bytes = read_image(path)
     cipher = AESCipher(key)
     data_bytes: bytes = cipher.decrypt(img_bytes)
