@@ -1,19 +1,27 @@
 import os
 import sys
 
-from PySide6.QtGui import QGuiApplication
-from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtQuickControls2 import QQuickStyle
+from PySide6.QtWidgets import QApplication, QStyleFactory
+from PySide6.QtUiTools import QUiLoader
+from PySide6.QtCore import QFile, QIODevice
+
 
 if __name__ == "__main__":
-    QQuickStyle.setStyle("Material")
+    app = QApplication(sys.argv)
+    # style = QStyleFactory.create("Fusion")  # ['windowsvista', 'Windows', 'Fusion']
+    # print(style)
+    # # app.setStyle(style)
+    # app.setStyle(style)
 
-    app = QGuiApplication(sys.argv)
-    engine = QQmlApplicationEngine()
-    engine.load(os.path.join(os.path.dirname(__file__), "Design.qml"))
-    if not engine.rootObjects():
+    ui_file = QFile("mainwindow.ui")
+    loader = QUiLoader()
+    window = loader.load(ui_file)
+    ui_file.close()
+    if not window:
+        print(loader.errorString())
         sys.exit(-1)
-    sys.exit(app.exec_())
+    window.show()
+    sys.exit(app.exec())
 
 
 # import os
