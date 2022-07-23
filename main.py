@@ -94,6 +94,7 @@ if __name__ == '__main__':
     engine.load(qml_file)
 
     if not engine.rootObjects():
+        print('QML Error')
         sys.exit(-1)
 
     sys.exit(app.exec())
