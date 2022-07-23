@@ -36,3 +36,9 @@ def decrypt_image(path: str, key: str) -> None:
     img_bytes = data_bytes[:idx]
     new_path = os.path.splitext(path)[0] + '_1' + original_ext
     write_image(new_path, img_bytes)
+
+
+if __name__ == '__main__':
+    keyphrase = 'mypassword'
+    encrypt_image(os.path.join('space.jpg'), keyphrase)
+    decrypt_image(os.path.join('space.cipher'), keyphrase)
