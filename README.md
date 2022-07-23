@@ -1,4 +1,4 @@
-# SecurePhotos (Early beta)
+# SecurePhotos (In progress)
 SecurePhotos - Gallery for photos with encryption for your photos or video
 
 [![download](https://img.shields.io/github/downloads/Annndruha/SecurePhotos/total)](https://github.com/Annndruha/SecurePhotos/releases)
