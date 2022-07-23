@@ -6,7 +6,7 @@ ApplicationWindow {
     visible: true
 
     Material.theme: Material.Light
-    Material.accent: Material.Blue
+    Material.accent: Material.Indigo
 
     Column {
         anchors.centerIn: parent
@@ -15,10 +15,9 @@ ApplicationWindow {
         RadioButton { text: qsTr("Medium");  checked: true }
         RadioButton { text: qsTr("Large") }
         Button {
-        text: qsTr("Button")
-        highlighted: true
-        Material.accent: Material.Blue
-    }
+            text: qsTr("Kill me")
+            highlighted: true
+        }
     }
 }
 
