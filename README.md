@@ -19,7 +19,7 @@ TBD
 TBD
 
 ### Algorithm:
-![](C:\dev\github\SecurePhotos\assets\encrypt.drawio.svg)
+![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/assets/encrypt.drawio.svg)
 
 ### Technologies:
 * Python 3
