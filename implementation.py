@@ -6,7 +6,7 @@ import os
 import re
 import sys
 
-from PyQt5 import QtCore, QtGui, QtWidgets, QTreeWidgetItem
+from PyQt5 import QtCore, QtGui, QtWidgets
 from ui_mainwindow import Ui_MainWindow
 from ui_rename import Ui_NameDialog
 from ui_tags_editor import Ui_TagEditor
@@ -153,19 +153,6 @@ class MainWindow(QtWidgets.QMainWindow):
         folder_dialog = QtWidgets.QFileDialog()
         folder_path = folder_dialog.getExistingDirectory(None, "Select Folder")
         self.ui.lineEdit_filepath.setText(folder_path)
-
-        data = {'fsf': 24235, 'dsgdg': '252'}
-
-        items = []
-        for key, values in data.items():
-            item = QTreeWidgetItem([key])
-            for value in values:
-                ext = value.split(".")[-1].upper()
-                child = QTreeWidgetItem([value, ext])
-                item.addChild(child)
-            items.append(item)
-
-        tree.insertTopLevelItems(0, items)
 
     # User rename checkbutton
     def _update_rename_state(self):
