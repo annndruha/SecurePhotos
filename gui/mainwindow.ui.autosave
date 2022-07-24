@@ -313,30 +313,6 @@
        <normaloff>../img/folder.ico</normaloff>../img/folder.ico</iconset>
      </property>
     </widget>
-    <widget class="QCheckBox" name="check_include_subfolder">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>70</y>
-       <width>341</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="locale">
-      <locale language="English" country="UnitedStates"/>
-     </property>
-     <property name="text">
-      <string>Include subfolders</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-    </widget>
     <widget class="QLineEdit" name="lineEdit_filepath">
      <property name="geometry">
       <rect>
@@ -391,7 +367,6 @@
  </widget>
  <tabstops>
   <tabstop>pushButton_path</tabstop>
-  <tabstop>check_include_subfolder</tabstop>
  </tabstops>
  <resources/>
  <connections/>

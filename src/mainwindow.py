@@ -12,20 +12,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        # Set icons from generated temp file while launch
-        if hasattr(sys, "_MEIPASS"):
-            icondir = os.path.join(sys._MEIPASS, 'images/icon.ico')
-            folderdir = os.path.join(sys._MEIPASS, 'images/folder.ico')
-        else:
-            icondir = 'images/icon.ico'
-            folderdir = 'images/folder.ico'
 
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(icondir), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.setWindowIcon(icon)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(folderdir), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.ui.pushButton_path.setIcon(icon1)
+        self.setWindowIcon(QtGui.QIcon('images/icon.ico'))
+        self.ui.pushButton_path.setIcon(QtGui.QIcon('images/folder.ico'))
 
         self.ui.lineEdit_filepath.setText(str(os.getcwd()))
 
@@ -55,39 +44,25 @@ class MainWindow(QtWidgets.QMainWindow):
             self.log("ERROR: Incorrect folder path")
             self.ui.lineEdit_filepath.setText("ERROR: Incorrect folder path")
 
-    def _get_pathces(self, path, subfolders=False):
-        file_paths = []
-        if subfolders:
-            for top, dirs, files in os.walk(path):
-                for nm in files:
-                    file_paths.append(os.path.join(top, nm))
-        else:
-            files_names = os.listdir(path)
-            for name in files_names:
-                file_paths.append(os.path.join(path, name))
-        return file_paths
-
     # Select path button
     def _select_path(self):
         folder_dialog = QtWidgets.QFileDialog()
         folder_path = folder_dialog.getExistingDirectory(None, "Select Folder")
         self.ui.lineEdit_filepath.setText(folder_path)
 
-        file_paths = []
-        subfolder = self.ui.check_include_subfolder.isChecked()
-        file_paths = self._get_pathces(folder_path, subfolder)
-        parent_itm = self.ui.treeWidget
-
-        def load_project_structure(startpath, tree):
-            for element in os.listdir(startpath):
-                path_info = startpath + "/" + element
-                print(os.path.basename(element))
+        def load_project_structure(path, tree):
+            dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
+            filelist = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
+            for element in dirlist + filelist:
+                path_info = os.path.join(path, element)
                 parent_itm = QTreeWidgetItem(tree, [os.path.basename(element)])
                 if os.path.isdir(path_info):
                     load_project_structure(path_info, parent_itm)
+                    parent_itm.setIcon(0, QtGui.QIcon('images/folder.ico'))
+                else:
+                    parent_itm.setIcon(0, QtGui.QIcon('images/file.ico'))
 
         load_project_structure(folder_path, self.ui.treeWidget)
-        # self.ui.treeWidget.insertTopLevelItems(0, items)
 
 # class NameDialog(QtWidgets.QDialog):
 #     def __init__(self):

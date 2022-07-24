@@ -141,8 +141,10 @@ class Ui_MainWindow(object):
         self.widget_2.setObjectName("widget_2")
         self.treeWidget = QtWidgets.QTreeWidget(self.widget)
         self.treeWidget.setGeometry(QtCore.QRect(5, 121, 531, 371))
+        self.treeWidget.setColumnCount(1)
         self.treeWidget.setObjectName("treeWidget")
         self.treeWidget.headerItem().setText(0, "1")
+        self.treeWidget.header().setVisible(False)
         MainWindow.setCentralWidget(self.widget)
 
         self.retranslateUi(MainWindow)
