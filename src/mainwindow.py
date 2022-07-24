@@ -1,9 +1,13 @@
 import os
 import sys
+import time
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from gui.ui_mainwindow import Ui_MainWindow
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QTreeWidgetItem
+
+from gui.ui_mainwindow import Ui_MainWindow
+from src.aes import read_file
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -12,48 +16,46 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.setWindowIcon(QtGui.QIcon('images/icon.png'))
+        self.setWindowIcon(QIcon('images/icon.png'))
+
+        # === TOOLBAR ICONS ===
+        self.ui.actionOpenFolder.setIcon(QIcon('images/icons/folder_open.svg'))
+        self.ui.actionTreeView.setIcon(QIcon('images/icons/tree.svg'))
+        self.ui.actionRotateLeft.setIcon(QIcon('images/icons/rotate_left.svg'))
+        self.ui.actionRotateRight.setIcon(QIcon('images/icons/rotate_right.svg'))
+        self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
+        self.ui.actionEnter_Key.setIcon(QIcon('images/icons/key.svg'))
+        self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
 
         # ===CONNECTS===
-        self.ui.actionOpenFolder.triggered.connect(self._select_path)
+        self.ui.actionOpenFolder.triggered.connect(self._open_folder)
+        self.ui.treeWidget.itemSelectionChanged.connect(self._select_item)
 
     # ===SLOTS===
     # ===Main Window Slot
     # Start button
-    def _start(self):
-        pass
-        # try:
-        #     path = self.ui.lineEdit_filepath.text()
-        #     if self.ui.check_include_subfolder.isChecked():
-        #         for top, dirs, files in os.walk(path):
-        #             for nm in files:
-        #                 self.file_paths.append(os.path.join(top, nm))
-        #     else:
-        #         files_names = os.listdir(path)
-        #         for name in files_names:
-        #             self.file_paths.append(os.path.join(path, name))
-        #
-        #     self.file_paths = list(filter(lambda x: x.endswith('.mp3'), self.file_paths))
-        # except:
-        #     self.log("ERROR: Incorrect folder path")
-        #     self.ui.lineEdit_filepath.setText("ERROR: Incorrect folder path")
+    def _select_item(self):
+        print(self.ui.treeWidget.currentItem().full_path)
+
+        self.ui.label.setPixmap(QPixmap(self.ui.treeWidget.currentItem().full_path))
+        # print(read_file(self.ui.treeWidget.currentItem().full_path))
 
     # Select path button
-    def _select_path(self):
+    def _open_folder(self):
         folder_dialog = QtWidgets.QFileDialog()
         folder_path = folder_dialog.getExistingDirectory(None, "Select Folder")
         if folder_path is '':
             return
-        # self.ui.lineEdit_filepath.setText(folder_path)
         self.ui.treeWidget.clear()
+
         def load_project_structure(path, tree):
             dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
             filelist = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
             for element in dirlist + filelist:
-                path_info = os.path.join(path, element)
                 parent_itm = QTreeWidgetItem(tree, [os.path.basename(element)])
-                if os.path.isdir(path_info):
-                    load_project_structure(path_info, parent_itm)
+                parent_itm.full_path = os.path.join(path, element)
+                if os.path.isdir(parent_itm.full_path):
+                    load_project_structure(parent_itm.full_path, parent_itm)
                     parent_itm.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
                 else:
                     parent_itm.setIcon(0, QtGui.QIcon('images/icons/file.svg'))

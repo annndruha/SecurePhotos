@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1066</width>
-    <height>585</height>
-   </rect>
-  </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
     <horstretch>0</horstretch>
@@ -42,22 +34,7 @@
     <normaloff>../img/icon.ico</normaloff>../img/icon.ico</iconset>
   </property>
   <widget class="QWidget" name="widget">
-   <property name="minimumSize">
-    <size>
-     <width>840</width>
-     <height>500</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>1600</width>
-     <height>500</height>
-    </size>
-   </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="2" rowspan="2">
-     <widget class="QWidget" name="imageview" native="true"/>
-    </item>
     <item row="0" column="0">
      <widget class="QTreeWidget" name="treeWidget">
       <property name="sizePolicy">
@@ -65,6 +42,12 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>500</width>
+        <height>0</height>
+       </size>
       </property>
       <property name="maximumSize">
        <size>
@@ -83,6 +66,13 @@
         <string notr="true">1</string>
        </property>
       </column>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
      </widget>
     </item>
    </layout>
