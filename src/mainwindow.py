@@ -12,17 +12,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-
         self.setWindowIcon(QtGui.QIcon('images/icon.png'))
-        self.ui.pushButton_path.setIcon(QtGui.QIcon('images/icons/folder.svg'))
 
-        self.ui.lineEdit_filepath.setText(str(os.getcwd()))
-
-        # ===SIGNALS===
-        # self.ui.pushButton_start.clicked.connect(self._start)
-        self.ui.pushButton_path.clicked.connect(self._select_path)
-        # self.ui.checkBox_user_replace.stateChanged.connect(self._update_rename_state)
-        # self.name.finished.connect(self._name_handler)
+        # ===CONNECTS===
+        self.ui.actionOpenFolder.triggered.connect(self._select_path)
 
     # ===SLOTS===
     # ===Main Window Slot
@@ -49,7 +42,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def _select_path(self):
         folder_dialog = QtWidgets.QFileDialog()
         folder_path = folder_dialog.getExistingDirectory(None, "Select Folder")
-        self.ui.lineEdit_filepath.setText(folder_path)
+        if folder_path is '':
+            return
+        # self.ui.lineEdit_filepath.setText(folder_path)
         self.ui.treeWidget.clear()
         def load_project_structure(path, tree):
             dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]

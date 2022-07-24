@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1164</width>
-    <height>500</height>
+    <width>1066</width>
+    <height>585</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,83 +55,23 @@
     </size>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="2">
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="text">
-         <string>Encrypt</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="text">
-         <string>Decrypt</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="2" rowspan="2">
-     <widget class="QWidget" name="widget_2" native="true"/>
+    <item row="0" column="2" rowspan="2">
+     <widget class="QWidget" name="imageview" native="true"/>
     </item>
     <item row="0" column="0">
-     <widget class="QGroupBox" name="group_file_open">
-      <property name="minimumSize">
+     <widget class="QTreeWidget" name="treeWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
        <size>
-        <width>510</width>
-        <height>100</height>
+        <width>500</width>
+        <height>16777215</height>
        </size>
       </property>
-      <property name="locale">
-       <locale language="English" country="UnitedStates"/>
-      </property>
-      <property name="title">
-       <string>Select folder</string>
-      </property>
-      <widget class="QPushButton" name="pushButton_path">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>31</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="locale">
-        <locale language="English" country="UnitedStates"/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../img/folder.ico</normaloff>../img/folder.ico</iconset>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="lineEdit_filepath">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>30</y>
-         <width>450</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="locale">
-        <locale language="English" country="UnitedStates"/>
-       </property>
-      </widget>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QTreeWidget" name="treeWidget">
       <property name="columnCount">
        <number>1</number>
       </property>
@@ -151,30 +91,96 @@
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionOpenFolder"/>
+   <addaction name="actionTreeView"/>
+   <addaction name="separator"/>
+   <addaction name="actionRotateLeft"/>
+   <addaction name="actionRotateRight"/>
+   <addaction name="separator"/>
+   <addaction name="actionFullscreen"/>
+   <addaction name="separator"/>
+   <addaction name="actionEnter_Key"/>
+   <addaction name="actionEncrypt"/>
   </widget>
-  <action name="actionOpen">
+  <action name="actionEnter_Key">
    <property name="icon">
     <iconset>
-     <normalon>../images/folder.ico</normalon>
+     <normalon>../images/icons/key.svg</normalon>
     </iconset>
    </property>
    <property name="text">
-    <string>Open</string>
+    <string>Enter Key</string>
    </property>
-   <property name="toolTip">
-    <string>Open folder</string>
+  </action>
+  <action name="actionEncrypt">
+   <property name="icon">
+    <iconset>
+     <normalon>../images/icons/lock.svg</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Encrypt</string>
+   </property>
+  </action>
+  <action name="actionOpenFolder">
+   <property name="icon">
+    <iconset>
+     <normalon>../images/icons/folder_open.svg</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Open Folder</string>
+   </property>
+  </action>
+  <action name="actionRotateLeft">
+   <property name="icon">
+    <iconset>
+     <normalon>../images/icons/rotate_left.svg</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Rotate Left</string>
+   </property>
+  </action>
+  <action name="actionRotateRight">
+   <property name="icon">
+    <iconset>
+     <normalon>../images/icons/rotate_right.svg</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Rotate Right</string>
+   </property>
+  </action>
+  <action name="actionFullscreen">
+   <property name="icon">
+    <iconset>
+     <normaloff>../images/icons/open_full.svg</normaloff>../images/icons/open_full.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Fullscreen</string>
+   </property>
+  </action>
+  <action name="actionTreeView">
+   <property name="icon">
+    <iconset>
+     <normalon>../images/icons/tree.svg</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Tree View</string>
    </property>
   </action>
  </widget>
- <tabstops>
-  <tabstop>pushButton_path</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>
