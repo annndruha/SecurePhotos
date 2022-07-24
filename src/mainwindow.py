@@ -76,7 +76,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_paths = []
         subfolder = self.ui.check_include_subfolder.isChecked()
         file_paths = self._get_pathces(folder_path, subfolder)
-        parent_itm = self.ui.treeView
+        parent_itm = self.ui.treeWidget
 
         def load_project_structure(startpath, tree):
             for element in os.listdir(startpath):
@@ -86,8 +86,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 if os.path.isdir(path_info):
                     load_project_structure(path_info, parent_itm)
 
-        load_project_structure(folder_path, self.ui.treeView)
-        self.ui.treeView.insertTopLevelItems(0, items)
+        load_project_structure(folder_path, self.ui.treeWidget)
+        # self.ui.treeWidget.insertTopLevelItems(0, items)
 
 # class NameDialog(QtWidgets.QDialog):
 #     def __init__(self):

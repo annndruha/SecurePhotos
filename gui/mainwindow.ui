@@ -275,10 +275,10 @@
    <widget class="QGroupBox" name="group_file_open">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>8</y>
-      <width>521</width>
-      <height>121</height>
+      <x>0</x>
+      <y>10</y>
+      <width>531</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -356,16 +356,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QTreeView" name="treeView">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>130</y>
-      <width>521</width>
-      <height>361</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QWidget" name="widget_2" native="true">
     <property name="geometry">
      <rect>
@@ -375,6 +365,21 @@
       <height>411</height>
      </rect>
     </property>
+   </widget>
+   <widget class="QTreeWidget" name="treeWidget">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>121</y>
+      <width>531</width>
+      <height>371</height>
+     </rect>
+    </property>
+    <column>
+     <property name="text">
+      <string notr="true">1</string>
+     </property>
+    </column>
    </widget>
   </widget>
  </widget>
