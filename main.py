@@ -17,11 +17,11 @@
 #
 #
 import os
-from encrypt_code.image_engine import encrypt_image, decrypt_image
+from aes.aes import encrypt_file, decrypt_file
 
 keyphrase = 'mypassword'
-encrypt_image(os.path.join('space.jpg'), keyphrase)
-decrypt_image(os.path.join('space.cipher'), keyphrase)
+encrypt_file(os.path.join('space.jpg'), keyphrase)
+decrypt_file(os.path.join('space.jpg.aes'), keyphrase)
 #
 # import sys
 # from pathlib import Path
