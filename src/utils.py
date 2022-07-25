@@ -1,3 +1,5 @@
+import os
+import shutil
 from PIL import Image
 
 
@@ -17,3 +19,10 @@ def rotate_file_left(img_path):
     # with Image.open(img_path) as img:
     img = img.rotate(90, expand=1)
     img.save(img_path)
+
+
+def delete_path(path):
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+    else:
+        os.remove(path)
