@@ -87,14 +87,14 @@ def encrypt_file(path: str, cipher: AESCipher) -> None:
     write_file(path, encrypted_text)
 
 
-def __decrypt_file(path: str, cipher: AESCipher) -> None:
+def decrypt_file(path: str, cipher: AESCipher) -> None:
     file_bytes = read_file(path)
     decrypted_text = cipher.decrypt(file_bytes)
     path = os.path.splitext(path)[0]
     write_file(path, decrypted_text)
 
 
-def decrypt_file(path: str, cipher: AESCipher):
+def decrypt_runtime(path: str, cipher: AESCipher):
     if cipher is None:
         return read_file('images/encrypted.png'), False
     else:
