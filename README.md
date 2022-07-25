@@ -3,8 +3,8 @@ SecurePhotos - Gallery for photos with encryption for your photos or video
 
 [![download](https://img.shields.io/github/downloads/Annndruha/SecurePhotos/total)](https://github.com/Annndruha/SecurePhotos/releases)
 ![visitors](https://visitor-badge.glitch.me/badge?page_id=Annndruha/SecurePhotos)
+[![GitHub license](https://img.shields.io/github/license/Annndruha/SecurePhotos.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/LICENSE)
 [![python lint](https://github.com/Annndruha/SecurePhotos/actions/workflows/pylint.yml/badge.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/.github/workflows/pylint.yml)
-[![Release](https://github.com/Annndruha/SecurePhotos/actions/workflows/release.yml/badge.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/.github/workflows/release.yml)
 
 ### Screenshots:
 ![image](https://user-images.githubusercontent.com/51162917/180698988-6f879719-0c9d-436e-834a-a3f0550e4a53.png)
