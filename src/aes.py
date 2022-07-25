@@ -22,6 +22,9 @@ class AESCipher:
         """
         self.__hash = SHA256.new(bytes(password, 'utf-8')).digest()
 
+    def hash(self):
+        return str(self.__hash)  # WTF with convert?
+
     def __pad(self, data: bytes) -> bytes:
         """
         Padding data for correct AES encrypt
@@ -77,20 +80,29 @@ def write_file(path: str, data: bytes) -> None:
         f.write(data)
 
 
-def encrypt_file(path: str, key: str) -> None:
+def encrypt_file(path: str, cipher: AESCipher) -> None:
     file_bytes = read_file(path)
-    cipher = AESCipher(key)
     encrypted_text = cipher.encrypt(file_bytes)
     path += ENCODED_EXTENSION
     write_file(path, encrypted_text)
 
 
-def decrypt_file(path: str, key: str) -> None:
+def __decrypt_file(path: str, cipher: AESCipher) -> None:
     file_bytes = read_file(path)
-    cipher = AESCipher(key)
     decrypted_text = cipher.decrypt(file_bytes)
     path = os.path.splitext(path)[0]
     write_file(path, decrypted_text)
+
+
+def decrypt_file(path: str, cipher: AESCipher):
+    if cipher is None:
+        return read_file('images/encrypted.png'), False
+    else:
+        file_bytes = read_file(path)
+        decrypted_text = cipher.decrypt(file_bytes)
+        # path = os.path.splitext(path)[0]
+        return decrypted_text, True
+    # write_file(path, decrypted_text)
 
 
 if __name__ == "__main__":

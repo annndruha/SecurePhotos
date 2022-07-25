@@ -1,13 +1,12 @@
 import os
-import sys
-import time
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QTreeWidgetItem
 
 from gui.ui_mainwindow import Ui_MainWindow
-from src.aes import read_file
+from gui.ui_enterkey import Ui_EnterKey
+from src.aes import AESCipher, encrypt_file, decrypt_file
 from src.utils import rotate_file_right, rotate_file_left, delete_path
 
 
@@ -17,20 +16,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.setWindowIcon(QIcon('images/icon.png'))
-
         self.image = None
-        
+        self.cipher = None
+        self.enterkeydialog = EnterKeyDialog()
+
         # === TOOLBAR ICONS ===
+        self.setWindowIcon(QIcon('images/icon.png'))
         self.ui.actionOpenFolder.setIcon(QIcon('images/icons/folder_open.svg'))
         self.ui.actionTreeView.setIcon(QIcon('images/icons/tree.svg'))
         self.ui.actionRotateLeft.setIcon(QIcon('images/icons/rotate_left.svg'))
         self.ui.actionRotateRight.setIcon(QIcon('images/icons/rotate_right.svg'))
-
         self.ui.actionDelete.setIcon(QIcon('images/icons/delete.svg'))
         self.ui.actionActualSize.setIcon(QIcon('images/icons/zoom_in.svg'))
         self.ui.actionFitSize.setIcon(QIcon('images/icons/zoom_out.svg'))
-
         self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
         self.ui.actionEnterKey.setIcon(QIcon('images/icons/key.svg'))
         self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
@@ -40,29 +38,74 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionActualSize.setDisabled(True)
         self.ui.actionFitSize.setDisabled(True)
         self.ui.actionFullscreen.setDisabled(True)
-        self.ui.actionEnterKey.setDisabled(True)
-        self.ui.actionEncrypt.setDisabled(True)
+        # self.ui.actionEnterKey.setDisabled(True)
+        # self.ui.actionEncrypt.setDisabled(True)
 
         # ===CONNECTS===
+        self.ui.treeWidget.itemSelectionChanged.connect(self._select_item)
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
         self.ui.actionRotateLeft.triggered.connect(self._rotate_left)
         self.ui.actionRotateRight.triggered.connect(self._rotate_right)
         self.ui.actionDelete.triggered.connect(self._delete_file)
-        self.ui.treeWidget.itemSelectionChanged.connect(self._select_item)
+        self.ui.actionEnterKey.triggered.connect(self._enter_key)
+        self.ui.actionEncrypt.triggered.connect(self._crypt)
 
-        # self.ui.label.resizeEvent.triggered.connect(self._resize_view)
+        self.enterkeydialog.ui.pushButton_cancel.clicked.connect(self._cancel_key)
+        self.enterkeydialog.ui.pushButton_apply.clicked.connect(self._apply_key)
+
+        self._open_folder()
+
+        # self.ui.imageView.wheelEvent.triggered.connect(self._zoom)
+        # self.installEventFilter(self)
+        # self.ui.imageView.resizeEvent.triggered.connect(self._resize_view)
         # .connect(self._resize_view)
 
     # ===SLOTS===
     # ===Main Window Slot
     # Start button
+
+    # def wheelEvent(self, event):
+    #     event.
+    #     print(event)
+
+    def _enter_key(self):
+        self.enterkeydialog.show()
+
+    def _cancel_key(self):
+        self.enterkeydialog.ui.keyField.setText('')
+        self.enterkeydialog.done(200)
+
+    def _apply_key(self):
+        if self.enterkeydialog.ui.keyField.text() is not '':
+            self.cipher = AESCipher(self.enterkeydialog.ui.keyField.text())
+        else:
+            pass  # If not provided
+        print('Apply key:', self.cipher.hash())
+        self._select_item()
+        self.enterkeydialog.ui.keyField.setText('')
+        self.enterkeydialog.done(200)
+
+    def _crypt(self):
+        path = self.ui.treeWidget.currentItem().full_path
+        encrypt_file(path, self.cipher)
+        self._delete_file()
+
+    def _decrypt(self, path):
+        image = QPixmap()
+        file_bytes, success = decrypt_file(path, self.cipher)
+        ext = os.path.splitext(os.path.splitext(path)[0])[1]
+        image.loadFromData(file_bytes, ext.upper())
+        if success:
+            pass
+        return image
+
     def _update_image(self):
         if self.image is not None:
-            w = self.ui.label.width()
-            h = self.ui.label.height()
-            self.ui.label.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
+            w = self.ui.imageView.width()
+            h = self.ui.imageView.height()
+            self.ui.imageView.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
         else:
-            self.ui.label.setText("dgshsh")
+            self.ui.imageView.setText("Nothing to show :(")
 
     def _rotate_left(self):
         path = self.ui.treeWidget.currentItem().full_path
@@ -77,19 +120,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_image()
 
     def _delete_file(self):
-        path = self.ui.treeWidget.currentItem().full_path
-        delete_path(path)
-        self.image = None
-        # self.image = QPixmap(path)
-        self._update_image()
-        idx = self.ui.treeWidget.indexOfTopLevelItem(self.ui.treeWidget.currentItem())
-        # self.ui.treeWidget.removeItemWidget(self.ui.treeWidget.currentItem(), 0)
-        self.ui.treeWidget.takeTopLevelItem(idx)
+        # path = self.ui.treeWidget.currentItem().full_path
+        # delete_path(path)
+        # self.image = None
+        # self._update_image()
+        # idx = self.ui.treeWidget.indexOfTopLevelItem(self.ui.treeWidget.currentItem())  # TODO: Only to item
+        # # self.ui.treeWidget.removeItemWidget(self.ui.treeWidget.currentItem(), 0)
+        # self.ui.treeWidget.takeTopLevelItem(idx)
+        self.ui.treeWidget.clear()
+        self.load_project_structure(self.root_path, self.ui.treeWidget)
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event):  # Work only while mainwindow resize
         self._resize_image()
 
-    def _resize_image(self):  # Work only while mainwindows resize
+    def _resize_image(self):
         if self.image is not None:
             self._update_image()
 
@@ -99,60 +143,60 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if os.path.isdir(path):
             self.image = None
-            self.ui.label.setText("Can't show, folder selected.")
+            self.ui.imageView.setText("Can't show, folder selected.")
         else:
-            ext = os.path.splitext(path)[1].replace('.','')
+            ext = os.path.splitext(path)[1].replace('.', '')
             supported_ext = QtGui.QImageReader.supportedImageFormats()
             if ext in [str(ext, 'utf-8') for ext in supported_ext]:
                 self.image = QPixmap(path)
                 self._update_image()
+            elif ext == 'aes':
+                print('aes')
+                self.image = self._decrypt(path)
+                self._update_image()
             else:
                 text = 'Can not show. Supported image formats: \n' + \
                        ', '.join([str(ext, 'utf-8') for ext in supported_ext]) + \
-                       '\n\bYou still can encrypt ot decrypt file!'
-                self.ui.label.setText(text)
+                       '\n\nYou still can encrypt ot decrypt file!'
+                self.ui.imageView.setText(text)
+
+    def load_project_structure(self, path, tree):
+        dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
+        filelist = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
+        for element in dirlist + filelist:
+            parent_itm = QTreeWidgetItem(tree, [os.path.basename(element)])
+            parent_itm.full_path = os.path.join(path, element)
+            if os.path.isdir(parent_itm.full_path):
+                self.load_project_structure(parent_itm.full_path, parent_itm)
+                parent_itm.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
+            else:
+                parent_itm.setIcon(0, QtGui.QIcon('images/icons/file.svg'))
 
     # Select path button
     def _open_folder(self):
         folder_dialog = QtWidgets.QFileDialog()
-        folder_path = folder_dialog.getExistingDirectory(None, "Select Folder")
-        if folder_path is '':
+        self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")
+        if self.root_path is '':
             return
         self.ui.treeWidget.clear()
+        self.load_project_structure(self.root_path, self.ui.treeWidget)
 
-        def load_project_structure(path, tree):
-            dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
-            filelist = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
-            for element in dirlist + filelist:
-                parent_itm = QTreeWidgetItem(tree, [os.path.basename(element)])
-                parent_itm.full_path = os.path.join(path, element)
-                if os.path.isdir(parent_itm.full_path):
-                    load_project_structure(parent_itm.full_path, parent_itm)
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
-                else:
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/file.svg'))
 
-        load_project_structure(folder_path, self.ui.treeWidget)
+class EnterKeyDialog(QtWidgets.QDialog):
+    def __init__(self):
+        super(EnterKeyDialog, self).__init__()
+        self.ui = Ui_EnterKey()
+        self.ui.setupUi(self)
 
-# class NameDialog(QtWidgets.QDialog):
-#     def __init__(self):
-#         super(NameDialog, self).__init__()
-#         self.ui = Ui_NameDialog()
-#         self.ui.setupUi(self)
-#
-#         if hasattr(sys, "_MEIPASS"):
-#             icondir = os.path.join(sys._MEIPASS, 'img/icon.ico')
-#         else:
-#             icondir = 'img/icon.ico'
-#         icon = QtGui.QIcon()
-#         icon.addPixmap(QtGui.QPixmap(icondir), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-#         self.setWindowIcon(icon)
-#
-#         self.clear()
-#
-#     def clear(self):
-#         self.ui.lineEdit_cur_name.clear()
-#         self.ui.lineEdit_new_name.clear()
+        icon = QtGui.QIcon('images/icon.ico')
+        self.setWindowIcon(icon)
+
+        self.clear()
+
+    def clear(self):
+        pass
+        # self.ui.lineEdit_cur_name.clear()
+        # self.ui.lineEdit_new_name.clear()
 #
 #
 # class TagsDialog(QtWidgets.QDialog):

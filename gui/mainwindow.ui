@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>840</width>
+    <height>500</height>
+   </rect>
+  </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
     <horstretch>0</horstretch>
@@ -69,7 +77,7 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="imageView">
       <property name="text">
        <string>Image not selected</string>
       </property>

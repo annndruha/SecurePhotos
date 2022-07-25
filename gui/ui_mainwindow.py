@@ -14,6 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(840, 500)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -45,10 +46,10 @@ class Ui_MainWindow(object):
         self.treeWidget.headerItem().setText(0, "1")
         self.treeWidget.header().setVisible(False)
         self.gridLayout.addWidget(self.treeWidget, 0, 0, 1, 1)
-        self.label = QtWidgets.QLabel(self.widget)
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
-        self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 1, 1, 1)
+        self.imageView = QtWidgets.QLabel(self.widget)
+        self.imageView.setAlignment(QtCore.Qt.AlignCenter)
+        self.imageView.setObjectName("imageView")
+        self.gridLayout.addWidget(self.imageView, 0, 1, 1, 1)
         MainWindow.setCentralWidget(self.widget)
         self.toolBar = QtWidgets.QToolBar(MainWindow)
         self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
@@ -124,7 +125,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "SecurePhotos"))
-        self.label.setText(_translate("MainWindow", "Image not selected"))
+        self.imageView.setText(_translate("MainWindow", "Image not selected"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.actionEnterKey.setText(_translate("MainWindow", "Enter Key"))
         self.actionEncrypt.setText(_translate("MainWindow", "Encrypt"))
