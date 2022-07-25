@@ -8,7 +8,7 @@ SecurePhotos - Gallery for photos with encryption for your photos or video
 [![Release](https://github.com/Annndruha/SecurePhotos/actions/workflows/release.yml/badge.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/.github/workflows/release.yml)
 
 ### Screenshots:
-TBD
+![image](https://user-images.githubusercontent.com/51162917/180698988-6f879719-0c9d-436e-834a-a3f0550e4a53.png)
 
 ### Install and usage:
 TBD
