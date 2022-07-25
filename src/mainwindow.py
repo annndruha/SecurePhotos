@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QTreeWidgetItem
 
 from gui.ui_mainwindow import Ui_MainWindow
 from src.aes import read_file
+from src.utils import rotate_file_right, rotate_file_left
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -43,6 +44,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # ===CONNECTS===
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
+        self.ui.actionRotateLeft.triggered.connect(self._rotate_left)
+        self.ui.actionRotateRight.triggered.connect(self._rotate_right)
         self.ui.treeWidget.itemSelectionChanged.connect(self._select_item)
 
         # self.ui.label.resizeEvent.triggered.connect(self._resize_view)
@@ -51,14 +54,29 @@ class MainWindow(QtWidgets.QMainWindow):
     # ===SLOTS===
     # ===Main Window Slot
     # Start button
+    def _update_image(self):
+        w = self.ui.label.width()
+        h = self.ui.label.height()
+        self.ui.label.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
+
+    def _rotate_left(self):
+        path = self.ui.treeWidget.currentItem().full_path
+        rotate_file_left(path)
+        self.image = QPixmap(path)
+        self._update_image()
+
+    def _rotate_right(self):
+        path = self.ui.treeWidget.currentItem().full_path
+        rotate_file_right(path)
+        self.image = QPixmap(path)
+        self._update_image()
+
     def resizeEvent(self, event):
         self._resize_image()
 
     def _resize_image(self):  # Work only while mainwindows resize
         if self.image is not None:
-            w = self.ui.label.width()
-            h = self.ui.label.height()
-            self.ui.label.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
+            self._update_image()
 
     def _select_item(self):
         path = self.ui.treeWidget.currentItem().full_path
@@ -72,9 +90,7 @@ class MainWindow(QtWidgets.QMainWindow):
             supported_ext = QtGui.QImageReader.supportedImageFormats()
             if ext in [str(ext, 'utf-8') for ext in supported_ext]:
                 self.image = QPixmap(path)
-                w = self.ui.label.width()
-                h = self.ui.label.height()
-                self.ui.label.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
+                self._update_image()
             else:
                 text = 'Can not show. Supported image formats: \n' + \
                        ', '.join([str(ext, 'utf-8') for ext in supported_ext]) + \
