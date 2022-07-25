@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
@@ -82,7 +83,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def _apply_key(self):
         if self.enterKeyDialog.ui.keyField.text() != '':
             self.cipher = AESCipher(self.enterKeyDialog.ui.keyField.text())
-        self._select_item()
+        # if self.ui.treeWidget.currentItem() is None:
+        #     self._open_folder()
+        # self._select_item()
         self.enterKeyDialog.ui.keyField.setText('')
         self.enterKeyDialog.done(200)
 
@@ -166,11 +169,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self._update_image()
 
     def _select_item(self, old_path_if_changed=None):
+        path: Optional[str] = None
         if old_path_if_changed is not None:
             path = old_path_if_changed  # TODO: Need real selection
-        else:
-            path = self.ui.treeWidget.currentItem().full_path
-
+        # if self.ui.treeWidget.currentItem() is None:
+        #     self.ui.imageView.setText("You have to open folder")
+        #     self._open_folder()
+        #     self._select_item()
+            # path = self.ui.treeWidget.currentItem().full_path
+        # if old_path_if_changed is None and self.ui.treeWidget.currentItem() is not None:
+        path = self.ui.treeWidget.currentItem().full_path
         self.update_crypt_status(path)
         if os.path.isdir(path):
             self.image = None
