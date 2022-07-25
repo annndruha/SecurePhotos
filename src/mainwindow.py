@@ -120,13 +120,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_image()
 
     def _delete_file(self):
-        # path = self.ui.treeWidget.currentItem().full_path
-        # delete_path(path)
-        # self.image = None
-        # self._update_image()
+        path = self.ui.treeWidget.currentItem().full_path
+        delete_path(path)
+        self.image = None
+        self._update_image()
         # idx = self.ui.treeWidget.indexOfTopLevelItem(self.ui.treeWidget.currentItem())  # TODO: Only to item
         # # self.ui.treeWidget.removeItemWidget(self.ui.treeWidget.currentItem(), 0)
         # self.ui.treeWidget.takeTopLevelItem(idx)
+        print('Delete')
         self.ui.treeWidget.clear()
         self.load_project_structure(self.root_path, self.ui.treeWidget)
 
