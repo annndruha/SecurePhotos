@@ -215,7 +215,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _open_folder(self):
         folder_dialog = QtWidgets.QFileDialog()
         self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")  # TODO: Why is this to slow?
-        if self.root_path is '':
+        if self.root_path == '':
             return
         self.ui.treeWidget.clear()
         self.load_project_structure(self.root_path, self.ui.treeWidget)
