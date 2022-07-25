@@ -96,7 +96,7 @@ def decrypt_file(path: str, cipher: AESCipher) -> None:
 
 def decrypt_runtime(path: str, cipher: AESCipher):
     if cipher is None:
-        return read_file('images/encrypted.png'), False
+        return read_file('images/encrypted_placeholder.png'), False
     else:
         file_bytes = read_file(path)
         decrypted_text = cipher.decrypt(file_bytes)

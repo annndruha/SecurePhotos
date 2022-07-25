@@ -91,6 +91,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.cipher is None:
             self.ui.actionEncrypt.setText('Need key')
             self.ui.actionEncrypt.setDisabled(True)
+            self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
             self.ui.actionEncrypt.mode = 'disable'
         else:
             if ext == '.aes':
