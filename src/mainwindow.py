@@ -10,24 +10,6 @@ from gui.ui_mainwindow import Ui_MainWindow
 from src.aes import read_file
 
 
-# class ImageViewer(QtWidgets.QLabel):
-#     # resized = QtCore.pyqtSignal()
-#
-#     def __init__(self, parent=None):
-#         super(ImageViewer, self).__init__(parent=parent)
-#         ui = Ui_MainWindow()
-#         ui.setupUi(self)
-#         self.resized.connect(self.someFunction)
-#
-#     def resizeEvent(self, event):
-#         print('resize', event)
-        # self.resized.emit()
-        # return super(Window, self).resizeEvent(event)
-
-    # def someFunction(self):
-    #     print("someFunction")
-
-
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -42,9 +24,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionTreeView.setIcon(QIcon('images/icons/tree.svg'))
         self.ui.actionRotateLeft.setIcon(QIcon('images/icons/rotate_left.svg'))
         self.ui.actionRotateRight.setIcon(QIcon('images/icons/rotate_right.svg'))
+
+        self.ui.actionDelete.setIcon(QIcon('images/icons/delete.svg'))
+        self.ui.actionActualSize.setIcon(QIcon('images/icons/zoom_in.svg'))
+        self.ui.actionFitSize.setIcon(QIcon('images/icons/zoom_out.svg'))
+
         self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
-        self.ui.actionEnter_Key.setIcon(QIcon('images/icons/key.svg'))
+        self.ui.actionEnterKey.setIcon(QIcon('images/icons/key.svg'))
         self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
+
+        # Not done
+        self.ui.actionTreeView.setDisabled(True)
+        self.ui.actionActualSize.setDisabled(True)
+        self.ui.actionFitSize.setDisabled(True)
+        self.ui.actionFullscreen.setDisabled(True)
+        self.ui.actionEnterKey.setDisabled(True)
+        self.ui.actionEncrypt.setDisabled(True)
 
         # ===CONNECTS===
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
@@ -85,11 +80,6 @@ class MainWindow(QtWidgets.QMainWindow):
                        ', '.join([str(ext, 'utf-8') for ext in supported_ext]) + \
                        '\n\bYou still can encrypt ot decrypt file!'
                 self.ui.label.setText(text)
-            # self.ui.label.setText(text)
-            # self.image = QPixmap(path)
-            # w = self.ui.label.width()
-            # h = self.ui.label.height()
-            # self.ui.label.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
 
     # Select path button
     def _open_folder(self):

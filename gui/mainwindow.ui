@@ -98,13 +98,16 @@
    <addaction name="separator"/>
    <addaction name="actionRotateLeft"/>
    <addaction name="actionRotateRight"/>
+   <addaction name="actionDelete"/>
    <addaction name="separator"/>
+   <addaction name="actionActualSize"/>
+   <addaction name="actionFitSize"/>
    <addaction name="actionFullscreen"/>
    <addaction name="separator"/>
-   <addaction name="actionEnter_Key"/>
+   <addaction name="actionEnterKey"/>
    <addaction name="actionEncrypt"/>
   </widget>
-  <action name="actionEnter_Key">
+  <action name="actionEnterKey">
    <property name="icon">
     <iconset>
      <normalon>../images/icons/key.svg</normalon>
@@ -171,6 +174,35 @@
    </property>
    <property name="text">
     <string>Tree View</string>
+   </property>
+  </action>
+  <action name="actionActualSize">
+   <property name="icon">
+    <iconset>
+     <normaloff>../images/icons/zoom_in.svg</normaloff>../images/icons/zoom_in.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Actual Size</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="icon">
+    <iconset>
+     <normalon>../images/icons/delete.svg</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
+  </action>
+  <action name="actionFitSize">
+   <property name="icon">
+    <iconset>
+     <normalon>../images/icons/zoom_out.svg</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Fit Size</string>
    </property>
   </action>
  </widget>
