@@ -18,6 +18,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.image = None
         self.cipher = None
+        self.fullscreen = False
         self.enterKeyDialog = EnterKeyDialog()
 
         # === TOOLBAR ICONS ===
@@ -37,7 +38,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionTreeView.setDisabled(True)
         self.ui.actionActualSize.setDisabled(True)
         self.ui.actionFitSize.setDisabled(True)
-        self.ui.actionFullscreen.setDisabled(True)
 
         # ===CONNECTS===
         self.ui.treeWidget.itemSelectionChanged.connect(self._select_item)
@@ -47,6 +47,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionDelete.triggered.connect(self._delete_file)
         self.ui.actionEnterKey.triggered.connect(self._enter_key)
         self.ui.actionEncrypt.triggered.connect(self._crypt)
+        self.ui.actionFullscreen.triggered.connect(self._fullscreen)
 
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._cancel_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_key)
@@ -56,6 +57,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.showMaximized()
 
     # ===SLOTS===
+    def _fullscreen(self):
+        if not self.fullscreen:
+            self.showFullScreen()
+            self.ui.actionFullscreen.setIcon(QIcon('images/icons/close_full.svg'))
+            self.ui.actionFullscreen.setText('Window')
+            # close_full.svg
+        else:
+            self.showMaximized()
+            self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
+            self.ui.actionFullscreen.setText('Fullscreen')
+        self.fullscreen = not self.fullscreen
+
+
+    def _exit_fullscreen(self):
+        self.showMaximized()
+
     def _enter_key(self):
         self.enterKeyDialog.show()
 
@@ -211,7 +228,7 @@ class EnterKeyDialog(QtWidgets.QDialog):
         self.ui = Ui_EnterKey()
         self.ui.setupUi(self)
 
-        icon = QtGui.QIcon('images/icon.ico')
+        icon = QtGui.QIcon('images/icon.png')
         self.setWindowIcon(icon)
 
 # msg = QtWidgets.QMessageBox()
