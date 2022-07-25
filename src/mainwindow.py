@@ -10,6 +10,24 @@ from gui.ui_mainwindow import Ui_MainWindow
 from src.aes import read_file
 
 
+# class ImageViewer(QtWidgets.QLabel):
+#     # resized = QtCore.pyqtSignal()
+#
+#     def __init__(self, parent=None):
+#         super(ImageViewer, self).__init__(parent=parent)
+#         ui = Ui_MainWindow()
+#         ui.setupUi(self)
+#         self.resized.connect(self.someFunction)
+#
+#     def resizeEvent(self, event):
+#         print('resize', event)
+        # self.resized.emit()
+        # return super(Window, self).resizeEvent(event)
+
+    # def someFunction(self):
+    #     print("someFunction")
+
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -18,6 +36,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setWindowIcon(QIcon('images/icon.png'))
 
+        self.image = None
         # === TOOLBAR ICONS ===
         self.ui.actionOpenFolder.setIcon(QIcon('images/icons/folder_open.svg'))
         self.ui.actionTreeView.setIcon(QIcon('images/icons/tree.svg'))
@@ -31,14 +50,46 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
         self.ui.treeWidget.itemSelectionChanged.connect(self._select_item)
 
+        # self.ui.label.resizeEvent.triggered.connect(self._resize_view)
+        # .connect(self._resize_view)
+
     # ===SLOTS===
     # ===Main Window Slot
     # Start button
-    def _select_item(self):
-        print(self.ui.treeWidget.currentItem().full_path)
+    def resizeEvent(self, event):
+        self._resize_image()
 
-        self.ui.label.setPixmap(QPixmap(self.ui.treeWidget.currentItem().full_path))
-        # print(read_file(self.ui.treeWidget.currentItem().full_path))
+    def _resize_image(self):  # Work only while mainwindows resize
+        if self.image is not None:
+            w = self.ui.label.width()
+            h = self.ui.label.height()
+            self.ui.label.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
+
+    def _select_item(self):
+        path = self.ui.treeWidget.currentItem().full_path
+        print()
+
+        if os.path.isdir(path):
+            self.image = None
+            self.ui.label.setText("Can't show, folder selected.")
+        else:
+            ext = os.path.splitext(path)[1].replace('.','')
+            supported_ext = QtGui.QImageReader.supportedImageFormats()
+            if ext in [str(ext, 'utf-8') for ext in supported_ext]:
+                self.image = QPixmap(path)
+                w = self.ui.label.width()
+                h = self.ui.label.height()
+                self.ui.label.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
+            else:
+                text = 'Can not show. Supported image formats: \n' + \
+                       ', '.join([str(ext, 'utf-8') for ext in supported_ext]) + \
+                       '\n\bYou still can encrypt ot decrypt file!'
+                self.ui.label.setText(text)
+            # self.ui.label.setText(text)
+            # self.image = QPixmap(path)
+            # w = self.ui.label.width()
+            # h = self.ui.label.height()
+            # self.ui.label.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
 
     # Select path button
     def _open_folder(self):

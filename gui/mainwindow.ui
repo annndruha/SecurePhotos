@@ -27,7 +27,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Music file names normalizer</string>
+   <string>SecurePhotos</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -45,13 +45,13 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>500</width>
+        <width>400</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>500</width>
+        <width>400</width>
         <height>16777215</height>
        </size>
       </property>
@@ -71,7 +71,10 @@
     <item row="0" column="1">
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>TextLabel</string>
+       <string>Image not selected</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>

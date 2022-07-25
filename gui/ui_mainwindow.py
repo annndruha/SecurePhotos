@@ -38,14 +38,15 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.treeWidget.sizePolicy().hasHeightForWidth())
         self.treeWidget.setSizePolicy(sizePolicy)
-        self.treeWidget.setMinimumSize(QtCore.QSize(500, 0))
-        self.treeWidget.setMaximumSize(QtCore.QSize(500, 16777215))
+        self.treeWidget.setMinimumSize(QtCore.QSize(400, 0))
+        self.treeWidget.setMaximumSize(QtCore.QSize(400, 16777215))
         self.treeWidget.setColumnCount(1)
         self.treeWidget.setObjectName("treeWidget")
         self.treeWidget.headerItem().setText(0, "1")
         self.treeWidget.header().setVisible(False)
         self.gridLayout.addWidget(self.treeWidget, 0, 0, 1, 1)
         self.label = QtWidgets.QLabel(self.widget)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 1, 1, 1)
         MainWindow.setCentralWidget(self.widget)
@@ -104,8 +105,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Music file names normalizer"))
-        self.label.setText(_translate("MainWindow", "TextLabel"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "SecurePhotos"))
+        self.label.setText(_translate("MainWindow", "Image not selected"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.actionEnter_Key.setText(_translate("MainWindow", "Enter Key"))
         self.actionEncrypt.setText(_translate("MainWindow", "Encrypt"))
