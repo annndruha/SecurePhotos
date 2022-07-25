@@ -18,7 +18,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.image = None
         self.cipher = None
-        self.enterkeydialog = EnterKeyDialog()
+        self.enterKeyDialog = EnterKeyDialog()
 
         # === TOOLBAR ICONS ===
         self.setWindowIcon(QIcon('images/icon.png'))
@@ -38,8 +38,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionActualSize.setDisabled(True)
         self.ui.actionFitSize.setDisabled(True)
         self.ui.actionFullscreen.setDisabled(True)
-        # self.ui.actionEnterKey.setDisabled(True)
-        # self.ui.actionEncrypt.setDisabled(True)
 
         # ===CONNECTS===
         self.ui.treeWidget.itemSelectionChanged.connect(self._select_item)
@@ -50,40 +48,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionEnterKey.triggered.connect(self._enter_key)
         self.ui.actionEncrypt.triggered.connect(self._crypt)
 
-        self.enterkeydialog.ui.pushButton_cancel.clicked.connect(self._cancel_key)
-        self.enterkeydialog.ui.pushButton_apply.clicked.connect(self._apply_key)
-
+        self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._cancel_key)
+        self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_key)
+        self.update_crypt_status('sample.path')
+        # self.showFullScreen()
         self._open_folder()
-
-        # self.ui.imageView.wheelEvent.triggered.connect(self._zoom)
-        # self.installEventFilter(self)
-        # self.ui.imageView.resizeEvent.triggered.connect(self._resize_view)
-        # .connect(self._resize_view)
+        self.showMaximized()
 
     # ===SLOTS===
-    # ===Main Window Slot
-    # Start button
-
-    # def wheelEvent(self, event):
-    #     event.
-    #     print(event)
-
     def _enter_key(self):
-        self.enterkeydialog.show()
+        self.enterKeyDialog.show()
 
     def _cancel_key(self):
-        self.enterkeydialog.ui.keyField.setText('')
-        self.enterkeydialog.done(200)
+        self.enterKeyDialog.ui.keyField.setText('')
+        self.enterKeyDialog.done(200)
 
     def _apply_key(self):
-        if self.enterkeydialog.ui.keyField.text() is not '':
-            self.cipher = AESCipher(self.enterkeydialog.ui.keyField.text())
-        else:
-            pass  # If not provided
-        print('Apply key:', self.cipher.hash())
+        if self.enterKeyDialog.ui.keyField.text() is not '':
+            self.cipher = AESCipher(self.enterKeyDialog.ui.keyField.text())
         self._select_item()
-        self.enterkeydialog.ui.keyField.setText('')
-        self.enterkeydialog.done(200)
+        self.enterKeyDialog.ui.keyField.setText('')
+        self.enterKeyDialog.done(200)
 
     def update_crypt_status(self, path):
         ext = os.path.splitext(path)[1]
@@ -95,32 +80,29 @@ class MainWindow(QtWidgets.QMainWindow):
             if ext == '.aes':
                 self.ui.actionEncrypt.setText('Decrypt')
                 self.ui.actionEncrypt.setEnabled(True)
+                self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock_open.svg'))
                 self.ui.actionEncrypt.mode = 'decrypt'
             else:
                 self.ui.actionEncrypt.setText('Encrypt')
                 self.ui.actionEncrypt.setEnabled(True)
+                self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
                 self.ui.actionEncrypt.mode = 'encrypt'
 
     def _crypt(self):
-        # if self.cipher is None:
-        #     msg = QtWidgets.QMessageBox()
-        #     msg.setIcon(QtWidgets.QMessageBox.Warning)
-        #     msg.setWindowTitle("Enter key to decrypt")
-        #     msg.setText('Enter key to decrypt. ')
-        #     # msg.setInformativeText('Enter key to decrypt')
-        #     msg.setDefaultButton(QtWidgets.QMessageBox.Save)
-        #     msg.exec()
-        # else:
-        if self.ui.actionEncrypt.mode == 'encrypt':
+        try:
             path = self.ui.treeWidget.currentItem().full_path
-            encrypt_file(path, self.cipher)
-            self._delete_file()
-            self._select_item(path + '.aes')
-        elif self.ui.actionEncrypt.mode == 'decrypt':
-            path = self.ui.treeWidget.currentItem().full_path
-            decrypt_file(path, self.cipher)
-            self._delete_file()
-            self._select_item(os.path.splitext(path)[0])
+        except AttributeError:  # TODO: Temp solution
+            self.ui.actionEncrypt.setText('Select file first')
+            self.ui.actionEncrypt.setEnabled(False)
+        else:
+            if self.ui.actionEncrypt.mode == 'encrypt':
+                encrypt_file(path, self.cipher)
+                self._delete_file()
+                self._select_item(path + '.aes')
+            elif self.ui.actionEncrypt.mode == 'decrypt':
+                decrypt_file(path, self.cipher)
+                self._delete_file()
+                self._select_item(os.path.splitext(path)[0])
 
     def _runtime_decrypt(self, path):
         image = QPixmap()
@@ -156,9 +138,6 @@ class MainWindow(QtWidgets.QMainWindow):
         delete_path(path)
         self.image = None
         self._update_image()
-        # idx = self.ui.treeWidget.indexOfTopLevelItem(self.ui.treeWidget.currentItem())  # TODO: Only to item
-        # # self.ui.treeWidget.removeItemWidget(self.ui.treeWidget.currentItem(), 0)
-        # self.ui.treeWidget.takeTopLevelItem(idx)
         self.ui.treeWidget.clear()
         self.load_project_structure(self.root_path, self.ui.treeWidget)
 
@@ -171,7 +150,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _select_item(self, old_path_if_changed=None):
         if old_path_if_changed is not None:
-            path = old_path_if_changed
+            path = old_path_if_changed  # TODO: Need real selection
         else:
             path = self.ui.treeWidget.currentItem().full_path
 
@@ -188,7 +167,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif ext == 'aes':
                 try:
                     self.image = self._runtime_decrypt(path)
-                except FileNotFoundError as e:
+                except FileNotFoundError:
                     pass
                 self._update_image()
             else:
@@ -207,12 +186,19 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.load_project_structure(parent_itm.full_path, parent_itm)
                 parent_itm.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
             else:
-                parent_itm.setIcon(0, QtGui.QIcon('images/icons/file.svg'))
+                ext = os.path.splitext(parent_itm.full_path)[1].replace('.', '')
+                supported_ext = QtGui.QImageReader.supportedImageFormats()
+                if ext in [str(ext, 'utf-8') for ext in supported_ext]:
+                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/image.svg'))
+                elif ext == 'aes':
+                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/lock.svg'))
+                else:
+                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/file.svg'))
 
     # Select path button
     def _open_folder(self):
         folder_dialog = QtWidgets.QFileDialog()
-        self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")
+        self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")  # TODO: Why is this to slow?
         if self.root_path is '':
             return
         self.ui.treeWidget.clear()
@@ -228,30 +214,10 @@ class EnterKeyDialog(QtWidgets.QDialog):
         icon = QtGui.QIcon('images/icon.ico')
         self.setWindowIcon(icon)
 
-#     msg = QtWidgets.QMessageBox()
-#     msg.setIcon(QtWidgets.QMessageBox.Warning)
-#     msg.setWindowTitle("Enter key to decrypt")
-#     msg.setText('Enter key to decrypt. ')
-#     # msg.setInformativeText('Enter key to decrypt')
-#     msg.setDefaultButton(QtWidgets.QMessageBox.Save)
-#     msg.exec()
-#
-#
-# class TagsDialog(QtWidgets.QDialog):
-#     def __init__(self):
-#         super(TagsDialog, self).__init__()
-#         self.ui = Ui_TagEditor()
-#         self.ui.setupUi(self)
-#
-#         if hasattr(sys, "_MEIPASS"):
-#             icondir = os.path.join(sys._MEIPASS, 'img/icon.ico')
-#         else:
-#             icondir = 'img/icon.ico'
-#         icon = QtGui.QIcon()
-#         icon.addPixmap(QtGui.QPixmap(icondir), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-#         self.setWindowIcon(icon)
-#
-#         self.clear()
-#
-#     def clear(self):
-#         self.ui.track_num_0.clear()
+# msg = QtWidgets.QMessageBox()
+# msg.setIcon(QtWidgets.QMessageBox.Warning)
+# msg.setWindowTitle("Enter key to decrypt")
+# msg.setText('Enter key to decrypt. ')
+# msg.setInformativeText('Enter key to decrypt')
+# msg.setDefaultButton(QtWidgets.QMessageBox.Save)
+# msg.exec()
