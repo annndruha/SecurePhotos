@@ -17,7 +17,7 @@ TBD
 TBD
 
 ### Algorithm:
-![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/assets/encrypt.svg)
+![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/assets/encrypt_scheme.drawio.svg)
 
 ### Technologies:
 * Python3
