@@ -24,6 +24,6 @@ jobs:
 
     - name: Lint
       run: |
-        flake8 --max-line-length 120 .
+        flake8 . --max-line-length 120
         isort --check-only --diff handyview/ setup.py
         yapf -r -d handyview/ setup.py
