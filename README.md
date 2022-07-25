@@ -11,7 +11,19 @@ SecurePhotos - Gallery for photos with encryption for your photos or video
 ![image](https://user-images.githubusercontent.com/51162917/180698988-6f879719-0c9d-436e-834a-a3f0550e4a53.png)
 
 ### Install and usage:
-TBD
+Tested on:
+* Python 3.6.8
+* pip==21.3.1
+
+Install and run:
+```bash
+pip install -r requirements.txt
+python main.py
+```
+Libs in requirements.txt:
+* PyQt5==5.15.6
+* Pillow==8.4.0
+* pycryptodome==3.15.0
 
 ### Features
 TBD
@@ -19,12 +31,7 @@ TBD
 ### Algorithm:
 ![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/assets/encrypt_scheme.drawio.svg)
 
-### Technologies:
-* Python3
-* pip==21.3.1
-* Libs:
-  * PyCryptodome
-  * Qt5
 
 ### Contact
-TBD
+Andrey Marakulin
+[annndruha.github@gmail.com](mailto:annndruha.github@gmail.com)

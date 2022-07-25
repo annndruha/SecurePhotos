@@ -69,7 +69,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionFullscreen.setText('Fullscreen')
         self.fullscreen = not self.fullscreen
 
-
     def _exit_fullscreen(self):
         self.showMaximized()
 
@@ -81,7 +80,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.done(200)
 
     def _apply_key(self):
-        if self.enterKeyDialog.ui.keyField.text() is not '':
+        if self.enterKeyDialog.ui.keyField.text() != '':
             self.cipher = AESCipher(self.enterKeyDialog.ui.keyField.text())
         self._select_item()
         self.enterKeyDialog.ui.keyField.setText('')
