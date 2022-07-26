@@ -60,17 +60,25 @@ class MainWindow(QtWidgets.QMainWindow):
         self.showMaximized()
 
     # ===SLOTS===
+    def showFullScreen(self) -> None:
+        if not self.fullscreen:
+            super(MainWindow, self).showFullScreen()
+            self.ui.actionFullscreen.setIcon(QIcon('images/icons/close_full.svg'))
+            self.ui.actionFullscreen.setText('Window')
+            self.fullscreen = True
+
+    def showMaximized(self) -> None:
+        if self.fullscreen:
+            super(MainWindow, self).showMaximized()
+            self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
+            self.ui.actionFullscreen.setText('Fullscreen')
+            self.fullscreen = False
+
     def _fullscreen(self):
         if not self.fullscreen:
             self.showFullScreen()
-            self.ui.actionFullscreen.setIcon(QIcon('images/icons/close_full.svg'))
-            self.ui.actionFullscreen.setText('Window')
-            # close_full.svg
         else:
             self.showMaximized()
-            self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
-            self.ui.actionFullscreen.setText('Fullscreen')
-        self.fullscreen = not self.fullscreen
 
     def _exit_fullscreen(self):
         self.showMaximized()
@@ -229,6 +237,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.ui.treeWidget.clear()
         self.load_project_structure(self.root_path, self.ui.treeWidget)
+
+
 
 
 class EnterKeyDialog(QtWidgets.QDialog):
