@@ -88,6 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # self._select_item()
         self.enterKeyDialog.ui.keyField.setText('')
         self.enterKeyDialog.done(200)
+        self.ui.actionEncrypt.setText('Choose file')
 
     def update_crypt_status(self, path):
         ext = os.path.splitext(path)[1]
@@ -172,13 +173,8 @@ class MainWindow(QtWidgets.QMainWindow):
         path: Optional[str] = None
         if old_path_if_changed is not None:
             path = old_path_if_changed  # TODO: Need real selection
-        # if self.ui.treeWidget.currentItem() is None:
-        #     self.ui.imageView.setText("You have to open folder")
-        #     self._open_folder()
-        #     self._select_item()
-            # path = self.ui.treeWidget.currentItem().full_path
-        # if old_path_if_changed is None and self.ui.treeWidget.currentItem() is not None:
-        path = self.ui.treeWidget.currentItem().full_path
+        else:
+            path = self.ui.treeWidget.currentItem().full_path
         self.update_crypt_status(path)
         if os.path.isdir(path):
             self.image = None
