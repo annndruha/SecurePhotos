@@ -10,6 +10,8 @@ from gui.ui_enterkey import Ui_EnterKey
 from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime
 from src.utils import rotate_file_right, rotate_file_left, delete_path
 
+supported_ext = QtGui.QImageReader.supportedImageFormats()
+
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -100,11 +102,16 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.actionEncrypt.setEnabled(True)
                 self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock_open.svg'))
                 self.ui.actionEncrypt.mode = 'decrypt'
-            else:
+            elif ext in supported_ext:
                 self.ui.actionEncrypt.setText('Encrypt')
                 self.ui.actionEncrypt.setEnabled(True)
                 self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
                 self.ui.actionEncrypt.mode = 'encrypt'
+            else:
+                self.ui.actionEncrypt.setText('Choose file')
+                self.ui.actionEncrypt.setDisabled(True)
+                self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
+                self.ui.actionEncrypt.mode = 'disable'
 
     def _crypt(self):
         try:
@@ -195,7 +202,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.imageView.setText(text)
 
     def load_project_structure(self, path, tree):
-        supported_ext = QtGui.QImageReader.supportedImageFormats()
         dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
         filelist = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
         for element in dirlist + filelist:
