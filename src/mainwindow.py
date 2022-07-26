@@ -83,9 +83,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def _apply_key(self):
         if self.enterKeyDialog.ui.keyField.text() != '':
             self.cipher = AESCipher(self.enterKeyDialog.ui.keyField.text())
-        # if self.ui.treeWidget.currentItem() is None:
-        #     self._open_folder()
-        # self._select_item()
         self.enterKeyDialog.ui.keyField.setText('')
         self.enterKeyDialog.done(200)
         self.ui.actionEncrypt.setText('Choose file')
@@ -198,17 +195,19 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.imageView.setText(text)
 
     def load_project_structure(self, path, tree):
+        supported_ext = QtGui.QImageReader.supportedImageFormats()
         dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
         filelist = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
         for element in dirlist + filelist:
+            ext = os.path.splitext(os.path.join(path, element))[1].replace('.', '')
+            if ext not in supported_ext and ext != 'aes':
+                continue
             parent_itm = QTreeWidgetItem(tree, [os.path.basename(element)])
             parent_itm.full_path = os.path.join(path, element)
             if os.path.isdir(parent_itm.full_path):
                 self.load_project_structure(parent_itm.full_path, parent_itm)
                 parent_itm.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
             else:
-                ext = os.path.splitext(parent_itm.full_path)[1].replace('.', '')
-                supported_ext = QtGui.QImageReader.supportedImageFormats()
                 if ext in [str(ext, 'utf-8') for ext in supported_ext]:
                     parent_itm.setIcon(0, QtGui.QIcon('images/icons/image.svg'))
                 elif ext == 'aes':
