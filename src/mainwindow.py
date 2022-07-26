@@ -11,9 +11,9 @@ from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime
 from src.utils import rotate_file_right, rotate_file_left, delete_path
 
 SUPPORTED_EXT = QtGui.QImageReader.supportedImageFormats()
-VIDEO_EXT = ("mp4",)
-MUSIC_EXT = ("mp3",)
-TEXT_EXT = ("txt",)
+VIDEO_EXT = ("mp4", "mov", "wmv", "avi", "mkv", "mpa", "flv", "webm", "f4v", "swf")
+MUSIC_EXT = ("mp3" "m4a", "flac", "alac", "wav", "wma", "aac")
+TEXT_EXT = ("txt", "doc", "docx", "tex", "rtf", "odt")
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -59,7 +59,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._cancel_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_key)
         self.update_crypt_status("sample.path")
-        # self.showFullScreen()
         self._open_folder()
         self.showMaximized()
 
@@ -87,7 +86,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.done(200)
         self.ui.actionEncrypt.setText("Choose file")
 
-    def update_crypt_status(self, path: str) -> None:
+    def update_crypt_status(self, path: os.PathLike) -> None:
         ext = os.path.splitext(path)[1]
         if self.cipher is None:
             self.ui.actionEncrypt.setText("Need key")
@@ -122,7 +121,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._delete_file()
                 self._select_item(os.path.splitext(path)[0])
 
-    def _runtime_decrypt(self, path: str) -> QPixmap:
+    def _runtime_decrypt(self, path: os.PathLike) -> QPixmap:
         image = QPixmap()
         file_bytes, success = decrypt_runtime(path, self.cipher)
         ext = os.path.splitext(os.path.splitext(path)[0])[1]
@@ -172,7 +171,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _select_item(self, old_path_if_changed: Optional[str] = None) -> None:
         path: Optional[str] = None
-        if old_path_if_changed is not None:
+        if old_path_if_changed:
             path = old_path_if_changed  # TODO: Need real selection
         else:
             path = self.ui.treeWidget.currentItem().full_path
@@ -242,7 +241,6 @@ class EnterKeyDialog(QtWidgets.QDialog):
         super(EnterKeyDialog, self).__init__()
         self.ui = Ui_EnterKey()
         self.ui.setupUi(self)
-
         icon = QtGui.QIcon("images/icon.png")
         self.setWindowIcon(icon)
 

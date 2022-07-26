@@ -69,7 +69,7 @@ class AESCipher:
         return self.__unpad(aes.decrypt(data[AES.block_size :]))
 
 
-def read_file(path: str) -> bytes:
+def read_file(path: os.PathLike) -> bytes:
     with open(path, "rb") as f:
         byte = f.read()
         return byte
@@ -80,29 +80,27 @@ def write_file(path: str, data: bytes) -> None:
         f.write(data)
 
 
-def encrypt_file(path: str, cipher: AESCipher) -> None:
+def encrypt_file(path: os.PathLike, cipher: AESCipher) -> None:
     file_bytes = read_file(path)
     encrypted_text = cipher.encrypt(file_bytes)
     path += ENCODED_EXTENSION
     write_file(path, encrypted_text)
 
 
-def decrypt_file(path: str, cipher: AESCipher) -> None:
+def decrypt_file(path: os.PathLike, cipher: AESCipher) -> None:
     file_bytes = read_file(path)
     decrypted_text = cipher.decrypt(file_bytes)
     path = os.path.splitext(path)[0]
     write_file(path, decrypted_text)
 
 
-def decrypt_runtime(path: str, cipher: AESCipher):
+def decrypt_runtime(path: os.PathLike, cipher: AESCipher):
     if cipher is None:
-        return read_file("images/encrypted_placeholder.png"), False
+        return read_file("images/icons/lock.svg"), False
     else:
         file_bytes = read_file(path)
         decrypted_text = cipher.decrypt(file_bytes)
-        # path = os.path.splitext(path)[0]
         return decrypted_text, True
-    # write_file(path, decrypted_text)
 
 
 if __name__ == "__main__":
