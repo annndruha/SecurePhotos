@@ -4,7 +4,7 @@ from PIL import Image
 
 
 def rotate_file_right(img_path):
-    print('rotate right')
+    print("rotate right")
     img = Image.open(img_path)
     # with Image.open(img_path) as img:
     print(img)
@@ -14,7 +14,7 @@ def rotate_file_right(img_path):
 
 
 def rotate_file_left(img_path):
-    print('rotate left')
+    print("rotate left")
     img = Image.open(img_path)
     # with Image.open(img_path) as img:
     img = img.rotate(90, expand=True)

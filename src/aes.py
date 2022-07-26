@@ -6,8 +6,8 @@ from Crypto import Random
 from Crypto.Hash import SHA256
 from Crypto.Cipher import AES
 
-ENCODED_EXTENSION = '.aes'
-UTF_8 = 'utf-8'
+ENCODED_EXTENSION = ".aes"
+UTF_8 = "utf-8"
 
 
 class AESCipher:
@@ -20,7 +20,7 @@ class AESCipher:
 
         :param password: Password for encrypt
         """
-        self.__hash = SHA256.new(bytes(password, 'utf-8')).digest()
+        self.__hash = SHA256.new(bytes(password, "utf-8")).digest()
 
     def hash(self):
         return str(self.__hash)  # WTF with convert?
@@ -43,7 +43,7 @@ class AESCipher:
         :param data: Data with padding
         :return: Unpadded data
         """
-        return data[:-ord(data[len(data) - 1:])]
+        return data[: -ord(data[len(data) - 1 :])]
 
     def encrypt(self, data: bytes) -> bytes:
         """
@@ -64,19 +64,19 @@ class AESCipher:
         :param data: Data to be decrypted
         :return: Decrypted data
         """
-        iv = data[:AES.block_size]
+        iv = data[: AES.block_size]
         aes = AES.new(self.__hash, AES.MODE_CBC, iv)
-        return self.__unpad(aes.decrypt(data[AES.block_size:]))
+        return self.__unpad(aes.decrypt(data[AES.block_size :]))
 
 
 def read_file(path: str) -> bytes:
-    with open(path, 'rb') as f:
+    with open(path, "rb") as f:
         byte = f.read()
         return byte
 
 
 def write_file(path: str, data: bytes) -> None:
-    with open(path, 'wb') as f:
+    with open(path, "wb") as f:
         f.write(data)
 
 
@@ -96,7 +96,7 @@ def decrypt_file(path: str, cipher: AESCipher) -> None:
 
 def decrypt_runtime(path: str, cipher: AESCipher):
     if cipher is None:
-        return read_file('images/encrypted_placeholder.png'), False
+        return read_file("images/encrypted_placeholder.png"), False
     else:
         file_bytes = read_file(path)
         decrypted_text = cipher.decrypt(file_bytes)
@@ -106,12 +106,18 @@ def decrypt_runtime(path: str, cipher: AESCipher):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Encrypt files with console. Usage:"
-                                                 "\n python aes.py -e -f test.jpg -p mypassword")
+    parser = argparse.ArgumentParser(
+        description="Encrypt files with console. Usage:"
+        "\n python aes.py -e -f test.jpg -p mypassword"
+    )
     parser.add_argument("-e", action="store_true", help="Encrypt mode")
     parser.add_argument("-d", action="store_true", help="Decrypt mode")
     parser.add_argument("-f", default=None, help="Path to file to encrypt/decrypt")
-    parser.add_argument("-p", default=None, help="""Password for encrypt/decrypt. Password -> sha256 -> aes256 key""")
+    parser.add_argument(
+        "-p",
+        default=None,
+        help="""Password for encrypt/decrypt. Password -> sha256 -> aes256 key""",
+    )
 
     args = parser.parse_args()
     if bool(args.e) != bool(args.d):
@@ -124,4 +130,6 @@ if __name__ == "__main__":
         else:
             logging.error('File path "-f" or password "-p" not specified.')
     else:
-        logging.error('Unknown mode, use "-e" or "-d" for encrypt or decrypt respectively.')
+        logging.error(
+            'Unknown mode, use "-e" or "-d" for encrypt or decrypt respectively.'
+        )
