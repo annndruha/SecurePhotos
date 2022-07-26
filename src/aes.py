@@ -43,7 +43,7 @@ class AESCipher:
         :param data: Data with padding
         :return: Unpadded data
         """
-        return data[: -ord(data[len(data) - 1 :])]
+        return data[: -ord(data[len(data) - 1:])]
 
     def encrypt(self, data: bytes) -> bytes:
         """
@@ -66,7 +66,7 @@ class AESCipher:
         """
         iv = data[: AES.block_size]
         aes = AES.new(self.__hash, AES.MODE_CBC, iv)
-        return self.__unpad(aes.decrypt(data[AES.block_size :]))
+        return self.__unpad(aes.decrypt(data[AES.block_size:]))
 
 
 def read_file(path: os.PathLike) -> bytes:
