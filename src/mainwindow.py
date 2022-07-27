@@ -151,8 +151,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_image()
 
     def _delete_file(self):
-        path = self.ui.filesTree.getPath()
-        delete_path(path)
+        delete_path(self.ui.filesTree.getPath())
         self.image = None
         self._update_image()
         self.ui.filesTree.deleteItem()

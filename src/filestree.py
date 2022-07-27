@@ -2,14 +2,11 @@ import os
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem
 
-
 SUPPORTED_EXT = QtGui.QImageReader.supportedImageFormats()
 
 
 def geticon(fullpath):
     ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '')
-    # if os.path.isdir(fullpath):
-    #     return QtGui.QIcon('images/icons/folder.svg')
     if ext in [str(ext, 'utf-8') for ext in SUPPORTED_EXT]:
         return QtGui.QIcon('images/icons/image.svg')
     elif ext == 'aes':
@@ -25,6 +22,9 @@ class FilesItem(QTreeWidgetItem):
         self.fullpath = fullpath
         self.basename = basename
         # self.setChildIndicatorPolicy(QTreeWidgetItem.DontShowIndicatorWhenChildless)
+
+    def __repr__(self):
+        return str(self.basename)
 
     def load_subtree(self):
         self.clear()
@@ -47,8 +47,6 @@ class FilesItem(QTreeWidgetItem):
                 self.removeChild(self.child(i))
 
 
-
-
 class FilesTree(QTreeWidget):
     def __init__(self, parent):
         super().__init__(parent)
@@ -59,10 +57,7 @@ class FilesTree(QTreeWidget):
     def load_project_structure(self, path):
         self.root_elem = FilesItem(self, path, path)
         self.root_elem.load_subtree()
-        # self.root_elem.setChildIndicatorPolicy(QTreeWidgetItem.DontShowIndicator)
         self.root_elem.setExpanded(True)
-        # self.root_elem.setSelected(True)
-        # self.addTopLevelItem(self.root_elem)
 
     def _item_expanded(self, item):
         item.load_subtree()
@@ -73,13 +68,13 @@ class FilesTree(QTreeWidget):
         item.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
 
     def getPath(self):
-        return super().currentItem().fullpath
+        return self.currentItem().fullpath
 
     def deleteItem(self):
-        item = super().currentItem()
+        item = self.currentItem()
+        print(item)
+        idx = item.parent.indexOfChild(item)
         item.parent.load_subtree()
-        # print('Delete ', item.fullpath)
-        # self.removeItemWidget(item, 0)
-
-    def clear(self):
-        super().clear()
+        new_item = item.parent.child(idx)
+        item.parent.setSelected(False)
+        new_item.setSelected(True)
