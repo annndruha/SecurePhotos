@@ -61,6 +61,7 @@ class FilesTree(QTreeWidget):
         self.root_elem.load_subtree()
         # self.root_elem.setChildIndicatorPolicy(QTreeWidgetItem.DontShowIndicator)
         self.root_elem.setExpanded(True)
+        # self.root_elem.setSelected(True)
         # self.addTopLevelItem(self.root_elem)
 
     def _item_expanded(self, item):
@@ -73,6 +74,12 @@ class FilesTree(QTreeWidget):
 
     def getPath(self):
         return super().currentItem().fullpath
+
+    def deleteItem(self):
+        item = super().currentItem()
+        item.parent.load_subtree()
+        # print('Delete ', item.fullpath)
+        # self.removeItemWidget(item, 0)
 
     def clear(self):
         super().clear()

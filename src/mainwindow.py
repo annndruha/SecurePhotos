@@ -155,8 +155,10 @@ class MainWindow(QtWidgets.QMainWindow):
         delete_path(path)
         self.image = None
         self._update_image()
-        self.ui.filesTree.clear()
-        self.ui.filesTree.load_project_structure(self.root_path)
+        self.ui.filesTree.deleteItem()
+
+        # self.ui.filesTree.clear()
+        # self.ui.filesTree.load_project_structure(self.root_path)
 
     def resizeEvent(self, event):  # Work only while mainwindow resize
         self._resize_image()
