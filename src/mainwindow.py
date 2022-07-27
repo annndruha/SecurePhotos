@@ -107,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _crypt(self):
         try:
-            path = self.ui.filesTree.currentItem().fullpath
+            path = self.ui.filesTree.getPath()
         except AttributeError:  # TODO: Temp solution
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setEnabled(False)
@@ -139,19 +139,19 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.imageView.setText("Nothing to show :(")
 
     def _rotate_left(self):
-        path = self.ui.filesTree.currentItem().fullpath
+        path = self.ui.filesTree.getPath()
         rotate_file_left(path)
         self.image = QPixmap(path)
         self._update_image()
 
     def _rotate_right(self):
-        path = self.ui.filesTree.currentItem().fullpath
+        path = self.ui.filesTree.getPath()
         rotate_file_right(path)
         self.image = QPixmap(path)
         self._update_image()
 
     def _delete_file(self):
-        path = self.ui.filesTree.currentItem().fullpath
+        path = self.ui.filesTree.getPath()
         delete_path(path)
         self.image = None
         self._update_image()
@@ -169,7 +169,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if old_path_if_changed is not None:
             path = old_path_if_changed  # TODO: Need real selection
         else:
-            path = self.ui.filesTree.currentItem().fullpath
+            path = self.ui.filesTree.getPath()
 
         self.update_crypt_status(path)
         if os.path.isdir(path):
@@ -197,7 +197,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _open_folder(self):
         folder_dialog = QtWidgets.QFileDialog()
         # self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")  # TODO: Why is this to slow?
-        self.root_path = 'C:\dev\github\SecurePhotos'
+        self.root_path = 'C:\dev\github'
         if self.root_path == '':
             return
         self.ui.filesTree.clear()
