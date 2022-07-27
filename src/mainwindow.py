@@ -181,7 +181,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.imageView.setText("Can't show, folder selected.")
         else:
             ext = os.path.splitext(path)[1].replace(".", "")
-            if ext in [str(ext, "utf-8") for ext in SUPPORTED_EXT]:
+            if ext in SUPPORTED_EXT:
                 self.image = QPixmap(path)
                 self._update_image()
             elif ext == "aes":
