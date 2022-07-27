@@ -107,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _crypt(self):
         try:
-            path = self.ui.filesTree.getPath()
+            path = self.ui.filesTree.get_path()
         except AttributeError:  # TODO: Temp solution
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setEnabled(False)
@@ -139,25 +139,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.imageView.setText("Nothing to show :(")
 
     def _rotate_left(self):
-        path = self.ui.filesTree.getPath()
+        path = self.ui.filesTree.get_path()
         rotate_file_left(path)
         self.image = QPixmap(path)
         self._update_image()
 
     def _rotate_right(self):
-        path = self.ui.filesTree.getPath()
+        path = self.ui.filesTree.get_path()
         rotate_file_right(path)
         self.image = QPixmap(path)
         self._update_image()
 
     def _delete_file(self):
-        delete_path(self.ui.filesTree.getPath())
+        delete_path(self.ui.filesTree.get_path())
         self.image = None
         self._update_image()
-        self.ui.filesTree.deleteItem()
-
-        # self.ui.filesTree.clear()
-        # self.ui.filesTree.load_project_structure(self.root_path)
+        self.ui.filesTree.delete_item()
 
     def resizeEvent(self, event):  # Work only while mainwindow resize
         self._resize_image()
@@ -170,7 +167,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if old_path_if_changed is not None:
             path = old_path_if_changed  # TODO: Need real selection
         else:
-            path = self.ui.filesTree.getPath()
+            path = self.ui.filesTree.get_path()
 
         self.update_crypt_status(path)
         if os.path.isdir(path):
@@ -197,8 +194,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # Select path button
     def _open_folder(self):
         folder_dialog = QtWidgets.QFileDialog()
-        # self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")  # TODO: Why is this to slow?
-        self.root_path = 'C:\dev\github'
+        self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")  # TODO: Why is this to slow?
         if self.root_path == '':
             return
         self.ui.filesTree.clear()

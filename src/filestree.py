@@ -50,6 +50,7 @@ class FilesItem(QTreeWidgetItem):
 class FilesTree(QTreeWidget):
     def __init__(self, parent):
         super().__init__(parent)
+        self.root_elem = None
         self.itemExpanded.connect(self._item_expanded)
         self.itemCollapsed.connect(self._item_collapsed)
         self.setRootIsDecorated(False)
@@ -67,14 +68,9 @@ class FilesTree(QTreeWidget):
         item.clear()
         item.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
 
-    def getPath(self):
+    def get_path(self):
         return self.currentItem().fullpath
 
-    def deleteItem(self):
+    def delete_item(self):
         item = self.currentItem()
-        print(item)
-        idx = item.parent.indexOfChild(item)
-        item.parent.load_subtree()
-        new_item = item.parent.child(idx)
-        item.parent.setSelected(False)
-        new_item.setSelected(True)
+        item.parent.removeChild(item)
