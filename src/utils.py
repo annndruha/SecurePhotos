@@ -22,7 +22,10 @@ def rotate_file_left(img_path):
 
 
 def delete_path(path):
-    if os.path.isdir(path):
-        shutil.rmtree(path)
-    else:
-        os.remove(path)
+    try:
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        else:
+            os.remove(path)
+    except FileNotFoundError:
+        pass

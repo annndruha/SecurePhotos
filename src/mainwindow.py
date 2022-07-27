@@ -2,7 +2,7 @@ import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QTreeWidgetItem
+# from PyQt5.QtWidgets import QTreeWidgetItem
 
 from gui.ui_mainwindow import Ui_MainWindow
 from gui.ui_enterkey import Ui_EnterKey
@@ -40,7 +40,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionFitSize.setDisabled(True)
 
         # ===CONNECTS===
-        self.ui.treeWidget.itemSelectionChanged.connect(self._select_item)
+        self.ui.filesTree.itemSelectionChanged.connect(self._select_item)
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
         self.ui.actionRotateLeft.triggered.connect(self._rotate_left)
         self.ui.actionRotateRight.triggered.connect(self._rotate_right)
@@ -107,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _crypt(self):
         try:
-            path = self.ui.treeWidget.currentItem().full_path
+            path = self.ui.filesTree.get_path()
         except AttributeError:  # TODO: Temp solution
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setEnabled(False)
@@ -139,24 +139,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.imageView.setText("Nothing to show :(")
 
     def _rotate_left(self):
-        path = self.ui.treeWidget.currentItem().full_path
+        path = self.ui.filesTree.get_path()
         rotate_file_left(path)
         self.image = QPixmap(path)
         self._update_image()
 
     def _rotate_right(self):
-        path = self.ui.treeWidget.currentItem().full_path
+        path = self.ui.filesTree.get_path()
         rotate_file_right(path)
         self.image = QPixmap(path)
         self._update_image()
 
     def _delete_file(self):
-        path = self.ui.treeWidget.currentItem().full_path
-        delete_path(path)
+        delete_path(self.ui.filesTree.get_path())
         self.image = None
         self._update_image()
-        self.ui.treeWidget.clear()
-        self.load_project_structure(self.root_path, self.ui.treeWidget)
+        self.ui.filesTree.delete_item()
 
     def resizeEvent(self, event):  # Work only while mainwindow resize
         self._resize_image()
@@ -169,7 +167,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if old_path_if_changed is not None:
             path = old_path_if_changed  # TODO: Need real selection
         else:
-            path = self.ui.treeWidget.currentItem().full_path
+            path = self.ui.filesTree.get_path()
 
         self.update_crypt_status(path)
         if os.path.isdir(path):
@@ -193,33 +191,14 @@ class MainWindow(QtWidgets.QMainWindow):
                        '\n\nYou still can encrypt ot decrypt file!'
                 self.ui.imageView.setText(text)
 
-    def load_project_structure(self, path, tree):
-        dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
-        filelist = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
-        for element in dirlist + filelist:
-            parent_itm = QTreeWidgetItem(tree, [os.path.basename(element)])
-            parent_itm.full_path = os.path.join(path, element)
-            if os.path.isdir(parent_itm.full_path):
-                self.load_project_structure(parent_itm.full_path, parent_itm)
-                parent_itm.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
-            else:
-                ext = os.path.splitext(parent_itm.full_path)[1].replace('.', '')
-                supported_ext = QtGui.QImageReader.supportedImageFormats()
-                if ext in [str(ext, 'utf-8') for ext in supported_ext]:
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/image.svg'))
-                elif ext == 'aes':
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/lock.svg'))
-                else:
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/file.svg'))
-
     # Select path button
     def _open_folder(self):
         folder_dialog = QtWidgets.QFileDialog()
         self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")  # TODO: Why is this to slow?
         if self.root_path == '':
             return
-        self.ui.treeWidget.clear()
-        self.load_project_structure(self.root_path, self.ui.treeWidget)
+        self.ui.filesTree.clear()
+        self.ui.filesTree.load_project_structure(self.root_path)
 
 
 class EnterKeyDialog(QtWidgets.QDialog):

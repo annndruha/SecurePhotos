@@ -24,4 +24,4 @@ jobs:
 
     - name: Lint
       run: |
-        flake8 --max-line-length 120 .
+        flake8 --exclude=gui/* --max-line-length 120 .
