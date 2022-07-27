@@ -8,7 +8,6 @@ SUPPORTED_EXT = QtGui.QImageReader.supportedImageFormats()
 
 def geticon(fullpath):
     ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '')
-    print(ext)
     if os.path.isdir(fullpath):
         return QtGui.QIcon('images/icons/folder.svg')
     if ext in [str(ext, 'utf-8') for ext in SUPPORTED_EXT]:
@@ -27,6 +26,7 @@ class FilesItem(QTreeWidgetItem):
         super().__init__(parent, [basename])
 
     def load_subtree(self):
+        self.clear()
         if not os.path.isdir(self.fullpath):
             return
         dirlist = [x for x in os.listdir(self.fullpath) if os.path.isdir(os.path.join(self.fullpath, x))]
@@ -46,8 +46,11 @@ class FilesItem(QTreeWidgetItem):
         # super().clear()
         # self.__init__(self.parent, self.fullpath, self.basename)
         # print('before', self.childCount())
-        for i in range(self.childCount()):
-            self.removeChild(self.child(i))
+        while self.childCount() > 0:
+            for i in range(self.childCount()):
+                self.removeChild(self.child(i))
+        # for i in range(self.childCount()):
+        #     self.removeChild(self.child(i))
         # print('after', self.childCount())
 
 
@@ -65,7 +68,7 @@ class FilesTree(QTreeWidget):
         self.root_elem.setExpanded(True)
 
     def preload_subtree(self):
-        super().currentItem().clear()
+        # super().currentItem().clear()
         super().currentItem().load_subtree()
 
     def getPath(self):
