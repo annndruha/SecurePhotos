@@ -44,7 +44,7 @@
   <widget class="QWidget" name="widget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QTreeWidget" name="treeWidget">
+     <widget class="FilesTree" name="filesTree">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -214,6 +214,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FilesTree</class>
+   <extends>QTreeWidget</extends>
+   <header location="global">src/filestree.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
