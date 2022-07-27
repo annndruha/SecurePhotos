@@ -2,13 +2,12 @@ import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
-# from PyQt5.QtWidgets import QTreeWidgetItem
 
 from gui.ui_mainwindow import Ui_MainWindow
 from gui.ui_enterkey import Ui_EnterKey
 from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime
 from src.utils import rotate_file_right, rotate_file_left, delete_path
-from src.filestree import IMG_EXT
+from src.filestree import gettype
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -115,11 +114,13 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             if self.ui.actionEncrypt.mode == 'encrypt':
                 encrypt_file(path, self.cipher)
-                self._delete_file()
+                self._delete_file(delete_from_tree=False)
+                self.ui.filesTree.replace_name(path + '.aes')
                 self._select_item(path + '.aes')
             elif self.ui.actionEncrypt.mode == 'decrypt':
                 decrypt_file(path, self.cipher)
-                self._delete_file()
+                self._delete_file(delete_from_tree=False)
+                self.ui.filesTree.replace_name(os.path.splitext(path)[0])
                 self._select_item(os.path.splitext(path)[0])
 
     def _runtime_decrypt(self, path):
@@ -151,11 +152,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.image = QPixmap(path)
         self._update_image()
 
-    def _delete_file(self):
+    def _delete_file(self, delete_from_tree=True):
         delete_path(self.ui.filesTree.get_path())
         self.image = None
         self._update_image()
-        self.ui.filesTree.delete_item()
+        if delete_from_tree:
+            self.ui.filesTree.delete_item()
 
     def resizeEvent(self, event):  # Work only while mainwindow resize
         self._resize_image()
@@ -171,25 +173,17 @@ class MainWindow(QtWidgets.QMainWindow):
             path = self.ui.filesTree.get_path()
 
         self.update_crypt_status(path)
-        if os.path.isdir(path):
+        if gettype(path) == 'folder':
             self.image = None
-            self.ui.imageView.setText("Can't show, folder selected.")
-        else:
-            ext = os.path.splitext(os.path.basename(path))[1].replace('.', '').lower()
-            if ext in IMG_EXT:
-                self.image = QPixmap(path)
-                self._update_image()
-            elif ext == 'aes':
-                try:
-                    self.image = self._runtime_decrypt(path)
-                except FileNotFoundError:
-                    pass
-                self._update_image()
-            else:
-                text = 'Can not show. Supported image formats: \n' + \
-                       ', '.join(IMG_EXT) + \
-                       '\n\nYou still can encrypt ot decrypt file!'
-                self.ui.imageView.setText(text)
+        elif gettype(path) == 'image':
+            self.image = QPixmap(path)
+            self._update_image()
+        elif gettype(path) == 'aes':
+            try:
+                self.image = self._runtime_decrypt(path)
+            except FileNotFoundError:
+                pass
+        self._update_image()
 
     # Select path button
     def _open_folder(self):

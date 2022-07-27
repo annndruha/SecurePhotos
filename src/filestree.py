@@ -2,26 +2,37 @@ import os
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem
 
-IMG_EXT = [str(ext, 'utf-8').lower() for ext in QtGui.QImageReader.supportedImageFormats()]
-TEXT_EXT = ['txt', 'md', 'doc', 'docx', 'pdf', 'rtf', 'odt']
-AUDIO_EXT = ['aac', 'wav', 'mp3', 'ac3', 'ogg', 'wma']
-VIDEO_EXT = ['mkv', 'mp4', 'avi', 'mov']
-ZIP_EXT = ['rar', 'zip']
+SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xpm'],
+                 'aes': ['aes'],
+                 'text': ['txt', 'md', 'doc', 'docx', 'pdf', 'rtf', 'odt'],
+                 'audio': ['aac', 'wav', 'mp3', 'ac3', 'ogg', 'wma'],
+                 'video': ['mkv', 'mp4', 'avi', 'mov'],
+                 'zip': ['rar', 'zip']}
+
+
+def gettype(fullpath):
+    if os.path.isdir(fullpath):
+        return 'folder'
+    ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
+    for key in SUPPORTED_EXT.keys():
+        if ext in SUPPORTED_EXT[key]:
+            return key
+    return 'file'
 
 
 def geticon(fullpath):  # Not for folders
-    ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
-    if ext == 'aes':
+    filetype = gettype(fullpath)
+    if filetype == 'aes':
         return QtGui.QIcon('images/icons/lock.svg')
-    elif ext in IMG_EXT:
+    elif filetype == 'image':
         return QtGui.QIcon('images/icons/image.svg')
-    elif ext in TEXT_EXT:
+    elif filetype == 'text':
         return QtGui.QIcon('images/icons/file_text.svg')
-    elif ext in AUDIO_EXT:
+    elif filetype == 'audio':
         return QtGui.QIcon('images/icons/file_audio.svg')
-    elif ext in VIDEO_EXT:
+    elif filetype == 'video':
         return QtGui.QIcon('images/icons/movie.svg')
-    elif ext in ZIP_EXT:
+    elif filetype == 'file':
         return QtGui.QIcon('images/icons/file_zip.svg')
     else:
         return QtGui.QIcon('images/icons/file.svg')
@@ -85,3 +96,8 @@ class FilesTree(QTreeWidget):
     def delete_item(self):
         item = self.currentItem()
         item.parent.removeChild(item)
+
+    def replace_name(self, new_path):
+        item = self.currentItem()
+        item.__init__(item.parent, new_path, os.path.basename(new_path))
+        item.setText(0, os.path.basename(new_path))
