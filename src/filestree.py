@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem
 
 class FilesItem(QTreeWidgetItem):
     def __init__(self, parent, basename):
-        print(type(parent))
+        # print(type(parent))
         super().__init__(parent, basename)
         self.fullpath = None
 

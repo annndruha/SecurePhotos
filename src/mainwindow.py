@@ -107,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _crypt(self):
         try:
-            path = self.ui.filesTree.currentItem().full_path
+            path = self.ui.filesTree.currentItem().fullpath
         except AttributeError:  # TODO: Temp solution
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setEnabled(False)
@@ -139,24 +139,24 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.imageView.setText("Nothing to show :(")
 
     def _rotate_left(self):
-        path = self.ui.filesTree.currentItem().full_path
+        path = self.ui.filesTree.currentItem().fullpath
         rotate_file_left(path)
         self.image = QPixmap(path)
         self._update_image()
 
     def _rotate_right(self):
-        path = self.ui.filesTree.currentItem().full_path
+        path = self.ui.filesTree.currentItem().fullpath
         rotate_file_right(path)
         self.image = QPixmap(path)
         self._update_image()
 
     def _delete_file(self):
-        path = self.ui.filesTree.currentItem().full_path
+        path = self.ui.filesTree.currentItem().fullpath
         delete_path(path)
         self.image = None
         self._update_image()
         self.ui.filesTree.clear()
-        self.ui.filesTree.load_project_structure(self.root_path, self.ui.filesTree)
+        self.ui.filesTree.load_project_structure(self.root_path)
 
     def resizeEvent(self, event):  # Work only while mainwindow resize
         self._resize_image()
@@ -169,7 +169,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if old_path_if_changed is not None:
             path = old_path_if_changed  # TODO: Need real selection
         else:
-            path = self.ui.filesTree.currentItem().full_path
+            path = self.ui.filesTree.currentItem().fullpath
 
         self.update_crypt_status(path)
         if os.path.isdir(path):
