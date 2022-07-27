@@ -2,15 +2,27 @@ import os
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem
 
-SUPPORTED_EXT = QtGui.QImageReader.supportedImageFormats()
+IMG_EXT = [str(ext, 'utf-8').lower() for ext in QtGui.QImageReader.supportedImageFormats()]
+TEXT_EXT = ['txt', 'md', 'doc', 'docx', 'pdf', 'rtf', 'odt']
+AUDIO_EXT = ['aac', 'wav', 'mp3', 'ac3', 'ogg', 'wma']
+VIDEO_EXT = ['mkv', 'mp4', 'avi', 'mov']
+ZIP_EXT = ['rar', 'zip']
 
 
-def geticon(fullpath):
-    ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '')
-    if ext in [str(ext, 'utf-8') for ext in SUPPORTED_EXT]:
-        return QtGui.QIcon('images/icons/image.svg')
-    elif ext == 'aes':
+def geticon(fullpath):  # Not for folders
+    ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
+    if ext == 'aes':
         return QtGui.QIcon('images/icons/lock.svg')
+    elif ext in IMG_EXT:
+        return QtGui.QIcon('images/icons/image.svg')
+    elif ext in TEXT_EXT:
+        return QtGui.QIcon('images/icons/file_text.svg')
+    elif ext in AUDIO_EXT:
+        return QtGui.QIcon('images/icons/file_audio.svg')
+    elif ext in VIDEO_EXT:
+        return QtGui.QIcon('images/icons/movie.svg')
+    elif ext in ZIP_EXT:
+        return QtGui.QIcon('images/icons/file_zip.svg')
     else:
         return QtGui.QIcon('images/icons/file.svg')
 
@@ -21,7 +33,6 @@ class FilesItem(QTreeWidgetItem):
         self.parent = parent
         self.fullpath = fullpath
         self.basename = basename
-        # self.setChildIndicatorPolicy(QTreeWidgetItem.DontShowIndicatorWhenChildless)
 
     def __repr__(self):
         return str(self.basename)

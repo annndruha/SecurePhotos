@@ -8,6 +8,7 @@ from gui.ui_mainwindow import Ui_MainWindow
 from gui.ui_enterkey import Ui_EnterKey
 from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime
 from src.utils import rotate_file_right, rotate_file_left, delete_path
+from src.filestree import IMG_EXT
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -174,9 +175,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.image = None
             self.ui.imageView.setText("Can't show, folder selected.")
         else:
-            ext = os.path.splitext(path)[1].replace('.', '')
-            supported_ext = QtGui.QImageReader.supportedImageFormats()
-            if ext in [str(ext, 'utf-8') for ext in supported_ext]:
+            ext = os.path.splitext(os.path.basename(path))[1].replace('.', '').lower()
+            if ext in IMG_EXT:
                 self.image = QPixmap(path)
                 self._update_image()
             elif ext == 'aes':
@@ -187,7 +187,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._update_image()
             else:
                 text = 'Can not show. Supported image formats: \n' + \
-                       ', '.join([str(ext, 'utf-8') for ext in supported_ext]) + \
+                       ', '.join(IMG_EXT) + \
                        '\n\nYou still can encrypt ot decrypt file!'
                 self.ui.imageView.setText(text)
 
