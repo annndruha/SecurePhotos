@@ -3,9 +3,24 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem
 
 
+SUPPORTED_EXT = QtGui.QImageReader.supportedImageFormats()
+
+
+def geticon(fullpath):
+    ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '')
+    print(ext)
+    if os.path.isdir(fullpath):
+        return QtGui.QIcon('images/icons/folder.svg')
+    if ext in [str(ext, 'utf-8') for ext in SUPPORTED_EXT]:
+        return QtGui.QIcon('images/icons/image.svg')
+    elif ext == 'aes':
+        return QtGui.QIcon('images/icons/lock.svg')
+    else:
+        return QtGui.QIcon('images/icons/file.svg')
+
+
 class FilesItem(QTreeWidgetItem):
     def __init__(self, parent, fullpath, basename):
-        # print(type(parent))
         self.parent = parent
         self.fullpath = fullpath
         self.basename = basename
@@ -24,18 +39,8 @@ class FilesItem(QTreeWidgetItem):
             # parent_itm.fullpath = os.path.join(self.fullpath, element)
             if os.path.isdir(parent_itm.fullpath):
                 parent_itm.setChildIndicatorPolicy(QTreeWidgetItem.ShowIndicator)
-                parent_itm.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
-                # parent_itm.addChilds()
-                # self.load_project_structure(parent, parent_itm.fullpath)
-            else:
-                ext = os.path.splitext(parent_itm.fullpath)[1].replace('.', '')
-                supported_ext = QtGui.QImageReader.supportedImageFormats()
-                if ext in [str(ext, 'utf-8') for ext in supported_ext]:
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/image.svg'))
-                elif ext == 'aes':
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/lock.svg'))
-                else:
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/file.svg'))
+            parent_itm.setIcon(0, geticon(parent_itm.fullpath))
+
 
     def clear(self):
         # super().clear()
@@ -55,29 +60,9 @@ class FilesTree(QTreeWidget):
         self.itemSelectionChanged.connect(self.preload_subtree)
 
     def load_project_structure(self, path):
-        dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
-        filelist = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
-        for element in dirlist + filelist:
-
-            parent_itm = FilesItem(self, os.path.join(path, element), os.path.basename(element))
-
-            # parent_itm = FilesItem(os.path.join(path, element))
-            # parent_itm.fullpath = os.path.join(path, element)
-            if os.path.isdir(parent_itm.fullpath):
-                parent_itm.setChildIndicatorPolicy(QTreeWidgetItem.ShowIndicator)
-                parent_itm.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
-                # parent_itm.addChilds()
-                # self.load_project_structure(parent, parent_itm.fullpath)
-            else:
-                ext = os.path.splitext(parent_itm.fullpath)[1].replace('.', '')
-                supported_ext = QtGui.QImageReader.supportedImageFormats()
-                if ext in [str(ext, 'utf-8') for ext in supported_ext]:
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/image.svg'))
-                elif ext == 'aes':
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/lock.svg'))
-                else:
-                    parent_itm.setIcon(0, QtGui.QIcon('images/icons/file.svg'))
-            # self.insertChild()
+        self.root_elem = FilesItem(self, path, os.path.basename(path))
+        self.root_elem.load_subtree()
+        self.root_elem.setExpanded(True)
 
     def preload_subtree(self):
         super().currentItem().clear()
