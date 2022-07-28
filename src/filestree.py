@@ -32,7 +32,7 @@ def geticon(fullpath):  # Not for folders
         return QtGui.QIcon('images/icons/file_audio.svg')
     elif filetype == 'video':
         return QtGui.QIcon('images/icons/movie.svg')
-    elif filetype == 'file':
+    elif filetype == 'zip':
         return QtGui.QIcon('images/icons/file_zip.svg')
     else:
         return QtGui.QIcon('images/icons/file.svg')
@@ -99,5 +99,6 @@ class FilesTree(QTreeWidget):
 
     def replace_name(self, new_path):
         item = self.currentItem()
-        item.__init__(item.parent, new_path, os.path.basename(new_path))
-        item.setText(0, os.path.basename(new_path))
+        parent = item.parent
+        parent.removeChild(item)
+        # item.setText(0, os.path.basename(new_path))

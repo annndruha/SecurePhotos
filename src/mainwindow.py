@@ -87,14 +87,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.done(200)
 
     def update_crypt_status(self, path):
-        ext = os.path.splitext(path)[1]
         if self.cipher is None:
             self.ui.actionEncrypt.setText('Need key')
             self.ui.actionEncrypt.setDisabled(True)
             self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
             self.ui.actionEncrypt.mode = 'disable'
         else:
-            if ext == '.aes':
+            if gettype(path) =='folder':
+                self.ui.actionEncrypt.setText('Folder selected')
+                self.ui.actionEncrypt.setDisabled(True)
+                self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
+                self.ui.actionEncrypt.mode = 'disable'
+            elif gettype(path) =='aes':
                 self.ui.actionEncrypt.setText('Decrypt')
                 self.ui.actionEncrypt.setEnabled(True)
                 self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock_open.svg'))
@@ -108,6 +112,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _crypt(self):
         try:
             path = self.ui.filesTree.get_path()
+            print(path)
         except AttributeError:  # TODO: Temp solution
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setEnabled(False)
