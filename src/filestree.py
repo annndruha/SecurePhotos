@@ -100,5 +100,8 @@ class FilesTree(QTreeWidget):
     def replace_name(self, new_path):
         item = self.currentItem()
         parent = item.parent
+        idx = parent.indexOfChild(item)
         parent.removeChild(item)
+        new_item = FilesItem(parent, new_path, os.path.basename(new_path))
+        parent.insertChild(idx, new_item)  # TODO: Correct place to insert and load icon
         # item.setText(0, os.path.basename(new_path))

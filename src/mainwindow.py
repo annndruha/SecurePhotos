@@ -119,14 +119,14 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             if self.ui.actionEncrypt.mode == 'encrypt':
                 encrypt_file(path, self.cipher)
-                self._delete_file(delete_from_tree=False)
+                # self._delete_file(delete_from_tree=False)
                 self.ui.filesTree.replace_name(path + '.aes')
-                self._select_item(path + '.aes')
+                # self._select_item(path + '.aes')
             elif self.ui.actionEncrypt.mode == 'decrypt':
                 decrypt_file(path, self.cipher)
-                self._delete_file(delete_from_tree=False)
+                # self._delete_file(delete_from_tree=False)
                 self.ui.filesTree.replace_name(os.path.splitext(path)[0])
-                self._select_item(os.path.splitext(path)[0])
+                # self._select_item(os.path.splitext(path)[0])
 
     def _runtime_decrypt(self, path):
         image = QPixmap()
@@ -161,8 +161,7 @@ class MainWindow(QtWidgets.QMainWindow):
         delete_path(self.ui.filesTree.get_path())
         self.image = None
         self._update_image()
-        if delete_from_tree:
-            self.ui.filesTree.delete_item()
+        self.ui.filesTree.delete_item()
 
     def resizeEvent(self, event):  # Work only while mainwindow resize
         self._resize_image()
