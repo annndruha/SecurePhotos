@@ -119,14 +119,14 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             if self.ui.actionEncrypt.mode == 'encrypt':
                 encrypt_file(path, self.cipher)
-                # self._delete_file(delete_from_tree=False)
+                self._delete_by_crypt()
                 self.ui.filesTree.replace_name(path + '.aes')
-                # self._select_item(path + '.aes')
+                self._select_item(path + '.aes')
             elif self.ui.actionEncrypt.mode == 'decrypt':
                 decrypt_file(path, self.cipher)
-                # self._delete_file(delete_from_tree=False)
+                self._delete_by_crypt()
                 self.ui.filesTree.replace_name(os.path.splitext(path)[0])
-                # self._select_item(os.path.splitext(path)[0])
+                self._select_item(os.path.splitext(path)[0])
 
     def _runtime_decrypt(self, path):
         image = QPixmap()
@@ -157,7 +157,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.image = QPixmap(path)
         self._update_image()
 
-    def _delete_file(self, delete_from_tree=True):
+    def _delete_by_crypt(self):
+        delete_path(self.ui.filesTree.get_path())
+        self.image = None
+        self._update_image()
+
+    def _delete_file(self):
         delete_path(self.ui.filesTree.get_path())
         self.image = None
         self._update_image()
