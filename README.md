@@ -10,18 +10,21 @@ SecurePhotos - Gallery for photos with encryption for your photos or video
 ![image](https://user-images.githubusercontent.com/51162917/180698988-6f879719-0c9d-436e-834a-a3f0550e4a53.png)
 
 ### Install and usage:
-Tested on:
-* Python 3.6.8
-* pip==21.3.1
 
 Install and run:
 ```bash
 pip install -r requirements.txt
 python main.py
 ```
-Libs in requirements.txt:
-* PyQt5==5.15.6
-* Pillow==8.4.0
+
+Tested on:
+* Windows 11
+* Python 3.11.0
+* pip 22.3
+
+Test libs versions:
+* PyQt5==5.15.7
+* Pillow==9.3.0
 * pycryptodome==3.15.0
 
 ### Features
