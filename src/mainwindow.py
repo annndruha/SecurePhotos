@@ -145,9 +145,21 @@ class MainWindow(QtWidgets.QMainWindow):
         image = QPixmap()
         file_bytes, success = decrypt_runtime(path, self.cipher)
         ext = os.path.splitext(os.path.splitext(path)[0])[1]
-        img_load = image.loadFromData(file_bytes, ext.upper())
-        if not img_load:
+        read_success = image.loadFromData(file_bytes, ext.upper())
+        if not read_success:
             file_bytes = read_file('images/encrypted_with_another_key.png')
+            image.loadFromData(file_bytes, ext.upper())
+        return image
+
+    def _read_image(self, path):
+        image = QPixmap()
+        file_bytes = read_file(path)
+        ext = os.path.splitext(os.path.splitext(path)[0])[1]
+        read_success = image.loadFromData(file_bytes, ext.upper())
+        if not read_success:
+            self.ui.actionRotateRight.setDisabled(True)
+            self.ui.actionRotateLeft.setDisabled(True)
+            file_bytes = read_file('images/broken_image.png')
             image.loadFromData(file_bytes, ext.upper())
         return image
 
@@ -199,8 +211,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if gettype(path) == 'folder':
             self.image = None
         elif gettype(path) == 'image':
-            self.image = QPixmap(path)
-            self._update_image()
+            self.image = self._read_image(path)
         elif gettype(path) == 'aes':
             try:
                 self.image = self._runtime_decrypt(path)
