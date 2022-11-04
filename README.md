@@ -1,5 +1,6 @@
 # SecurePhotos (MVP)
 SecurePhotos - Gallery for photos with encryption for your photos or video
+
 ![version](https://img.shields.io/github/v/release/Annndruha/SecurePhotos)
 [![GitHub license](https://img.shields.io/github/license/Annndruha/SecurePhotos.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/LICENSE)
 ![visitors](https://visitor-badge.glitch.me/badge?page_id=Annndruha/SecurePhotos)
