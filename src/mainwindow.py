@@ -1,4 +1,5 @@
 import os
+import traceback
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
@@ -202,21 +203,23 @@ class MainWindow(QtWidgets.QMainWindow):
             self._update_image()
 
     def _select_item(self, old_path_if_changed=None):
-        if old_path_if_changed is not None:
-            path = old_path_if_changed  # TODO: Need real selection
-        else:
-            path = self.ui.filesTree.get_path()
-
-        self.update_actions_status(path)
-        if gettype(path) == 'folder':
-            self.image = None
-        elif gettype(path) == 'image':
-            self.image = self._read_image(path)
-        elif gettype(path) == 'aes':
-            try:
-                self.image = self._runtime_decrypt(path)
-            except FileNotFoundError:
-                pass
+        try:
+            if old_path_if_changed is not None:
+                path = old_path_if_changed  # TODO: Need real selection
+            else:
+                path = self.ui.filesTree.get_path()
+            self.update_actions_status(path)
+            if gettype(path) == 'folder':
+                self.image = None
+            elif gettype(path) == 'image':
+                self.image = self._read_image(path)
+            elif gettype(path) == 'aes':
+                try:
+                    self.image = self._runtime_decrypt(path)
+                except FileNotFoundError:
+                    pass
+        except Exception:
+            print(traceback.format_exc())
         self._update_image()
 
     # Select path button
