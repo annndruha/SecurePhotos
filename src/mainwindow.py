@@ -209,10 +209,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if gettype(path) == 'image':
                 self.image = self._read_image(path)
             elif gettype(path) == 'aes':
-                try:
-                    self.image = self._runtime_decrypt(path)
-                except FileNotFoundError:
-                    pass
+                self.image = self._runtime_decrypt(path)
             else:
                 self.image = None
         except Exception:
