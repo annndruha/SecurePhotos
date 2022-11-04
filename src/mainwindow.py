@@ -113,12 +113,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
                 self.ui.actionEncrypt.mode = 'disable'
             elif gettype(path) == 'aes':
-                self.ui.actionEncrypt.setText('Decrypt')
+                self.ui.actionEncrypt.setText('Decrypt on disk')
                 self.ui.actionEncrypt.setEnabled(True)
                 self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock_open.svg'))
                 self.ui.actionEncrypt.mode = 'decrypt'
             else:
-                self.ui.actionEncrypt.setText('Encrypt')
+                self.ui.actionEncrypt.setText('Encrypt on disk')
                 self.ui.actionEncrypt.setEnabled(True)
                 self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
                 self.ui.actionEncrypt.mode = 'encrypt'
