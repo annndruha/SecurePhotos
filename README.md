@@ -1,9 +1,8 @@
-# SecurePhotos (MVP beta)
+# SecurePhotos (MVP)
 SecurePhotos - Gallery for photos with encryption for your photos or video
-
-[![download](https://img.shields.io/github/downloads/Annndruha/SecurePhotos/total)](https://github.com/Annndruha/SecurePhotos/releases)
-![visitors](https://visitor-badge.glitch.me/badge?page_id=Annndruha/SecurePhotos)
+![version](https://img.shields.io/github/v/release/Annndruha/SecurePhotos)
 [![GitHub license](https://img.shields.io/github/license/Annndruha/SecurePhotos.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/LICENSE)
+![visitors](https://visitor-badge.glitch.me/badge?page_id=Annndruha/SecurePhotos)
 [![python lint](https://github.com/Annndruha/SecurePhotos/actions/workflows/pylint.yml/badge.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/.github/workflows/pylint.yml)
 
 ### Screenshots:
