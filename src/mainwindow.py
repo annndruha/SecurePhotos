@@ -51,7 +51,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._cancel_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_key)
-        self.update_crypt_status('sample.path')
+        self.update_actions_status('sample.path')
         # self.showFullScreen()
         # self._open_folder()
         self.showMaximized()
@@ -87,7 +87,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.ui.keyField.setText('')
         self.enterKeyDialog.done(200)
 
-    def update_crypt_status(self, path):
+    def update_actions_status(self, path):
+        # Rotate left
+        if gettype(path) == 'image':
+            self.ui.actionRotateLeft.setEnabled(True)
+        else:
+            self.ui.actionRotateLeft.setDisabled(True)
+
+        # Rotate right
+        if gettype(path) == 'image':
+            self.ui.actionRotateRight.setEnabled(True)
+        else:
+            self.ui.actionRotateRight.setDisabled(True)
+
+        # Encrypt
         if self.cipher is None:
             self.ui.actionEncrypt.setText('Need key')
             self.ui.actionEncrypt.setDisabled(True)
@@ -182,7 +195,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             path = self.ui.filesTree.get_path()
 
-        self.update_crypt_status(path)
+        self.update_actions_status(path)
         if gettype(path) == 'folder':
             self.image = None
         elif gettype(path) == 'image':
