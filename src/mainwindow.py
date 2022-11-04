@@ -93,12 +93,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
             self.ui.actionEncrypt.mode = 'disable'
         else:
-            if gettype(path) =='folder':
+            if gettype(path) == 'folder':
                 self.ui.actionEncrypt.setText('Folder selected')
                 self.ui.actionEncrypt.setDisabled(True)
                 self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
                 self.ui.actionEncrypt.mode = 'disable'
-            elif gettype(path) =='aes':
+            elif gettype(path) == 'aes':
                 self.ui.actionEncrypt.setText('Decrypt')
                 self.ui.actionEncrypt.setEnabled(True)
                 self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock_open.svg'))
