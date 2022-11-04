@@ -2,7 +2,7 @@ import os
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem
 
-SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xpm'],
+SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xpm', 'svg'],
                  'aes': ['aes'],
                  'text': ['txt', 'md', 'doc', 'docx', 'pdf', 'rtf', 'odt'],
                  'audio': ['aac', 'wav', 'mp3', 'ac3', 'ogg', 'wma'],

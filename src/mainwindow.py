@@ -131,16 +131,19 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setEnabled(False)
         else:
-            if self.ui.actionEncrypt.mode == 'encrypt':
-                encrypt_file(path, self.cipher)
-                self._delete_by_crypt()
-                self.ui.filesTree.replace_name(path + '.aes')
-                self._select_item()
-            elif self.ui.actionEncrypt.mode == 'decrypt':
-                decrypt_file(path, self.cipher)
-                self._delete_by_crypt()
-                self.ui.filesTree.replace_name(os.path.splitext(path)[0])
-                self._select_item()
+            try:
+                if self.ui.actionEncrypt.mode == 'encrypt':
+                    encrypt_file(path, self.cipher)
+                    self._delete_by_crypt()
+                    self.ui.filesTree.replace_name(path + '.aes')
+                    self._select_item()
+                elif self.ui.actionEncrypt.mode == 'decrypt':
+                    decrypt_file(path, self.cipher)
+                    self._delete_by_crypt()
+                    self.ui.filesTree.replace_name(os.path.splitext(path)[0])
+                    self._select_item()
+            except FileNotFoundError:
+                self._process_tree_changes()
 
     def _runtime_decrypt(self, path):
         image = QPixmap()
@@ -164,6 +167,12 @@ class MainWindow(QtWidgets.QMainWindow):
             image.loadFromData(file_bytes, ext.upper())
         return image
 
+    def _process_tree_changes(self):
+        self.ui.filesTree.itemSelectionChanged.disconnect()
+        self.ui.filesTree.clear()
+        self.ui.filesTree.load_project_structure(self.root_path)
+        self.ui.filesTree.itemSelectionChanged.connect(self._select_item)
+
     def _update_image(self):
         if self.image is not None:
             w = self.ui.imageView.width()
@@ -173,16 +182,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.imageView.setText("Nothing to show :(")
 
     def _rotate_left(self):
-        path = self.ui.filesTree.get_path()
-        rotate_file_left(path)
-        self.image = QPixmap(path)
-        self._update_image()
+        try:
+            path = self.ui.filesTree.get_path()
+            rotate_file_left(path)
+            self.image = QPixmap(path)
+            self._update_image()
+        except FileNotFoundError:
+            self._process_tree_changes()
 
     def _rotate_right(self):
-        path = self.ui.filesTree.get_path()
-        rotate_file_right(path)
-        self.image = QPixmap(path)
-        self._update_image()
+        try:
+            path = self.ui.filesTree.get_path()
+            rotate_file_right(path)
+            self.image = QPixmap(path)
+            self._update_image()
+        except FileNotFoundError:
+            self._process_tree_changes()
 
     def _delete_by_crypt(self):
         delete_path(self.ui.filesTree.get_path())
@@ -212,6 +227,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.image = self._runtime_decrypt(path)
             else:
                 self.image = None
+        except FileNotFoundError:
+            try:
+                self._process_tree_changes()
+            except Exception:
+                print(traceback.format_exc())
         except Exception:
             print(traceback.format_exc())
         self._update_image()
@@ -232,6 +252,7 @@ class MainWindow(QtWidgets.QMainWindow):
             with open('metadata.txt') as f:
                 last_path = f.read()
             if os.path.exists(last_path):
+                self.root_path = last_path
                 self.ui.filesTree.clear()
                 self.ui.filesTree.load_project_structure(last_path)
         except Exception:
