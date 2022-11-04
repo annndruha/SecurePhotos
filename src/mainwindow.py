@@ -53,8 +53,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_key)
         self.update_crypt_status('sample.path')
         # self.showFullScreen()
-        self._open_folder()
+        # self._open_folder()
         self.showMaximized()
+        self._open_last_folder()
 
     # ===SLOTS===
     def _fullscreen(self):
@@ -202,6 +203,18 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.ui.filesTree.clear()
         self.ui.filesTree.load_project_structure(self.root_path)
+        with open('metadata.txt', 'w+') as f:
+            f.write(str(self.root_path))
+
+    def _open_last_folder(self):
+        try:
+            with open('metadata.txt') as f:
+                last_path = f.read()
+            if os.path.exists(last_path):
+                self.ui.filesTree.clear()
+                self.ui.filesTree.load_project_structure(last_path)
+        except Exception:
+            print("metadata.txt not found or path broken")
 
 
 class EnterKeyDialog(QtWidgets.QDialog):
