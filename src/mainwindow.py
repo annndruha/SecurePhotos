@@ -127,7 +127,7 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             path = self.ui.filesTree.get_path()
             print(path)
-        except AttributeError:  # TODO: Temp solution
+        except AttributeError:
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setEnabled(False)
         else:
@@ -135,12 +135,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 encrypt_file(path, self.cipher)
                 self._delete_by_crypt()
                 self.ui.filesTree.replace_name(path + '.aes')
-                self._select_item(path + '.aes')
+                self._select_item()
             elif self.ui.actionEncrypt.mode == 'decrypt':
                 decrypt_file(path, self.cipher)
                 self._delete_by_crypt()
                 self.ui.filesTree.replace_name(os.path.splitext(path)[0])
-                self._select_item(os.path.splitext(path)[0])
+                self._select_item()
 
     def _runtime_decrypt(self, path):
         image = QPixmap()
@@ -202,22 +202,19 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.image is not None:
             self._update_image()
 
-    def _select_item(self, old_path_if_changed=None):
+    def _select_item(self):
         try:
-            if old_path_if_changed is not None:
-                path = old_path_if_changed  # TODO: Need real selection
-            else:
-                path = self.ui.filesTree.get_path()
+            path = self.ui.filesTree.get_path()
             self.update_actions_status(path)
-            if gettype(path) == 'folder':
-                self.image = None
-            elif gettype(path) == 'image':
+            if gettype(path) == 'image':
                 self.image = self._read_image(path)
             elif gettype(path) == 'aes':
                 try:
                     self.image = self._runtime_decrypt(path)
                 except FileNotFoundError:
                     pass
+            else:
+                self.image = None
         except Exception:
             print(traceback.format_exc())
         self._update_image()

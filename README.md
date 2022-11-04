@@ -1,10 +1,11 @@
 # SecurePhotos (MVP)
-SecurePhotos - Gallery for photos with encryption for your photos or video
 
 ![version](https://img.shields.io/github/v/release/Annndruha/SecurePhotos)
 [![GitHub license](https://img.shields.io/github/license/Annndruha/SecurePhotos.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/LICENSE)
 ![visitors](https://visitor-badge.glitch.me/badge?page_id=Annndruha/SecurePhotos)
 [![python lint](https://github.com/Annndruha/SecurePhotos/actions/workflows/pylint.yml/badge.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/.github/workflows/pylint.yml)
+
+SecurePhotos - Gallery for photos with encryption for your photos or video
 
 ### Screenshots:
 ![image](https://user-images.githubusercontent.com/51162917/180698988-6f879719-0c9d-436e-834a-a3f0550e4a53.png)
@@ -28,7 +29,10 @@ Test libs versions:
 * pycryptodome==3.15.0
 
 ### Features
-TBD
+
+* Encrypt/Decrypt files on disk
+* Encrypted image preview without decrypt on disk
+* Rotate and delete images
 
 ### Algorithm:
 ![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/assets/encrypt_scheme.drawio.svg)
