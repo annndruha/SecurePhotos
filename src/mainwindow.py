@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 
 from gui.ui_mainwindow import Ui_MainWindow
 from gui.ui_enterkey import Ui_EnterKey
-from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime
+from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime, read_file
 from src.utils import rotate_file_right, rotate_file_left, delete_path
 from src.filestree import gettype
 
@@ -63,7 +63,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.showFullScreen()
             self.ui.actionFullscreen.setIcon(QIcon('images/icons/close_full.svg'))
             self.ui.actionFullscreen.setText('Window')
-            # close_full.svg
         else:
             self.showMaximized()
             self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
@@ -88,7 +87,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.done(200)
 
     def update_actions_status(self, path):
-        # Rotate left
+        # Rotate left TODO: Is all image type can rotate?
         if gettype(path) == 'image':
             self.ui.actionRotateLeft.setEnabled(True)
         else:
@@ -146,9 +145,10 @@ class MainWindow(QtWidgets.QMainWindow):
         image = QPixmap()
         file_bytes, success = decrypt_runtime(path, self.cipher)
         ext = os.path.splitext(os.path.splitext(path)[0])[1]
-        image.loadFromData(file_bytes, ext.upper())
-        if success:
-            pass
+        img_load = image.loadFromData(file_bytes, ext.upper())
+        if not img_load:
+            file_bytes = read_file('images/encrypted_with_another_key.png')
+            image.loadFromData(file_bytes, ext.upper())
         return image
 
     def _update_image(self):
