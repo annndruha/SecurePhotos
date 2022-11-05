@@ -8,7 +8,7 @@ from gui.ui_mainwindow import Ui_MainWindow
 from gui.ui_enterkey import Ui_EnterKey
 from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime, read_file
 from src.utils import rotate_file_right, rotate_file_left, delete_path
-from src.filestree import gettype, FilesTree
+from src.filestree import gettype
 
 
 class MainWindow(QtWidgets.QMainWindow):
