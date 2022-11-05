@@ -1,8 +1,6 @@
 import os
 from PyQt5 import QtGui
-from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QTreeView, QFileSystemModel, QFileIconProvider
-
+from PyQt5.QtWidgets import QTreeView, QFileSystemModel, QFileIconProvider
 
 SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xpm', 'svg'],
                  'aes': ['aes'],
@@ -13,6 +11,8 @@ SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xp
 
 
 def gettype(fullpath):
+    if fullpath is None:
+        return None
     if os.path.isdir(fullpath):
         return 'folder'
     ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
@@ -22,59 +22,11 @@ def gettype(fullpath):
     return 'file'
 
 
-def geticon(fullpath):  # Not for folders
-    filetype = gettype(fullpath)
-    if filetype == 'aes':
-        return QtGui.QIcon('images/icons/lock.svg')
-    elif filetype == 'image':
-        return QtGui.QIcon('images/icons/image.svg')
-    elif filetype == 'text':
-        return QtGui.QIcon('images/icons/file_text.svg')
-    elif filetype == 'audio':
-        return QtGui.QIcon('images/icons/file_audio.svg')
-    elif filetype == 'video':
-        return QtGui.QIcon('images/icons/movie.svg')
-    elif filetype == 'zip':
-        return QtGui.QIcon('images/icons/file_zip.svg')
-    else:
-        return QtGui.QIcon('images/icons/file.svg')
-
-
-# class FilesItem(QTreeWidgetItem):
-#     def __init__(self, parent, fullpath, basename):
-#         super().__init__(parent, [basename])
-#         self.parent = parent
-#         self.fullpath = fullpath
-#         self.basename = basename
-#
-#     def __repr__(self):
-#         return str(self.basename)
-#
-#     def load_subtree(self):
-#         self.clear()
-#         if not os.path.isdir(self.fullpath):
-#             return
-#         dirlist = [x for x in os.listdir(self.fullpath) if os.path.isdir(os.path.join(self.fullpath, x))]
-#         filelist = [x for x in os.listdir(self.fullpath) if not os.path.isdir(os.path.join(self.fullpath, x))]
-#         for element in dirlist + filelist:
-#
-#             parent_itm = FilesItem(self, os.path.join(self.fullpath, element), os.path.basename(element))
-#             if os.path.isdir(parent_itm.fullpath):
-#                 parent_itm.setChildIndicatorPolicy(QTreeWidgetItem.ShowIndicator)
-#                 parent_itm.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
-#             else:
-#                 parent_itm.setIcon(0, geticon(parent_itm.fullpath))
-#
-#     def clear(self):
-#         while self.childCount() > 0:
-#             for i in range(self.childCount()):
-#                 self.removeChild(self.child(i))
-
 class IconProvider(QFileIconProvider):
-    def icon(self, fileInfo):
-        if fileInfo.isDir():
+    def icon(self, file_info):
+        if file_info.isDir():
             return QtGui.QIcon("images/icons/folder.svg")
-        return QFileIconProvider.icon(self, fileInfo)
+        return QFileIconProvider.icon(self, file_info)
 
 
 class FilesTree(QTreeView):
@@ -82,9 +34,7 @@ class FilesTree(QTreeView):
         super().__init__(parent)
         self.file_model = QFileSystemModel()
         self.file_model.setIconProvider(IconProvider())
-        # self.file_model.setRootPath(rootpath)
         self.setModel(self.file_model)
-        # self.setRootIndex(self.file_model.index(rootpath))
         self.hideColumn(1)
         self.hideColumn(2)
         self.hideColumn(3)
@@ -92,47 +42,3 @@ class FilesTree(QTreeView):
     def change_root(self, rootpath):
         self.file_model.setRootPath(rootpath)
         self.setRootIndex(self.file_model.index(rootpath))
-        # self.setRootIsDecorated(False)
-
-    def get_path(self):
-        print(self.currentItem().fullpath)
-        return self.currentItem().fullpath
-
-        # self.root_elem = None
-        # self.itemExpanded.connect(self._item_expanded)
-        # self.itemCollapsed.connect(self._item_collapsed)
-        # self.setRootIsDecorated(False)
-
-    # def load_project_structure(self, path):
-    #     self.root_elem = FilesItem(self, path, path)
-    #     self.root_elem.load_subtree()
-    #     self.root_elem.setExpanded(True)
-    #
-    # def _item_expanded(self, item):
-    #     item.load_subtree()
-    #     item.setIcon(0, QtGui.QIcon('images/icons/folder_open.svg'))
-    #
-    # def _item_collapsed(self, item):
-    #     item.clear()
-    #     item.setIcon(0, QtGui.QIcon('images/icons/folder.svg'))
-    #
-
-    #
-    # def delete_item(self):
-    #     item = self.currentItem()
-    #     item.parent.removeChild(item)
-    #
-    # def replace_name(self, new_path):
-    #     # "Old method"
-    #     # item = self.currentItem()
-    #     # parent = item.parent
-    #     # idx = parent.indexOfChild(item)
-    #     # parent.removeChild(item)
-    #     # new_item = FilesItem(parent, new_path, os.path.basename(new_path))
-    #     # parent.insertChild(idx, new_item)
-    #
-    #     item = self.currentItem()
-    #     item.basename = os.path.basename(new_path)
-    #     item.fullpath = new_path
-    #     item.setText(0, os.path.basename(new_path))
-    #     item.setIcon(0, geticon(new_path))
