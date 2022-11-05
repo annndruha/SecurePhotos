@@ -127,34 +127,47 @@ class MainWindow(QtWidgets.QMainWindow):
     def _crypt(self):
         if self.ui.actionEncrypt.mode == 'encrypt':
             encrypt_file(self.cur_path, self.cipher)
-            self._delete_by_crypt()
         elif self.ui.actionEncrypt.mode == 'decrypt':
             decrypt_file(self.cur_path, self.cipher)
-            self._delete_by_crypt()
-
-    def _runtime_decrypt(self, path):
-        image = QPixmap()
-        file_bytes, success = decrypt_runtime(path, self.cipher)
-        ext = os.path.splitext(os.path.splitext(path)[0])[1]
-        read_success = image.loadFromData(file_bytes, ext.upper())
-        if not read_success:
-            file_bytes = read_file('images/encrypted_with_another_key.png')
-            image.loadFromData(file_bytes, ext.upper())
-        return image
+        self._delete_file()
 
     def _read_image(self, path):
-        image = QPixmap()
-        file_bytes = read_file(path)
-        ext = os.path.splitext(os.path.splitext(path)[0])[1]
-        read_success = image.loadFromData(file_bytes, ext.upper())
-        if not read_success:
-            self.ui.actionRotateRight.setDisabled(True)
-            self.ui.actionRotateLeft.setDisabled(True)
-            file_bytes = read_file('images/broken_image.png')
-            image.loadFromData(file_bytes, ext.upper())
+        try:
+            image = QPixmap()
+            file_bytes = read_file(path)
+            ext = os.path.splitext(os.path.splitext(path)[0])[1]
+            read_success = image.loadFromData(file_bytes, ext.upper())
+            if not read_success:
+                self.ui.actionRotateRight.setDisabled(True)
+                self.ui.actionRotateLeft.setDisabled(True)
+                file_bytes = read_file('images/broken_image.png')
+                image.loadFromData(file_bytes, ext.upper())
+        except FileNotFoundError:
+            return None
         return image
 
-    def _update_image(self):
+    def _runtime_decrypt(self, path):
+        try:
+            image = QPixmap()
+            file_bytes, success = decrypt_runtime(path, self.cipher)
+            ext = os.path.splitext(os.path.splitext(path)[0])[1]
+            read_success = image.loadFromData(file_bytes, ext.upper())
+            if not read_success:
+                file_bytes = read_file('images/encrypted_with_another_key.png')
+                image.loadFromData(file_bytes, ext.upper())
+        except FileNotFoundError:
+            return None
+        return image
+
+    def _update_image(self, lazily=False):
+        if not lazily:
+            if gettype(self.cur_path) == 'image':
+                self.image = self._read_image(self.cur_path)
+            elif gettype(self.cur_path) == 'aes':
+                self.image = self._runtime_decrypt(self.cur_path)
+            else:
+                self.image = None
+
         if self.image is not None:
             w = self.ui.imageView.width()
             h = self.ui.imageView.height()
@@ -164,41 +177,24 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _rotate_left(self):
         rotate_file_left(self.cur_path)
-        self.image = QPixmap(self.cur_path)
         self._update_image()
 
     def _rotate_right(self):
         rotate_file_right(self.cur_path)
-        self.image = QPixmap(self.cur_path)
-        self._update_image()
-
-    def _delete_by_crypt(self):
-        delete_path(self.cur_path)
-        self.image = None
         self._update_image()
 
     def _delete_file(self):
         delete_path(self.cur_path)
-        self.image = None
         self._update_image()
 
     def resizeEvent(self, event):
-        self._resize_image()
-
-    def _resize_image(self):
-        if self.image is not None:
-            self._update_image()
+        print('resize')
+        self._update_image(lazily=True)
 
     def _select_item(self, cur, prev):
         self.cur_path = QFileSystemModel().filePath(cur)
         self.prev_path = QFileSystemModel().filePath(prev)
         self.update_actions_status(self.cur_path)
-        if gettype(self.cur_path) == 'image':
-            self.image = self._read_image(self.cur_path)
-        elif gettype(self.cur_path) == 'aes':
-            self.image = self._runtime_decrypt(self.cur_path)
-        else:
-            self.image = None
         self._update_image()
 
     def _open_folder(self):
@@ -217,8 +213,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if os.path.exists(last_path):
                 self.root_path = last_path
                 self.ui.filesTree.change_root(self.root_path)
-        except Exception:
-            print("metadata.txt not found or path broken")
+        except FileNotFoundError as err:
+            print(err, "metadata.txt not found")
 
 
 class EnterKeyDialog(QtWidgets.QDialog):

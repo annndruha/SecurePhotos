@@ -100,9 +100,7 @@ def decrypt_runtime(path: str, cipher: AESCipher):
     else:
         file_bytes = read_file(path)
         decrypted_text = cipher.decrypt(file_bytes)
-        # path = os.path.splitext(path)[0]
         return decrypted_text, True
-    # write_file(path, decrypted_text)
 
 
 if __name__ == "__main__":

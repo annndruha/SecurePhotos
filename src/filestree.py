@@ -1,5 +1,4 @@
 import os
-from PyQt5 import QtGui
 from PyQt5.QtWidgets import QTreeView, QFileSystemModel, QFileIconProvider
 
 SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xpm', 'svg'],
@@ -22,18 +21,11 @@ def gettype(fullpath):
     return 'file'
 
 
-class IconProvider(QFileIconProvider):
-    def icon(self, file_info):
-        if file_info.isDir():
-            return QtGui.QIcon("images/icons/folder.svg")
-        return QFileIconProvider.icon(self, file_info)
-
-
 class FilesTree(QTreeView):
     def __init__(self, parent):
         super().__init__(parent)
         self.file_model = QFileSystemModel()
-        self.file_model.setIconProvider(IconProvider())
+        self.file_model.setIconProvider(QFileIconProvider())
         self.setModel(self.file_model)
         self.hideColumn(1)
         self.hideColumn(2)
