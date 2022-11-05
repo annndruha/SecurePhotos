@@ -8,7 +8,7 @@ from gui.ui_mainwindow import Ui_MainWindow
 from gui.ui_enterkey import Ui_EnterKey
 from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime, read_file
 from src.utils import rotate_file_right, rotate_file_left, delete_path
-from src.filestree import gettype
+from src.filestree import gettype, is_rotatable
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -90,7 +90,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_actions_status(self, path):
         # TODO: Is all image type can rotate?
-        if gettype(path) == 'image':
+        if gettype(path) == 'image' and is_rotatable(path):
             self.ui.actionRotateLeft.setEnabled(True)
             self.ui.actionRotateRight.setEnabled(True)
         else:
@@ -199,7 +199,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _open_folder(self):
         folder_dialog = QtWidgets.QFileDialog()
-        self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")  # TODO: Why is this to slow?
+        self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")
         if self.root_path == '':
             return
         self.ui.filesTree.change_root(self.root_path)

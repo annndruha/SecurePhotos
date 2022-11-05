@@ -1,4 +1,6 @@
 import os
+from PyQt5 import QtGui
+from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QTreeView, QFileSystemModel, QFileIconProvider
 
 SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xpm', 'svg'],
@@ -7,6 +9,13 @@ SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xp
                  'audio': ['aac', 'wav', 'mp3', 'ac3', 'ogg', 'wma'],
                  'video': ['mkv', 'mp4', 'avi', 'mov'],
                  'zip': ['rar', 'zip']}
+
+
+def is_rotatable(fullpath):
+    ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
+    if ext in ['bmp', 'jpg', 'jpeg', 'png']:
+        return True
+    return False
 
 
 def gettype(fullpath):
@@ -21,11 +30,29 @@ def gettype(fullpath):
     return 'file'
 
 
+class IconProvider(QFileIconProvider):
+    def icon(self, parameter):
+        if isinstance(parameter, QFileInfo):
+            if parameter.isDir():
+                icon = QtGui.QIcon("images/icons/folder.svg")
+                icon.addFile("images/icons/folder_open.svg", state=icon.On)
+                return icon
+            if gettype(parameter.absoluteFilePath()) == 'aes':
+                return QtGui.QIcon("images/icons/lock.svg")
+            if gettype(parameter.absoluteFilePath()) == 'image':
+                return QtGui.QIcon("images/icons/image.svg")
+            if gettype(parameter.absoluteFilePath()) == 'video':
+                return QtGui.QIcon("images/icons/movie.svg")
+            if gettype(parameter.absoluteFilePath()) == 'zip':
+                return QtGui.QIcon("images/icons/file_zip.svg")
+        return super().icon(parameter)
+
+
 class FilesTree(QTreeView):
     def __init__(self, parent):
         super().__init__(parent)
         self.file_model = QFileSystemModel()
-        self.file_model.setIconProvider(QFileIconProvider())
+        self.file_model.setIconProvider(IconProvider())
         self.setModel(self.file_model)
         self.hideColumn(1)
         self.hideColumn(2)
