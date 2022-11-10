@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_EnterKey(object):
     def setupUi(self, EnterKey):
         EnterKey.setObjectName("EnterKey")
-        EnterKey.resize(771, 127)
+        EnterKey.resize(796, 135)
         font = QtGui.QFont()
         font.setPointSize(10)
         EnterKey.setFont(font)
