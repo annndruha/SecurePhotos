@@ -36,16 +36,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionRotateLeft.setIcon(QIcon('images/icons/rotate_left.svg'))
         self.ui.actionRotateRight.setIcon(QIcon('images/icons/rotate_right.svg'))
         self.ui.actionDelete.setIcon(QIcon('images/icons/delete.svg'))
-        self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_in.svg'))
-        # self.ui.actionFitSize.setIcon(QIcon('images/icons/zoom_out.svg'))
+        self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_none.svg'))
         self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
         self.ui.actionEnterKey.setIcon(QIcon('images/icons/key.svg'))
         self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
 
         # Not done
         self.ui.actionTreeView.setDisabled(True)
-        # self.ui.actionChangeFit.setEnabled(True)
-        # self.ui.actionFitSize.setDisabled(True)
+
+        # self.ui.actionChangeFit.setText("Can't fit")
+        # self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_none.svg'))
+        # self.ui.actionChangeFit.setDisabled(True)
 
         # ===CONNECTS===
         self.ui.filesTree.selectionModel().currentChanged.connect(self._select_item)
@@ -95,13 +96,25 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _change_fit(self):
         self.fit_in_view = not self.fit_in_view
-        if self.fit_in_view:
-            self.ui.actionChangeFit.setText('Actual size')
-            self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_in.svg'))
-        else:
-            self.ui.actionChangeFit.setText('Fit in size')
-            self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_out.svg'))
         self._update_image(lazily=False)
+
+    def _update_fit_status(self):
+        nothing_to_fit = self.ui.graphicsView.sceneRect().width() > self.ui.graphicsView.rect().width() or \
+                         self.ui.graphicsView.sceneRect().height() > self.ui.graphicsView.rect().height()
+        if gettype(self.cur_path) not in ['image', 'aes']:
+            nothing_to_fit = True
+        if self.fit_in_view and not nothing_to_fit:
+            self.ui.actionChangeFit.setEnabled(True)
+            self.ui.actionChangeFit.setText('Fit view')
+            self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_in.svg'))
+        elif not self.fit_in_view and not nothing_to_fit:
+            self.ui.actionChangeFit.setEnabled(True)
+            self.ui.actionChangeFit.setText('Fit view')
+            self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_out.svg'))
+        else:
+            self.ui.actionChangeFit.setText("Fit view")
+            self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_none.svg'))
+            self.ui.actionChangeFit.setDisabled(True)
 
     def update_actions_status(self, path):
         # TODO: Is all image type can rotate?
@@ -111,6 +124,8 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.ui.actionRotateLeft.setDisabled(True)
             self.ui.actionRotateRight.setDisabled(True)
+
+        self._update_fit_status()
 
         if self.cipher is None:
             self.ui.actionEncrypt.setText('Need key')
@@ -215,6 +230,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
                 else:
                     self.ui.graphicsView.resetTransform()
+            self._update_fit_status()
         else:
             self.scene.addText("Nothing to show :(")
 
@@ -232,6 +248,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def resizeEvent(self, event):
         self._update_image(lazily=True)
+        self._update_fit_status()
 
     def _select_item(self, cur, prev):
         self.cur_path = QFileSystemModel().filePath(cur)
