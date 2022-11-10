@@ -22,13 +22,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.cipher = None
         self.cur_path = None
         self.full_screen = False
+        self.fit_in_view = True
         self.enterKeyDialog = EnterKeyDialog()
 
         # === Image scene ===
         self.scene = QGraphicsScene()
-        self.graphicsView = QGraphicsView()
-        self.ui.widget.layout().addWidget(self.graphicsView)
-        self.graphicsView.setScene(self.scene)
+        self.ui.graphicsView.setScene(self.scene)
 
         # === TOOLBAR ICONS ===
         self.setWindowIcon(QIcon('images/icon.png'))
@@ -37,19 +36,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionRotateLeft.setIcon(QIcon('images/icons/rotate_left.svg'))
         self.ui.actionRotateRight.setIcon(QIcon('images/icons/rotate_right.svg'))
         self.ui.actionDelete.setIcon(QIcon('images/icons/delete.svg'))
-        self.ui.actionActualSize.setIcon(QIcon('images/icons/zoom_in.svg'))
-        self.ui.actionFitSize.setIcon(QIcon('images/icons/zoom_out.svg'))
+        self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_in.svg'))
+        # self.ui.actionFitSize.setIcon(QIcon('images/icons/zoom_out.svg'))
         self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
         self.ui.actionEnterKey.setIcon(QIcon('images/icons/key.svg'))
         self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
 
         # Not done
         self.ui.actionTreeView.setDisabled(True)
-        self.ui.actionActualSize.setDisabled(True)
-        self.ui.actionFitSize.setDisabled(True)
+        # self.ui.actionChangeFit.setEnabled(True)
+        # self.ui.actionFitSize.setDisabled(True)
 
         # ===CONNECTS===
-        # self.ui.filesTree.itemSelectionChanged.connect(self._select_item)
         self.ui.filesTree.selectionModel().currentChanged.connect(self._select_item)
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
         self.ui.actionRotateLeft.triggered.connect(self._rotate_left)
@@ -58,6 +56,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionEnterKey.triggered.connect(self._enter_key)
         self.ui.actionEncrypt.triggered.connect(self._crypt)
         self.ui.actionFullscreen.triggered.connect(self._fullscreen)
+        self.ui.actionChangeFit.triggered.connect(self._change_fit)
 
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._cancel_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_key)
@@ -93,6 +92,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.ui.keyField.setText('')
         self.enterKeyDialog.done(200)
         self.update_actions_status(self.cur_path)
+
+    def _change_fit(self):
+        self.fit_in_view = not self.fit_in_view
+        if self.fit_in_view:
+            self.ui.actionChangeFit.setText('Actual size')
+            self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_in.svg'))
+        else:
+            self.ui.actionChangeFit.setText('Fit in size')
+            self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_out.svg'))
+        self._update_image(lazily=False)
 
     def update_actions_status(self, path):
         # TODO: Is all image type can rotate?
@@ -194,14 +203,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.image = self._runtime_decrypt(self.cur_path)
             else:
                 self.image = None
-
         if self.image is not None:
-            w = self.graphicsView.width()
-            h = self.graphicsView.height()
-            # noinspection PyUnresolvedReferences
-            self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio)
             self.scene.clear()
             self.scene.addPixmap(self.image)
+            self.scene.setSceneRect(0, 0, self.image.width(), self.image.height())
+            if self.fit_in_view:
+                self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
+            else:
+                if self.ui.graphicsView.sceneRect().width() > self.ui.graphicsView.rect().width() or \
+                        self.ui.graphicsView.sceneRect().height() > self.ui.graphicsView.rect().height():
+                    self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
+                else:
+                    self.ui.graphicsView.resetTransform()
         else:
             self.scene.addText("Nothing to show :(")
 

@@ -66,6 +66,9 @@
       </column>
      </widget>
     </item>
+    <item>
+     <widget class="QGraphicsView" name="graphicsView"/>
+    </item>
    </layout>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -88,8 +91,7 @@
    <addaction name="actionRotateRight"/>
    <addaction name="actionDelete"/>
    <addaction name="separator"/>
-   <addaction name="actionActualSize"/>
-   <addaction name="actionFitSize"/>
+   <addaction name="actionChangeFit"/>
    <addaction name="actionFullscreen"/>
    <addaction name="separator"/>
    <addaction name="actionEnterKey"/>
@@ -164,7 +166,7 @@
     <string>Tree View</string>
    </property>
   </action>
-  <action name="actionActualSize">
+  <action name="actionChangeFit">
    <property name="icon">
     <iconset>
      <normaloff>../images/icons/zoom_in.svg</normaloff>../images/icons/zoom_in.svg</iconset>
@@ -181,16 +183,6 @@
    </property>
    <property name="text">
     <string>Delete</string>
-   </property>
-  </action>
-  <action name="actionFitSize">
-   <property name="icon">
-    <iconset>
-     <normalon>../images/icons/zoom_out.svg</normalon>
-    </iconset>
-   </property>
-   <property name="text">
-    <string>Fit Size</string>
    </property>
   </action>
  </widget>
