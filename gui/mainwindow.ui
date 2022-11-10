@@ -37,10 +37,6 @@
   <property name="windowTitle">
    <string>SecurePhotos</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>../img/icon.ico</normaloff>../img/icon.ico</iconset>
-  </property>
   <widget class="QWidget" name="widget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">

@@ -15,3 +15,18 @@ It's also means that not relevant to edit `.py` files in gui, and files will hav
     cd ../../gui
     ```
 * Run `ui_to_py.bat` or `ui_to_py.sh`
+
+
+### Second way
+
+Without generation a py files, change lines like this:
+```
+self.ui = Ui_MainWindow()
+self.ui.setupUi(self)
+```
+to this:
+```
+form, base = uic.loadUiType('gui/mainwindow.ui')
+self.ui = form()
+self.ui.setupUi(self)
+```

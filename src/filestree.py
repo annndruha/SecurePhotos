@@ -35,6 +35,7 @@ class IconProvider(QFileIconProvider):
         if isinstance(parameter, QFileInfo):
             if parameter.isDir():
                 icon = QtGui.QIcon("images/icons/folder.svg")
+                # noinspection PyUnresolvedReferences
                 icon.addFile("images/icons/folder_open.svg", state=icon.On)
                 return icon
             if gettype(parameter.absoluteFilePath()) == 'aes':

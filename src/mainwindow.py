@@ -1,6 +1,6 @@
 import os
 
-from PyQt5 import QtCore, QtGui, QtWidgets, uic
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QFileSystemModel
 
@@ -17,10 +17,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
-        # form, base = uic.loadUiType('gui/mainwindow.ui')
-        # self.ui = form()
-        # self.ui.setupUi(self)
 
         self.image = None
         self.cipher = None
@@ -175,6 +171,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.image is not None:
             w = self.ui.imageView.width()
             h = self.ui.imageView.height()
+            # noinspection PyUnresolvedReferences
             self.ui.imageView.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
         else:
             self.ui.imageView.setText("Nothing to show :(")
@@ -224,17 +221,7 @@ class MainWindow(QtWidgets.QMainWindow):
 class EnterKeyDialog(QtWidgets.QDialog):
     def __init__(self):
         super(EnterKeyDialog, self).__init__()
-        # form, base = uic.loadUiType('gui/enterkey.ui')
-        # self.ui = form()
-        # self.ui.setupUi(self)
 
         self.ui = Ui_EnterKey()
         self.ui.setupUi(self)
-
-# msg = QtWidgets.QMessageBox()
-# msg.setIcon(QtWidgets.QMessageBox.Warning)
-# msg.setWindowTitle("Enter key to decrypt")
-# msg.setText('Enter key to decrypt. ')
-# msg.setInformativeText('Enter key to decrypt')
-# msg.setDefaultButton(QtWidgets.QMessageBox.Save)
-# msg.exec()
+        self.setWindowIcon(QIcon('images/icon.png'))
