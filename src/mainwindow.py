@@ -125,11 +125,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.actionEncrypt.mode = 'encrypt'
 
     def _crypt(self):
-        if self.ui.actionEncrypt.mode == 'encrypt':
-            encrypt_file(self.cur_path, self.cipher)
-        elif self.ui.actionEncrypt.mode == 'decrypt':
-            decrypt_file(self.cur_path, self.cipher)
-        self._delete_file()
+        try:
+            if self.ui.actionEncrypt.mode == 'encrypt':
+                encrypt_file(self.cur_path, self.cipher)
+            elif self.ui.actionEncrypt.mode == 'decrypt':
+                decrypt_file(self.cur_path, self.cipher)
+            self._delete_file()
+        except FileNotFoundError:
+            return None
 
     def _read_image(self, path):
         try:
@@ -189,12 +192,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_image()
 
     def resizeEvent(self, event):
-        print('resize')
         self._update_image(lazily=True)
 
     def _select_item(self, cur, prev):
         self.cur_path = QFileSystemModel().filePath(cur)
         self.prev_path = QFileSystemModel().filePath(prev)
+        # print(self.prev_path, " TO ",self.cur_path)
         self.update_actions_status(self.cur_path)
         self._update_image()
 
