@@ -1,8 +1,8 @@
 import os
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QFileSystemModel
+from PyQt5.QtGui import QIcon, QPixmap, QImageReader
+from PyQt5.QtWidgets import QFileSystemModel, QGraphicsView, QGraphicsScene
 
 from gui.ui_mainwindow import Ui_MainWindow
 from gui.ui_enterkey import Ui_EnterKey
@@ -23,6 +23,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.cur_path = None
         self.full_screen = False
         self.enterKeyDialog = EnterKeyDialog()
+
+        # === Image scene ===
+        self.scene = QGraphicsScene()
+        self.graphicsView = QGraphicsView()
+        self.ui.widget.layout().addWidget(self.graphicsView)
+        self.graphicsView.setScene(self.scene)
 
         # === TOOLBAR ICONS ===
         self.setWindowIcon(QIcon('images/icon.png'))
@@ -135,16 +141,34 @@ class MainWindow(QtWidgets.QMainWindow):
             return None
 
     def _read_image(self, path):
+        # try:
+        #     image = QPixmap()
+        #     file_bytes = read_file(path)
+        #     ext = os.path.splitext(os.path.splitext(path)[0])[1]
+        #     read_success = image.loadFromData(file_bytes, ext.upper())
+        #     if not read_success:
+        #         self.ui.actionRotateRight.setDisabled(True)
+        #         self.ui.actionRotateLeft.setDisabled(True)
+        #         file_bytes = read_file('images/broken_image.png')
+        #         image.loadFromData(file_bytes, ext.upper())
+        # except FileNotFoundError:
+        #     return None
+        # return image
+
         try:
-            image = QPixmap()
-            file_bytes = read_file(path)
-            ext = os.path.splitext(os.path.splitext(path)[0])[1]
-            read_success = image.loadFromData(file_bytes, ext.upper())
-            if not read_success:
-                self.ui.actionRotateRight.setDisabled(True)
-                self.ui.actionRotateLeft.setDisabled(True)
-                file_bytes = read_file('images/broken_image.png')
-                image.loadFromData(file_bytes, ext.upper())
+            imgReader = QImageReader(path)
+            imgReader.setAutoTransform(True)
+            image = imgReader.read()
+            image = QPixmap.fromImage(image)
+
+            # file_bytes = read_file(path)
+            # ext = os.path.splitext(os.path.splitext(path)[0])[1]
+            # read_success = image.loadFromData(file_bytes, ext.upper())
+            # if not read_success:
+            #     self.ui.actionRotateRight.setDisabled(True)
+            #     self.ui.actionRotateLeft.setDisabled(True)
+            #     file_bytes = read_file('images/broken_image.png')
+            #     image.loadFromData(file_bytes, ext.upper())
         except FileNotFoundError:
             return None
         return image
@@ -172,12 +196,29 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.image = None
 
         if self.image is not None:
-            w = self.ui.imageView.width()
-            h = self.ui.imageView.height()
+            w = self.graphicsView.width()
+            h = self.graphicsView.height()
             # noinspection PyUnresolvedReferences
-            self.ui.imageView.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
+            self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio)
+            # self.scene = QGraphicsScene()
+            self.scene.addPixmap(self.image)
+            # rect = self.image.rect()
+            # rectf = rect.toRectF()
+            # scene.setSceneRect(rectf)
+            # self.graphicsView.setScene(self.scene)
+            # self.ui.widget.layout().addWidget(self.ui.graphicsView)
+
+            # self.ui.graphicsView.show()
+            # self.ui.graphicsView.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
         else:
-            self.ui.imageView.setText("Nothing to show :(")
+            # self.scene = QGraphicsScene()
+            self.scene.addText("Nothing to show :(")
+
+            # self.ui.graphicsView = QGraphicsView(self.scene)
+            # view.show()
+
+            # self.ui.graphicsView.addText("Nothing to show :(")
+            # self.ui.graphicsView.setText("Nothing to show :(")
 
     def _rotate_left(self):
         rotate_file_left(self.cur_path)
