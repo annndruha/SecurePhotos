@@ -84,6 +84,7 @@ class Ui_MainWindow(object):
         self.actionTreeView.setIcon(icon6)
         self.actionTreeView.setObjectName("actionTreeView")
         self.actionChangeFit = QtWidgets.QAction(MainWindow)
+        self.actionChangeFit.setEnabled(False)
         icon7 = QtGui.QIcon()
         icon7.addPixmap(QtGui.QPixmap("../images/icons/zoom_in.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionChangeFit.setIcon(icon7)
@@ -120,6 +121,6 @@ class Ui_MainWindow(object):
         self.actionRotateRight.setText(_translate("MainWindow", "Rotate Right"))
         self.actionFullscreen.setText(_translate("MainWindow", "Fullscreen"))
         self.actionTreeView.setText(_translate("MainWindow", "Tree View"))
-        self.actionChangeFit.setText(_translate("MainWindow", "Actual Size"))
+        self.actionChangeFit.setText(_translate("MainWindow", "Can\'t fit"))
         self.actionDelete.setText(_translate("MainWindow", "Delete"))
 from src.filestree import FilesTree

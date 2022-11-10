@@ -167,12 +167,15 @@
    </property>
   </action>
   <action name="actionChangeFit">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>../images/icons/zoom_in.svg</normaloff>../images/icons/zoom_in.svg</iconset>
    </property>
    <property name="text">
-    <string>Actual Size</string>
+    <string>Can't fit</string>
    </property>
   </action>
   <action name="actionDelete">
