@@ -200,25 +200,10 @@ class MainWindow(QtWidgets.QMainWindow):
             h = self.graphicsView.height()
             # noinspection PyUnresolvedReferences
             self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio)
-            # self.scene = QGraphicsScene()
+            self.scene.clear()
             self.scene.addPixmap(self.image)
-            # rect = self.image.rect()
-            # rectf = rect.toRectF()
-            # scene.setSceneRect(rectf)
-            # self.graphicsView.setScene(self.scene)
-            # self.ui.widget.layout().addWidget(self.ui.graphicsView)
-
-            # self.ui.graphicsView.show()
-            # self.ui.graphicsView.setPixmap(self.image.scaled(w, h, QtCore.Qt.KeepAspectRatio))
         else:
-            # self.scene = QGraphicsScene()
             self.scene.addText("Nothing to show :(")
-
-            # self.ui.graphicsView = QGraphicsView(self.scene)
-            # view.show()
-
-            # self.ui.graphicsView.addText("Nothing to show :(")
-            # self.ui.graphicsView.setText("Nothing to show :(")
 
     def _rotate_left(self):
         rotate_file_left(self.cur_path)
