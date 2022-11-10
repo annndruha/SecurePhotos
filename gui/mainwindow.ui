@@ -59,19 +59,13 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>400</width>
+        <width>420</width>
         <height>16777215</height>
        </size>
       </property>
-      <property name="columnCount">
-       <number>1</number>
-      </property>
-      <attribute name="headerVisible">
-       <bool>false</bool>
-      </attribute>
       <column>
        <property name="text">
-        <string notr="true">1</string>
+        <string/>
        </property>
       </column>
      </widget>

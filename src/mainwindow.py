@@ -1,6 +1,6 @@
 import os
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QFileSystemModel
 
@@ -17,6 +17,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        # form, base = uic.loadUiType('gui/mainwindow.ui')
+        # self.ui = form()
+        # self.ui.setupUi(self)
 
         self.image = None
         self.cipher = None
@@ -220,11 +224,12 @@ class MainWindow(QtWidgets.QMainWindow):
 class EnterKeyDialog(QtWidgets.QDialog):
     def __init__(self):
         super(EnterKeyDialog, self).__init__()
+        # form, base = uic.loadUiType('gui/enterkey.ui')
+        # self.ui = form()
+        # self.ui.setupUi(self)
+
         self.ui = Ui_EnterKey()
         self.ui.setupUi(self)
-
-        icon = QtGui.QIcon('images/icon.png')
-        self.setWindowIcon(icon)
 
 # msg = QtWidgets.QMessageBox()
 # msg.setIcon(QtWidgets.QMessageBox.Warning)
