@@ -1,4 +1,4 @@
-# SecurePhotos (MVP)
+# <img src="https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/images/icon.png" width="32px"> SecurePhotos (MVP)
 
 ![version](https://img.shields.io/github/v/release/Annndruha/SecurePhotos)
 [![GitHub license](https://img.shields.io/github/license/Annndruha/SecurePhotos.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/LICENSE)
