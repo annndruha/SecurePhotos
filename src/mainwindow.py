@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QFileSystemModel, QGraphicsView, QGraphicsScene
 
 from gui.ui_mainwindow import Ui_MainWindow
 from gui.ui_enterkey import Ui_EnterKey
-from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime, read_file
+from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime, EmptyCipher, DecryptException, read_file
 from src.utils import rotate_file_right, rotate_file_left, delete_path
 from src.filestree import gettype, is_rotatable
 
@@ -163,6 +163,10 @@ class MainWindow(QtWidgets.QMainWindow):
             elif self.ui.actionEncrypt.mode == 'decrypt':
                 decrypt_file(self.cur_path, self.cipher)
             self._delete_file()
+        except EmptyCipher:
+            pass
+        except DecryptException:
+            pass
         except FileNotFoundError:
             return None
 
@@ -175,49 +179,36 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.actionRotateRight.setDisabled(True)
                 self.ui.actionRotateLeft.setDisabled(True)
                 img_reader = QImageReader('images/broken_image.png')
-                img_reader.setAutoTransform(True)
                 image = img_reader.read()
-            image = QPixmap.fromImage(image)
+                return QPixmap.fromImage(image)
+            else:
+                return QPixmap.fromImage(image)
         except FileNotFoundError:
             return None
-        return image
 
     def _runtime_decrypt(self, path):
         try:
-            file_bytes, success = decrypt_runtime(path, self.cipher)
-            if not success:
-                img_reader = QImageReader('images/encrypted_placeholder.png')
+            file_bytes = decrypt_runtime(path, self.cipher)
+            ba = QByteArray(file_bytes)
+            iod = QBuffer(ba)
+            img_reader = QImageReader(iod)
+            ext_ba = QByteArray(os.path.splitext(os.path.splitext(path)[0])[1].encode())
+            img_reader.setFormat(ext_ba)
+            img_reader.setAutoTransform(True)
+            qimage = img_reader.read()
+            if img_reader.error() != 0:
+                img_reader = QImageReader('images/encrypted_with_another_key.png')
                 return QPixmap.fromImage(img_reader.read())
             else:
-                # TODO: Fix
-                # fb =
-                ba = QByteArray(file_bytes)
-                iod = QBuffer(ba)
-                # iod.bytesWritten(QByteArray(file_bytes))
-                img_reader = QImageReader(iod) # iod
-                ext = os.path.splitext(os.path.splitext(path)[0])[1]
-                # img_reader.setDevice(iod)
-                img_reader.setFormat(QByteArray(ext.encode()))
-                img_reader.setAutoTransform(True)
-                print(img_reader.canRead())
-                # iod.close()
-
-
-                # qimage = QImage()
-                # qimage.loadFromData(QByteArray(file_bytes), ext)
-                # image = QPixmap.fromImage(qimage)
-                qimage = img_reader.read()
-                if img_reader.error() != 0:
-                    print(img_reader.error())
-                    img_reader = QImageReader('images/encrypted_with_another_key.png')
-                    return QPixmap.fromImage(img_reader.read())
-
-                image = QPixmap.fromImage(qimage)
-
-
+                return QPixmap.fromImage(qimage)
+        except EmptyCipher:
+            img_reader = QImageReader('images/encrypted_placeholder.png')
+            return QPixmap.fromImage(img_reader.read())
+        except DecryptException:
+            img_reader = QImageReader('images/encrypted_with_another_key.png')
+            return QPixmap.fromImage(img_reader.read())
         except FileNotFoundError:
             return None
-        return image
 
     def _update_image(self, lazily=False):
         if not lazily:

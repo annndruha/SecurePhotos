@@ -10,6 +10,16 @@ ENCODED_EXTENSION = '.aes'
 UTF_8 = 'utf-8'
 
 
+class EmptyCipher(Exception):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class DecryptException(Exception):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
 class AESCipher:
     __hash: bytes
     __BS: int = 16
@@ -64,9 +74,12 @@ class AESCipher:
         :param data: Data to be decrypted
         :return: Decrypted data
         """
-        iv = data[:AES.block_size]
-        aes = AES.new(self.__hash, AES.MODE_CBC, iv)
-        return self.__unpad(aes.decrypt(data[AES.block_size:]))
+        try:
+            iv = data[:AES.block_size]
+            aes = AES.new(self.__hash, AES.MODE_CBC, iv)
+            return self.__unpad(aes.decrypt(data[AES.block_size:]))
+        except ValueError:
+            raise DecryptException
 
 
 def read_file(path: str) -> bytes:
@@ -81,26 +94,32 @@ def write_file(path: str, data: bytes) -> None:
 
 
 def encrypt_file(path: str, cipher: AESCipher) -> None:
-    file_bytes = read_file(path)
-    encrypted_text = cipher.encrypt(file_bytes)
-    path += ENCODED_EXTENSION
-    write_file(path, encrypted_text)
+    if cipher is None:
+        raise EmptyCipher
+    else:
+        file_bytes = read_file(path)
+        encrypted_text = cipher.encrypt(file_bytes)
+        path += ENCODED_EXTENSION
+        write_file(path, encrypted_text)
 
 
 def decrypt_file(path: str, cipher: AESCipher) -> None:
-    file_bytes = read_file(path)
-    decrypted_text = cipher.decrypt(file_bytes)
-    path = os.path.splitext(path)[0]
-    write_file(path, decrypted_text)
+    if cipher is None:
+        raise EmptyCipher
+    else:
+        file_bytes = read_file(path)
+        decrypted_text = cipher.decrypt(file_bytes)
+        path = os.path.splitext(path)[0]
+        write_file(path, decrypted_text)
 
 
 def decrypt_runtime(path: str, cipher: AESCipher):
     if cipher is None:
-        return read_file('images/encrypted_placeholder.png'), False
+        raise EmptyCipher
     else:
         file_bytes = read_file(path)
         decrypted_text = cipher.decrypt(file_bytes)
-        return decrypted_text, True
+        return decrypted_text
 
 
 if __name__ == "__main__":
