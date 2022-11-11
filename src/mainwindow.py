@@ -217,6 +217,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.image = self._read_image(self.cur_path)
             elif gettype(self.cur_path) == 'aes':
                 self.image = self._runtime_decrypt(self.cur_path)
+            elif gettype(self.cur_path) == 'video':
+                img_reader = QImageReader('images/video_placeholder.png')
+                self.image = QPixmap.fromImage(img_reader.read())
             else:
                 self.image = None
 
