@@ -1,7 +1,9 @@
 import os
+import time
 
+from PyQt5 import Qt
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QByteArray, QBuffer
+from PyQt5.QtCore import QByteArray, QBuffer, QEvent, QRect, QSize
 from PyQt5.QtGui import QIcon, QPixmap, QImageReader, QPalette, QColor
 from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene, QLineEdit
 
@@ -29,6 +31,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # === Image scene ===
         self.scene = QGraphicsScene()
         self.ui.graphicsView.setScene(self.scene)
+        self.fs = FullScreen()
+        self.fs.setScene(self.scene)
 
         # === TOOLBAR ICONS ===
         self.setWindowIcon(QIcon('images/icon.png'))
@@ -60,21 +64,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
         self.enterKeyDialog.rejected.connect(self._reject_enter_key)
 
+        self.fs.escapeSignal.connect(self._fullscreen)
+
         self.update_actions_status('sample.path')
         self.showMaximized()
         self._open_last_folder()
 
     # ===SLOTS===
     def _fullscreen(self):
-        if not self.full_screen:
-            self.showFullScreen()
+        self.full_screen = not self.full_screen
+        if self.full_screen:
+            self.fs.show()
+            self.fs.showFullScreen()
+            self.fs.resize(QSize(1920, 1080))  # TODO: Get screen size
+            self.fs.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
             self.ui.actionFullscreen.setIcon(QIcon('images/icons/close_full.svg'))
             self.ui.actionFullscreen.setText('Window')
         else:
-            self.showMaximized()
+            self.fs.showMinimized()
+            self.fs.close()
             self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
             self.ui.actionFullscreen.setText('Fullscreen')
-        self.full_screen = not self.full_screen
 
     def _exit_fullscreen(self):
         self.showMaximized()
@@ -342,3 +352,19 @@ class UserMessage(QtWidgets.QMessageBox):
             self.setWindowTitle("Info")
         self.setText(text)
         self.exec()
+
+
+class FullScreen(QtWidgets.QGraphicsView):
+    escapeSignal = QtCore.pyqtSignal()
+
+    def __init__(self):
+        super(FullScreen, self).__init__()
+
+    def keyPressEvent(self, event):
+        if event.key() == 16777216:
+            self.escapeSignal.emit()
+            # self.close()
+        elif event.key() == 16777236:
+            print('right')
+        elif event.key() == 16777234:
+            print('left')
