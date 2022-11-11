@@ -1,9 +1,7 @@
 import os
-import time
 
-from PyQt5 import Qt
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QByteArray, QBuffer, QEvent, QRect, QSize, QItemSelectionModel
+from PyQt5.QtCore import QByteArray, QBuffer, QSize, QItemSelectionModel
 from PyQt5.QtGui import QIcon, QPixmap, QImageReader, QPalette, QColor
 from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene, QLineEdit
 
