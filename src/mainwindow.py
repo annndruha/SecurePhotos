@@ -1,7 +1,8 @@
 import os
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtGui import QIcon, QPixmap, QImageReader
+from PyQt5.QtCore import QByteArray, QIODevice, QBuffer
+from PyQt5.QtGui import QIcon, QPixmap, QImageReader, QImage
 from PyQt5.QtWidgets import QFileSystemModel, QGraphicsView, QGraphicsScene
 
 from gui.ui_mainwindow import Ui_MainWindow
@@ -93,6 +94,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.ui.keyField.setText('')
         self.enterKeyDialog.done(200)
         self.update_actions_status(self.cur_path)
+        self._update_image()
 
     def _change_fit(self):
         self.fit_in_view = not self.fit_in_view
@@ -165,47 +167,54 @@ class MainWindow(QtWidgets.QMainWindow):
             return None
 
     def _read_image(self, path):
-        # try:
-        #     image = QPixmap()
-        #     file_bytes = read_file(path)
-        #     ext = os.path.splitext(os.path.splitext(path)[0])[1]
-        #     read_success = image.loadFromData(file_bytes, ext.upper())
-        #     if not read_success:
-        #         self.ui.actionRotateRight.setDisabled(True)
-        #         self.ui.actionRotateLeft.setDisabled(True)
-        #         file_bytes = read_file('images/broken_image.png')
-        #         image.loadFromData(file_bytes, ext.upper())
-        # except FileNotFoundError:
-        #     return None
-        # return image
-
         try:
-            imgReader = QImageReader(path)
-            imgReader.setAutoTransform(True)
-            image = imgReader.read()
+            img_reader = QImageReader(path)
+            img_reader.setAutoTransform(True)
+            image = img_reader.read()
+            if img_reader.error() != 0:
+                self.ui.actionRotateRight.setDisabled(True)
+                self.ui.actionRotateLeft.setDisabled(True)
+                img_reader = QImageReader('images/broken_image.png')
+                img_reader.setAutoTransform(True)
+                image = img_reader.read()
             image = QPixmap.fromImage(image)
-
-            # file_bytes = read_file(path)
-            # ext = os.path.splitext(os.path.splitext(path)[0])[1]
-            # read_success = image.loadFromData(file_bytes, ext.upper())
-            # if not read_success:
-            #     self.ui.actionRotateRight.setDisabled(True)
-            #     self.ui.actionRotateLeft.setDisabled(True)
-            #     file_bytes = read_file('images/broken_image.png')
-            #     image.loadFromData(file_bytes, ext.upper())
         except FileNotFoundError:
             return None
         return image
 
     def _runtime_decrypt(self, path):
         try:
-            image = QPixmap()
             file_bytes, success = decrypt_runtime(path, self.cipher)
-            ext = os.path.splitext(os.path.splitext(path)[0])[1]
-            read_success = image.loadFromData(file_bytes, ext.upper())
-            if not read_success:
-                file_bytes = read_file('images/encrypted_with_another_key.png')
-                image.loadFromData(file_bytes, ext.upper())
+            if not success:
+                img_reader = QImageReader('images/encrypted_placeholder.png')
+                return QPixmap.fromImage(img_reader.read())
+            else:
+                # TODO: Fix
+                # fb =
+                ba = QByteArray(file_bytes)
+                iod = QBuffer(ba)
+                # iod.bytesWritten(QByteArray(file_bytes))
+                img_reader = QImageReader(iod) # iod
+                ext = os.path.splitext(os.path.splitext(path)[0])[1]
+                # img_reader.setDevice(iod)
+                img_reader.setFormat(QByteArray(ext.encode()))
+                img_reader.setAutoTransform(True)
+                print(img_reader.canRead())
+                # iod.close()
+
+
+                # qimage = QImage()
+                # qimage.loadFromData(QByteArray(file_bytes), ext)
+                # image = QPixmap.fromImage(qimage)
+                qimage = img_reader.read()
+                if img_reader.error() != 0:
+                    print(img_reader.error())
+                    img_reader = QImageReader('images/encrypted_with_another_key.png')
+                    return QPixmap.fromImage(img_reader.read())
+
+                image = QPixmap.fromImage(qimage)
+
+
         except FileNotFoundError:
             return None
         return image
@@ -218,6 +227,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.image = self._runtime_decrypt(self.cur_path)
             else:
                 self.image = None
+
         if self.image is not None:
             self.scene.clear()
             self.scene.addPixmap(self.image)
@@ -232,6 +242,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.ui.graphicsView.resetTransform()
             self._update_fit_status()
         else:
+            self.scene.clear()
+            self.scene.setSceneRect(0, 0, 48.0, 48.0)
+            self.ui.graphicsView.resetTransform()
             self.scene.addText("Nothing to show :(")
 
     def _rotate_left(self):
