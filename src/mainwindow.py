@@ -57,14 +57,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionDelete.triggered.connect(self._delete_file)
         self.ui.actionEnterKey.triggered.connect(self._open_enter_key)
         self.ui.actionEncrypt.triggered.connect(self._crypt)
-        self.ui.actionFullscreen.triggered.connect(self._fullscreen)
+        self.ui.actionFullscreen.triggered.connect(self._change_fullscreen)
         self.ui.actionChangeFit.triggered.connect(self._change_fit)
 
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
         self.enterKeyDialog.rejected.connect(self._reject_enter_key)
 
-        self.fs.escapeSignal.connect(self._fullscreen)
+        self.fs.escapeSignal.connect(self._change_fullscreen)
         self.fs.nextSignal.connect(self._next)
         self.fs.prevSignal.connect(self._prev)
 
@@ -73,7 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._open_last_folder()
 
     # ===SLOTS===
-    def _fullscreen(self):
+    def _change_fullscreen(self):
         self.full_screen = not self.full_screen
         if self.full_screen:
             self.fs.show()
@@ -89,17 +89,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _next(self):
         cur = self.ui.filesTree.selectionModel().currentIndex()
-        row = cur.row()
-        idx = cur.siblingAtRow(row + 1)
-        self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
-        self.fs.update_image()
+        self.ui.filesTree.selectionModel()
+        idx = cur.siblingAtRow(cur.row() + 1)
+        if idx.isValid():
+            self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
+            self.fs.update_image()
+        else:
+            self._change_fullscreen()
 
     def _prev(self):
         cur = self.ui.filesTree.selectionModel().currentIndex()
-        row = cur.row()
-        idx = cur.siblingAtRow(row - 1)
-        self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
-        self.fs.update_image()
+        idx = cur.siblingAtRow(cur.row() - 1)
+        if idx.isValid():
+            self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
+            self.fs.update_image()
+        else:
+            self._change_fullscreen()
 
     def _open_enter_key(self):
         if self.cipher is not None:
