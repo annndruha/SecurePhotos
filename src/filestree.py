@@ -1,6 +1,7 @@
 import os
+
 from PyQt5 import QtGui
-from PyQt5.QtCore import QFileInfo
+from PyQt5.QtCore import QFileInfo, Qt
 from PyQt5.QtWidgets import QTreeView, QFileSystemModel, QFileIconProvider
 
 SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xpm', 'svg'],
@@ -49,10 +50,25 @@ class IconProvider(QFileIconProvider):
         return super().icon(parameter)
 
 
+class ProxyQFileSystemModel(QFileSystemModel):
+    def __init__(self):
+        super().__init__()
+        self.column_name = 'Name'
+
+    def headerData(self, section, orientation, role):
+        if section == 0 and role == Qt.DisplayRole:
+            return self.column_name
+        else:
+            return super(QFileSystemModel, self).headerData(section, orientation, role)
+
+    def set_header_name(self, name):
+        self.column_name = name
+
+
 class FilesTree(QTreeView):
     def __init__(self, parent):
         super().__init__(parent)
-        self.file_model = QFileSystemModel()
+        self.file_model = ProxyQFileSystemModel()
         self.file_model.setIconProvider(IconProvider())
         self.setModel(self.file_model)
         self.hideColumn(1)
@@ -60,5 +76,6 @@ class FilesTree(QTreeView):
         self.hideColumn(3)
 
     def change_root(self, rootpath):
+        self.file_model.set_header_name(rootpath)
         self.file_model.setRootPath(rootpath)
         self.setRootIndex(self.file_model.index(rootpath))
