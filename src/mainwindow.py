@@ -45,10 +45,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # Not done
         self.ui.actionTreeView.setDisabled(True)
 
-        # self.ui.actionChangeFit.setText("Can't fit")
-        # self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_none.svg'))
-        # self.ui.actionChangeFit.setDisabled(True)
-
         # ===CONNECTS===
         self.ui.filesTree.selectionModel().currentChanged.connect(self._select_item)
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
