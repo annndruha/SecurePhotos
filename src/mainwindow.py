@@ -1,13 +1,13 @@
 import os
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QByteArray, QIODevice, QBuffer
-from PyQt5.QtGui import QIcon, QPixmap, QImageReader, QImage
-from PyQt5.QtWidgets import QFileSystemModel, QGraphicsView, QGraphicsScene
+from PyQt5.QtCore import QByteArray, QBuffer
+from PyQt5.QtGui import QIcon, QPixmap, QImageReader
+from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene
 
 from gui.ui_mainwindow import Ui_MainWindow
 from gui.ui_enterkey import Ui_EnterKey
-from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime, EmptyCipher, DecryptException, read_file
+from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime, EmptyCipher, DecryptException
 from src.utils import rotate_file_right, rotate_file_left, delete_path
 from src.filestree import gettype, is_rotatable
 
@@ -164,9 +164,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 decrypt_file(self.cur_path, self.cipher)
             self._delete_file()
         except EmptyCipher:
-            pass
+            UserMessage("No key!")
         except DecryptException:
-            pass
+            UserMessage("Decrypt error, file probably broken!")
         except FileNotFoundError:
             return None
 
@@ -223,14 +223,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.scene.clear()
             self.scene.addPixmap(self.image)
             self.scene.setSceneRect(0, 0, self.image.width(), self.image.height())
-            if self.fit_in_view:
+            if self.fit_in_view or (self.ui.graphicsView.sceneRect().width() > self.ui.graphicsView.rect().width() or
+                                    self.ui.graphicsView.sceneRect().height() > self.ui.graphicsView.rect().height()):
                 self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
             else:
-                if self.ui.graphicsView.sceneRect().width() > self.ui.graphicsView.rect().width() or \
-                        self.ui.graphicsView.sceneRect().height() > self.ui.graphicsView.rect().height():
-                    self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
-                else:
-                    self.ui.graphicsView.resetTransform()
+                self.ui.graphicsView.resetTransform()
             self._update_fit_status()
         else:
             self.scene.clear()
@@ -288,3 +285,12 @@ class EnterKeyDialog(QtWidgets.QDialog):
         self.ui = Ui_EnterKey()
         self.ui.setupUi(self)
         self.setWindowIcon(QIcon('images/icon.png'))
+
+
+class UserMessage(QtWidgets.QMessageBox):
+    def __init__(self, text):
+        super(UserMessage, self).__init__()
+        self.setIcon(QtWidgets.QMessageBox.Critical)
+        self.setWindowTitle("Critical error")
+        self.setText(text)
+        self.exec()
