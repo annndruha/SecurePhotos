@@ -102,7 +102,7 @@ class Ui_EnterKey(object):
         self.label_3.setText(_translate("EnterKey", "Repeat password:"))
         self.keyRepeat.setPlaceholderText(_translate("EnterKey", "(optional)"))
         self.label_4.setText(_translate("EnterKey", "Enter password:  "))
-        self.label_5.setText(_translate("EnterKey", "Check correct by hash:"))
+        self.label_5.setText(_translate("EnterKey", "Validate by hash:"))
         self.hash_field.setText(_translate("EnterKey", "HASH"))
         self.pushButton_apply.setText(_translate("EnterKey", "Apply"))
         self.pushButton_cancel.setText(_translate("EnterKey", "Cancel"))

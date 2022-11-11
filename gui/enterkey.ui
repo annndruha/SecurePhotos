@@ -93,7 +93,7 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Check correct by hash:</string>
+        <string>Validate by hash:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

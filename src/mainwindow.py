@@ -3,7 +3,7 @@ import os
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QByteArray, QBuffer
 from PyQt5.QtGui import QIcon, QPixmap, QImageReader, QPalette, QColor
-from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene
+from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene, QLineEdit
 
 from gui.ui_mainwindow import Ui_MainWindow
 from gui.ui_enterkey import Ui_EnterKey
@@ -84,6 +84,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.showMaximized()
 
     def _open_enter_key(self):
+        if self.cipher is not None:
+            UserMessage("Be careful! This action will delete previous saved password!", "Info")
         self.enterKeyDialog.show()
         self.enterKeyDialog.ui.pushButton_apply.setDisabled(True)
 
@@ -289,6 +291,8 @@ class EnterKeyDialog(QtWidgets.QDialog):
         self.setWindowIcon(QIcon('images/icon.png'))
         self.ui.keyField.textChanged.connect(self._compare_key)
         self.ui.keyRepeat.textChanged.connect(self._compare_key)
+        self.ui.keyField.setEchoMode(QLineEdit.Password)
+        self.ui.keyRepeat.setEchoMode(QLineEdit.Password)
         self.palette_ok = QPalette()
         self.palette_ok.setColor(QPalette.WindowText, QColor(0, 180, 0))
         self.palette_not_ok = QPalette()
@@ -326,9 +330,16 @@ class EnterKeyDialog(QtWidgets.QDialog):
 
 
 class UserMessage(QtWidgets.QMessageBox):
-    def __init__(self, text):
+    def __init__(self, text, level="Critical"):
         super(UserMessage, self).__init__()
-        self.setIcon(QtWidgets.QMessageBox.Critical)
-        self.setWindowTitle("Critical error")
+        if level == "Critical":
+            self.setIcon(QtWidgets.QMessageBox.Critical)
+            self.setWindowTitle("Critical error")
+        elif level == "Warning":
+            self.setIcon(QtWidgets.QMessageBox.Warning)
+            self.setWindowTitle("Warning")
+        else:
+            self.setIcon(QtWidgets.QMessageBox.Information)
+            self.setWindowTitle("Info")
         self.setText(text)
         self.exec()
