@@ -3,7 +3,7 @@ import time
 
 from PyQt5 import Qt
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QByteArray, QBuffer, QEvent, QRect, QSize
+from PyQt5.QtCore import QByteArray, QBuffer, QEvent, QRect, QSize, QItemSelectionModel
 from PyQt5.QtGui import QIcon, QPixmap, QImageReader, QPalette, QColor
 from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene, QLineEdit
 
@@ -65,6 +65,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.rejected.connect(self._reject_enter_key)
 
         self.fs.escapeSignal.connect(self._fullscreen)
+        self.fs.nextSignal.connect(self._next)
+        self.fs.prevSignal.connect(self._prev)
 
         self.update_actions_status('sample.path')
         self.showMaximized()
@@ -76,8 +78,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.full_screen:
             self.fs.show()
             self.fs.showFullScreen()
-            self.fs.resize(QSize(1920, 1080))  # TODO: Get screen size
-            self.fs.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
+            self.fs.update_image()
             self.ui.actionFullscreen.setIcon(QIcon('images/icons/close_full.svg'))
             self.ui.actionFullscreen.setText('Window')
         else:
@@ -86,8 +87,19 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
             self.ui.actionFullscreen.setText('Fullscreen')
 
-    def _exit_fullscreen(self):
-        self.showMaximized()
+    def _next(self):
+        cur = self.ui.filesTree.selectionModel().currentIndex()
+        row = cur.row()
+        idx = cur.siblingAtRow(row + 1)
+        self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
+        self.fs.update_image()
+
+    def _prev(self):
+        cur = self.ui.filesTree.selectionModel().currentIndex()
+        row = cur.row()
+        idx = cur.siblingAtRow(row - 1)
+        self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
+        self.fs.update_image()
 
     def _open_enter_key(self):
         if self.cipher is not None:
@@ -356,6 +368,8 @@ class UserMessage(QtWidgets.QMessageBox):
 
 class FullScreen(QtWidgets.QGraphicsView):
     escapeSignal = QtCore.pyqtSignal()
+    nextSignal = QtCore.pyqtSignal()
+    prevSignal = QtCore.pyqtSignal()
 
     def __init__(self):
         super(FullScreen, self).__init__()
@@ -363,8 +377,11 @@ class FullScreen(QtWidgets.QGraphicsView):
     def keyPressEvent(self, event):
         if event.key() == 16777216:
             self.escapeSignal.emit()
-            # self.close()
         elif event.key() == 16777236:
-            print('right')
+            self.nextSignal.emit()
         elif event.key() == 16777234:
-            print('left')
+            self.prevSignal.emit()
+
+    def update_image(self):
+        self.resize(QSize(1920, 1080))  # TODO: Get screen size
+        self.fitInView(self.scene().itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
