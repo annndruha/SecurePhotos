@@ -2,7 +2,7 @@ import os
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QByteArray, QBuffer
-from PyQt5.QtGui import QIcon, QPixmap, QImageReader
+from PyQt5.QtGui import QIcon, QPixmap, QImageReader, QPalette, QColor
 from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene
 
 from gui.ui_mainwindow import Ui_MainWindow
@@ -55,13 +55,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionRotateLeft.triggered.connect(self._rotate_left)
         self.ui.actionRotateRight.triggered.connect(self._rotate_right)
         self.ui.actionDelete.triggered.connect(self._delete_file)
-        self.ui.actionEnterKey.triggered.connect(self._enter_key)
+        self.ui.actionEnterKey.triggered.connect(self._open_enter_key)
         self.ui.actionEncrypt.triggered.connect(self._crypt)
         self.ui.actionFullscreen.triggered.connect(self._fullscreen)
         self.ui.actionChangeFit.triggered.connect(self._change_fit)
 
-        self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._cancel_key)
-        self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_key)
+        self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
+        self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
+        self.enterKeyDialog.rejected.connect(self._reject_enter_key)
+
         self.update_actions_status('sample.path')
         self.showMaximized()
         self._open_last_folder()
@@ -81,17 +83,18 @@ class MainWindow(QtWidgets.QMainWindow):
     def _exit_fullscreen(self):
         self.showMaximized()
 
-    def _enter_key(self):
+    def _open_enter_key(self):
         self.enterKeyDialog.show()
+        self.enterKeyDialog.ui.pushButton_apply.setDisabled(True)
 
-    def _cancel_key(self):
-        self.enterKeyDialog.ui.keyField.setText('')
+    def _reject_enter_key(self):
+        self.enterKeyDialog.reset()
         self.enterKeyDialog.done(200)
 
-    def _apply_key(self):
+    def _apply_enter_key(self):
         if self.enterKeyDialog.ui.keyField.text() != '':
             self.cipher = AESCipher(self.enterKeyDialog.ui.keyField.text())
-        self.enterKeyDialog.ui.keyField.setText('')
+        self.enterKeyDialog.reset()
         self.enterKeyDialog.done(200)
         self.update_actions_status(self.cur_path)
         self._update_image()
@@ -281,10 +284,45 @@ class MainWindow(QtWidgets.QMainWindow):
 class EnterKeyDialog(QtWidgets.QDialog):
     def __init__(self):
         super(EnterKeyDialog, self).__init__()
-
         self.ui = Ui_EnterKey()
         self.ui.setupUi(self)
         self.setWindowIcon(QIcon('images/icon.png'))
+        self.ui.keyField.textChanged.connect(self._compare_key)
+        self.ui.keyRepeat.textChanged.connect(self._compare_key)
+        self.palette_ok = QPalette()
+        self.palette_ok.setColor(QPalette.WindowText, QColor(0, 180, 0))
+        self.palette_not_ok = QPalette()
+        self.palette_not_ok.setColor(QPalette.WindowText, QColor(255, 0, 0))
+        self.palette_neutral = QPalette()
+        self.palette_neutral.setColor(QPalette.WindowText, QColor(0, 0, 0))
+
+    def _recalc_hash(self):
+        if self.ui.keyField.text() != '':
+            dummy_cipher = AESCipher(self.ui.keyField.text())
+            _hash = dummy_cipher.hash()[-4:]
+            self.ui.pushButton_apply.setEnabled(True)
+            self.ui.hash_field.setText(_hash)
+            self.ui.hash_field.setPalette(self.palette_ok)
+        else:
+            self.ui.pushButton_apply.setDisabled(True)
+            self.ui.hash_field.setText('HASH')
+            self.ui.hash_field.setPalette(self.palette_neutral)
+
+    def _compare_key(self):
+        dummy_cipher1 = AESCipher(self.ui.keyField.text())
+        dummy_cipher2 = AESCipher(self.ui.keyRepeat.text())
+        if (dummy_cipher1.hash() == dummy_cipher2.hash()) or self.ui.keyRepeat.text() == '':
+            self.ui.pushButton_apply.setEnabled(True)
+            self._recalc_hash()
+        else:
+            self.ui.pushButton_apply.setDisabled(True)
+            self.ui.hash_field.setText('Password mismatch')
+            self.ui.hash_field.setPalette(self.palette_not_ok)
+
+    def reset(self):
+        self.ui.keyField.setText('')
+        self.ui.keyRepeat.setText('')
+        self.ui.hash_field.setPalette(self.palette_neutral)
 
 
 class UserMessage(QtWidgets.QMessageBox):

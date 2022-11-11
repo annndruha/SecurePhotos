@@ -33,7 +33,7 @@ class AESCipher:
         self.__hash = SHA256.new(bytes(password, 'utf-8')).digest()
 
     def hash(self):
-        return str(self.__hash)  # WTF with convert?
+        return str(self.__hash.hex())
 
     def __pad(self, data: bytes) -> bytes:
         """
