@@ -89,7 +89,8 @@ class MainWindow(QtWidgets.QMainWindow):
         cur = self.ui.filesTree.selectionModel().currentIndex()
         self.ui.filesTree.selectionModel()
         idx = cur.siblingAtRow(cur.row() + 1)
-        if idx.isValid():
+
+        if idx.isValid() and gettype(QFileSystemModel().filePath(idx)) != 'folder':
             self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
             self.fs.update_image()
         else:
@@ -98,7 +99,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _prev(self):
         cur = self.ui.filesTree.selectionModel().currentIndex()
         idx = cur.siblingAtRow(cur.row() - 1)
-        if idx.isValid():
+        if idx.isValid() and gettype(QFileSystemModel().filePath(idx)) != 'folder':
             self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
             self.fs.update_image()
         else:
@@ -152,6 +153,11 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.ui.actionRotateLeft.setDisabled(True)
             self.ui.actionRotateRight.setDisabled(True)
+
+        if gettype(path) == 'image':
+            self.ui.actionFullscreen.setEnabled(True)
+        else:
+            self.ui.actionFullscreen.setDisabled(True)
 
         self._update_fit_status()
 
@@ -259,10 +265,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.graphicsView.resetTransform()
             self._update_fit_status()
         else:
+            img_reader = QImageReader('images/nothing_to_show.png')
+            image = QPixmap.fromImage(img_reader.read())
             self.scene.clear()
-            self.scene.setSceneRect(0, 0, 48.0, 48.0)
-            self.ui.graphicsView.resetTransform()
-            self.scene.addText("Nothing to show :(")
+            self.scene.addPixmap(image)
+            self.scene.setSceneRect(0, 0, image.width(), image.height())
+            self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
 
     def _rotate_left(self):
         rotate_file_left(self.cur_path)
@@ -295,6 +303,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.filesTree.change_root(self.root_path)
         with open('metadata.txt', 'w+') as f:
             f.write(str(self.root_path))
+
+        self.cur_path = None
+        self.prev_path = None
+        self.image = None
+        self._update_image()
 
     def _open_last_folder(self):
         try:
