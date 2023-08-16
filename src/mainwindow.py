@@ -322,7 +322,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if os.path.exists(last_path):
                 self.root_path = last_path
                 self.ui.filesTree.change_root(self.root_path)
-        except FileNotFoundError as err:
+        except FileNotFoundError:
             print("Last opened folder not found")
 
 
