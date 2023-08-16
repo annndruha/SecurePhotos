@@ -96,6 +96,7 @@
    <addaction name="separator"/>
    <addaction name="actionEnterKey"/>
    <addaction name="actionEncrypt"/>
+   <addaction name="actionFoldeDecrypt"/>
   </widget>
   <action name="actionEnterKey">
    <property name="icon">
@@ -186,6 +187,15 @@
    </property>
    <property name="text">
     <string>Delete</string>
+   </property>
+  </action>
+  <action name="actionFoldeDecrypt">
+   <property name="icon">
+    <iconset>
+     <normaloff>../images/icons/folder.svg</normaloff>../images/icons/folder.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Decrypt Folder</string>
    </property>
   </action>
  </widget>

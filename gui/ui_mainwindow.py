@@ -94,6 +94,11 @@ class Ui_MainWindow(object):
         icon8.addPixmap(QtGui.QPixmap("../images/icons/delete.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.actionDelete.setIcon(icon8)
         self.actionDelete.setObjectName("actionDelete")
+        self.actionFoldeDecrypt = QtWidgets.QAction(MainWindow)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap("../images/icons/folder.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionFoldeDecrypt.setIcon(icon9)
+        self.actionFoldeDecrypt.setObjectName("actionFoldeDecrypt")
         self.toolBar.addAction(self.actionOpenFolder)
         self.toolBar.addAction(self.actionTreeView)
         self.toolBar.addSeparator()
@@ -106,6 +111,7 @@ class Ui_MainWindow(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionEnterKey)
         self.toolBar.addAction(self.actionEncrypt)
+        self.toolBar.addAction(self.actionFoldeDecrypt)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -123,4 +129,5 @@ class Ui_MainWindow(object):
         self.actionTreeView.setText(_translate("MainWindow", "Tree View"))
         self.actionChangeFit.setText(_translate("MainWindow", "Can\'t fit"))
         self.actionDelete.setText(_translate("MainWindow", "Delete"))
+        self.actionFoldeDecrypt.setText(_translate("MainWindow", "Decrypt Folder"))
 from src.filestree import FilesTree

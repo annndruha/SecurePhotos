@@ -9,13 +9,15 @@ from PyQt5.QtGui import QIcon, QPixmap, QImageReader
 from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene
 
 from gui.ui_mainwindow import Ui_MainWindow
-from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime, EmptyCipher, DecryptException
+from src.aes import (AESCipher, encrypt_file, decrypt_file,
+                     encrypt_folder, decrypt_folder, decrypt_folder_file, decrypt_runtime, EmptyCipher, DecryptException)
 from src.utils import rotate_file_right, rotate_file_left, delete_path
 from src.filestree import gettype, is_rotatable
 
 from src.window_usermessage import UserMessage
 from src.window_enterkey import EnterKeyDialog
 from src.window_fullscreen import FullScreen
+from src.window_folderencrypt import FolderEncrypt
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -31,6 +33,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.full_screen = False
         self.fit_in_view = True
         self.enterKeyDialog = EnterKeyDialog()
+        self.folderEncrypt = FolderEncrypt()
 
         # === Image scene ===
         self.scene = QGraphicsScene()
@@ -53,6 +56,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
         self.ui.actionEnterKey.setIcon(QIcon('images/icons/key.svg'))
         self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
+        self.ui.actionFoldeDecrypt.setIcon(QIcon('images/icons/folder_lock_open.svg'))
 
         # Not done
         self.ui.actionTreeView.setDisabled(True)
@@ -67,10 +71,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionEncrypt.triggered.connect(self._crypt)
         self.ui.actionFullscreen.triggered.connect(self._change_fullscreen)
         self.ui.actionChangeFit.triggered.connect(self._change_fit)
+        self.ui.actionFoldeDecrypt.triggered.connect(self._decrypt_folder)
 
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
         self.enterKeyDialog.rejected.connect(self._reject_enter_key)
+
+        self.folderEncrypt.ui.pushButton_cancel.clicked.connect(self._reject_folder_encrypt)
+        self.folderEncrypt.ui.pushButton_apply.clicked.connect(self._apply_folder_encrypt)
 
         self.fs.escapeSignal.connect(self._change_fullscreen)
         self.fs.nextSignal.connect(self._next)
@@ -133,6 +141,43 @@ class MainWindow(QtWidgets.QMainWindow):
         self.update_actions_status(self.cur_path)
         self._update_image()
 
+    def _reject_folder_encrypt(self):
+        print('reject')
+        self.folderEncrypt.reset()
+        self.folderEncrypt.done(200)
+
+    def _apply_folder_encrypt(self):
+        encrypt_type = self.folderEncrypt.get_select()
+        path = self.folderEncrypt.cur_path
+        cipher = self.folderEncrypt.cipher
+
+        try:
+            encrypt_folder(encrypt_type, path, cipher, delete_original=True)
+        except EmptyCipher:
+            UserMessage("No key!")
+        except DecryptException:
+            UserMessage("Decrypt error, file probably broken!")
+        except FileNotFoundError:
+            return None
+
+        self.folderEncrypt.reset()
+        self.folderEncrypt.done(200)
+        self.update_actions_status(self.cur_path)
+        self._update_image()
+
+    def _decrypt_folder(self):
+        try:
+            if gettype(self.cur_path) == 'aes_zip':
+                decrypt_folder_file(self.cur_path, self.cipher, delete_original=True)
+            else:
+                decrypt_folder(self.cur_path, self.cipher, delete_original=True)
+        except EmptyCipher:
+            UserMessage("No key!")
+        except DecryptException:
+            UserMessage("Decrypt error, file probably broken!")
+        except FileNotFoundError:
+            return None
+
     def _change_fit(self):
         self.fit_in_view = not self.fit_in_view
         self._update_image(lazily=False)
@@ -170,6 +215,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionFullscreen.setDisabled(True)
 
         self._update_fit_status()
+        self.ui.actionFoldeDecrypt.setVisible(False)
+        self.ui.actionEncrypt.setVisible(True)
 
         if self.cipher is None:
             self.ui.actionEncrypt.setText('Need key')
@@ -183,10 +230,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
                 self.ui.actionEncrypt.mode = 'disable'
             elif gettype(path) == 'folder':
-                self.ui.actionEncrypt.setText('Folder selected')
-                self.ui.actionEncrypt.setDisabled(True)
-                self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
-                self.ui.actionEncrypt.mode = 'disable'
+                self.ui.actionEncrypt.setText('Encrypt folder')
+                self.ui.actionEncrypt.setEnabled(True)
+                self.ui.actionEncrypt.setIcon(QIcon('images/icons/folder_lock.svg'))
+                self.ui.actionEncrypt.mode = 'folder'
+                self.ui.actionFoldeDecrypt.setVisible(True)
+            elif gettype(path) == 'aes_zip':
+                self.ui.actionEncrypt.setVisible(False)
+                self.ui.actionFoldeDecrypt.setVisible(True)
             elif gettype(path) == 'aes':
                 self.ui.actionEncrypt.setText('Decrypt on disk')
                 self.ui.actionEncrypt.setEnabled(True)
@@ -200,11 +251,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _crypt(self):
         try:
-            if self.ui.actionEncrypt.mode == 'encrypt':
-                encrypt_file(self.cur_path, self.cipher)
+            if self.ui.actionEncrypt.mode == 'folder':
+                self.folderEncrypt.set_values(self.cur_path, self.cipher)
+                self.folderEncrypt.show()
+            elif self.ui.actionEncrypt.mode == 'encrypt':
+                encrypt_file(self.cur_path, self.cipher, delete_original=True)
             elif self.ui.actionEncrypt.mode == 'decrypt':
-                decrypt_file(self.cur_path, self.cipher)
-            self._delete_file()
+                decrypt_file(self.cur_path, self.cipher, delete_original=True)
+            self._update_image()
         except EmptyCipher:
             UserMessage("No key!")
         except DecryptException:
@@ -258,6 +312,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.image = self._read_image(self.cur_path)
             elif gettype(self.cur_path) == 'aes':
                 self.image = self._runtime_decrypt(self.cur_path)
+            elif gettype(self.cur_path) == 'aes_zip':
+                img_reader = QImageReader('images/encrypted_placeholder.png')
+                self.image = QPixmap.fromImage(img_reader.read())
             elif gettype(self.cur_path) == 'video':
                 img_reader = QImageReader('images/video_placeholder.png')
                 self.image = QPixmap.fromImage(img_reader.read())

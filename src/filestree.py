@@ -9,7 +9,8 @@ SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xp
                  'text': ['txt', 'md', 'doc', 'docx', 'pdf', 'rtf', 'odt'],
                  'audio': ['aac', 'wav', 'mp3', 'ac3', 'ogg', 'wma'],
                  'video': ['mkv', 'mp4', 'avi', 'mov'],
-                 'zip': ['rar', 'zip']}
+                 'zip': ['rar', 'zip'],
+                 'aes_zip': ['aes_zip']}
 
 
 def is_rotatable(fullpath):
@@ -41,6 +42,8 @@ class IconProvider(QFileIconProvider):
                 return icon
             if gettype(parameter.absoluteFilePath()) == 'aes':
                 return QtGui.QIcon("images/icons/lock.svg")
+            if gettype(parameter.absoluteFilePath()) == 'aes_zip':
+                return QtGui.QIcon("images/icons/folder_lock.svg")
             if gettype(parameter.absoluteFilePath()) == 'image':
                 return QtGui.QIcon("images/icons/image.svg")
             if gettype(parameter.absoluteFilePath()) == 'video':

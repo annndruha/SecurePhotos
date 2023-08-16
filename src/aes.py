@@ -1,12 +1,15 @@
 import os
+import stat
 import argparse
 import logging
+import shutil
 
 from Crypto import Random
 from Crypto.Hash import SHA256
 from Crypto.Cipher import AES
 
-ENCODED_EXTENSION = '.aes'
+CRYPT_EXTENSION = '.aes'
+CRYPT_FOLDER_EXTENSION = '.aes_zip'
 UTF_8 = 'utf-8'
 
 
@@ -93,24 +96,30 @@ def write_file(path: str, data: bytes) -> None:
         f.write(data)
 
 
-def encrypt_file(path: str, cipher: AESCipher) -> None:
+def encrypt_file(path: str, cipher: AESCipher, delete_original=False) -> None:
     if cipher is None:
         raise EmptyCipher
-    else:
-        file_bytes = read_file(path)
-        encrypted_text = cipher.encrypt(file_bytes)
-        path += ENCODED_EXTENSION
-        write_file(path, encrypted_text)
+    file_bytes = read_file(path)
+    encrypted_text = cipher.encrypt(file_bytes)
+    aes_path = path + CRYPT_EXTENSION
+    # TODO: Raise if file exist
+    write_file(aes_path, encrypted_text)
+
+    if delete_original:
+        delete_path(path)
 
 
-def decrypt_file(path: str, cipher: AESCipher) -> None:
+def decrypt_file(path: str, cipher: AESCipher, delete_original=False) -> None:
     if cipher is None:
         raise EmptyCipher
-    else:
-        file_bytes = read_file(path)
-        decrypted_text = cipher.decrypt(file_bytes)
-        path = os.path.splitext(path)[0]
-        write_file(path, decrypted_text)
+    file_bytes = read_file(path)
+    decrypted_text = cipher.decrypt(file_bytes)
+    orig_path = os.path.splitext(path)[0]
+    # TODO: Raise if file exist
+    write_file(orig_path, decrypted_text)
+
+    if delete_original:
+        delete_path(path)
 
 
 def decrypt_runtime(path: str, cipher: AESCipher):
@@ -120,6 +129,64 @@ def decrypt_runtime(path: str, cipher: AESCipher):
         file_bytes = read_file(path)
         decrypted_text = cipher.decrypt(file_bytes)
         return decrypted_text
+
+
+def encrypt_folder(encrypt_type: str, path: str, cipher: AESCipher, delete_original=False) -> None:
+    match encrypt_type:
+        case 'one':
+            # TODO: Raise if file exist
+            shutil.make_archive(path, 'zip', path)
+            encrypt_file(path + '.zip', cipher, delete_original=delete_original)
+            os.rename(path + '.zip' + CRYPT_EXTENSION, path + CRYPT_FOLDER_EXTENSION)
+            delete_path(path)
+
+        case 'files':
+            for path, _, files in os.walk(path):
+                for name in files:
+                    filepath = os.path.join(path, name)
+                    ext = os.path.splitext(filepath)[1]
+                    if ext != CRYPT_EXTENSION:
+                        encrypt_file(filepath, cipher, delete_original=delete_original)
+        case _:
+            pass
+
+
+def decrypt_folder_file(path: str, cipher: AESCipher, delete_original=False) -> None:
+    # TODO: Raise if file exist
+    path_zipped_aes = path.replace(CRYPT_FOLDER_EXTENSION, '.zip' + CRYPT_EXTENSION)
+    os.rename(path, path_zipped_aes)
+    decrypt_file(path_zipped_aes, cipher, delete_original=delete_original)
+
+    path_zipped = path.replace(CRYPT_FOLDER_EXTENSION, '.zip')
+    shutil.unpack_archive(path_zipped, extract_dir=path.replace(CRYPT_FOLDER_EXTENSION, ''))
+    delete_path(path_zipped)
+
+
+def decrypt_folder(path: str, cipher: AESCipher, delete_original=False) -> None:
+    for path, _, files in os.walk(path):
+        for name in files:
+            filepath = os.path.join(path, name)
+            ext = os.path.splitext(filepath)[1]
+            if ext == CRYPT_EXTENSION:
+                decrypt_file(filepath, cipher, delete_original=delete_original)
+
+
+def make_dir_writable(function, path, exception):
+    """The path on Windows cannot be gracefully removed due to being read-only,
+    so we make the directory writable on a failure and retry the original function.
+    """
+    os.chmod(path, stat.S_IWRITE)
+    function(path)
+
+
+def delete_path(path):
+    try:
+        if os.path.isdir(path):
+            shutil.rmtree(path, onerror=make_dir_writable)
+        else:
+            os.remove(path)
+    except FileNotFoundError:
+        pass
 
 
 if __name__ == "__main__":
