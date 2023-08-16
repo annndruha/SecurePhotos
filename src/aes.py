@@ -62,7 +62,7 @@ class AESCipher:
         """
         AES-256 encrypt data with hash stored in this class
 
-        :param data: Data to be encrypted
+        :param data: Data to be encrypted.
         :return: Encrypted data
         """
         data = self.__pad(data)
@@ -74,7 +74,7 @@ class AESCipher:
         """
         AES-256 decrypt data with hash stored in this class.
 
-        :param data: Data to be decrypted
+        :param data: Data to be decrypted.
         :return: Decrypted data
         """
         try:

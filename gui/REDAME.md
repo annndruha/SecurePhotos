@@ -19,7 +19,7 @@ It's also means that not relevant to edit `.py` files in gui, and files will hav
 
 ### Second way
 
-Without generation a py files, change lines like this:
+Without generation a py files, change lines from this:
 ```
 self.ui = Ui_MainWindow()
 self.ui.setupUi(self)
