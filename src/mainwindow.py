@@ -1,4 +1,5 @@
 import os
+import ctypes
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QByteArray, QBuffer, QSize, QItemSelectionModel
@@ -32,8 +33,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fs = FullScreen()
         self.fs.setScene(self.scene)
 
-        # === TOOLBAR ICONS ===
+        # === APP ICON ===
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('annndruha.SecurePhotos')
         self.setWindowIcon(QIcon('images/icon.png'))
+
+        # === TOOLBAR ICONS ===
         self.ui.actionOpenFolder.setIcon(QIcon('images/icons/folder_open.svg'))
         self.ui.actionTreeView.setIcon(QIcon('images/icons/tree.svg'))
         self.ui.actionRotateLeft.setIcon(QIcon('images/icons/rotate_left.svg'))
@@ -325,7 +329,7 @@ class EnterKeyDialog(QtWidgets.QDialog):
         super(EnterKeyDialog, self).__init__()
         self.ui = Ui_EnterKey()
         self.ui.setupUi(self)
-        self.setWindowIcon(QIcon('images/icon.png'))
+        self.setWindowIcon(QIcon('images/icon.ico'))
         self.ui.keyField.textChanged.connect(self._compare_key)
         self.ui.keyRepeat.textChanged.connect(self._compare_key)
         self.ui.keyField.setEchoMode(QLineEdit.Password)
