@@ -1,5 +1,6 @@
 import os
 import ctypes
+import platform
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QByteArray, QBuffer, QSize, QItemSelectionModel
@@ -34,7 +35,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fs.setScene(self.scene)
 
         # === APP ICON ===
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('annndruha.SecurePhotos')
+        if platform.uname()[0] == "Windows":
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('annndruha.SecurePhotos')
         self.setWindowIcon(QIcon('images/icon.png'))
 
         # === TOOLBAR ICONS ===
