@@ -1,9 +1,6 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QIcon, QPalette, QColor
-from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtGui import QIcon
 
-from gui.ui_enterkey import Ui_EnterKey
-from src.aes import AESCipher
 from gui.ui_folderencrypt import Ui_FolderEncrypt
 
 
