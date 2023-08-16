@@ -301,7 +301,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.root_path == '':
             return
         self.ui.filesTree.change_root(self.root_path)
-        with open('metadata.txt', 'w+') as f:
+        with open('metadata.txt', 'w+', encoding="utf-8") as f:
             f.write(str(self.root_path))
 
         self.cur_path = None
@@ -311,7 +311,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _open_last_folder(self):
         try:
-            with open('metadata.txt') as f:
+            with open('metadata.txt', encoding="utf-8") as f:
                 last_path = f.read()
             if os.path.exists(last_path):
                 self.root_path = last_path
