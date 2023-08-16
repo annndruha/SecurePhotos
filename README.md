@@ -9,6 +9,12 @@ SecurePhotos - Gallery for photos with encryption for your photos or video
 ### Screenshots:
 ![image](https://user-images.githubusercontent.com/51162917/180698988-6f879719-0c9d-436e-834a-a3f0550e4a53.png)
 
+### Features
+
+* Encrypt/Decrypt files and folders on disk
+* Encrypted image preview without decrypt on disk
+* Rotate and delete images
+
 ### Install and usage:
 
 Install and run:
@@ -17,26 +23,19 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Tested on:
-* Windows 11
-* Python 3.11.0
-* pip 22.3
+| Tested soft  | Version |
+|--------------|---------|
+| Windows      | 11      |
+| Python       | 3.11.4  |
+| pip          | 23.2.1  |
+| PyQt5        | 5.15.8  |
+| Pillow       | 10.0.0  |
+| pycryptodome | 3.18.0  |
 
-Test libs versions:
-* PyQt5==5.15.7
-* Pillow==9.3.0
-* pycryptodome==3.15.0
-
-### Features
-
-* Encrypt/Decrypt files on disk
-* Encrypted image preview without decrypt on disk
-* Rotate and delete images
 
 ### Algorithm:
 ![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/assets/encrypt_scheme.drawio.svg)
 
 
 ### Contact
-Andrey Marakulin
-[annndruha.github@gmail.com](mailto:annndruha.github@gmail.com)
+Andrey Marakulin [annndruha.github@gmail.com](mailto:annndruha.github@gmail.com)
