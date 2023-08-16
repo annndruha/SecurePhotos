@@ -323,7 +323,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.root_path = last_path
                 self.ui.filesTree.change_root(self.root_path)
         except FileNotFoundError as err:
-            print(err, "metadata.txt not found")
+            print("Last opened folder not found")
 
 
 class EnterKeyDialog(QtWidgets.QDialog):
