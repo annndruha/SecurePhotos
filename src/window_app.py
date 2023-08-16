@@ -1,17 +1,21 @@
 import os
 import ctypes
 import platform
+import logging
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QByteArray, QBuffer, QSize, QItemSelectionModel
-from PyQt5.QtGui import QIcon, QPixmap, QImageReader, QPalette, QColor
-from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene, QLineEdit
+from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel
+from PyQt5.QtGui import QIcon, QPixmap, QImageReader
+from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene
 
 from gui.ui_mainwindow import Ui_MainWindow
-from gui.ui_enterkey import Ui_EnterKey
 from src.aes import AESCipher, encrypt_file, decrypt_file, decrypt_runtime, EmptyCipher, DecryptException
 from src.utils import rotate_file_right, rotate_file_left, delete_path
 from src.filestree import gettype, is_rotatable
+
+from src.window_usermessage import UserMessage
+from src.window_enterkey import EnterKeyDialog
+from src.window_fullscreen import FullScreen
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -297,7 +301,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _select_item(self, cur, prev):
         self.cur_path = QFileSystemModel().filePath(cur)
         self.prev_path = QFileSystemModel().filePath(prev)
-        # print(self.prev_path, " TO ",self.cur_path)
+        # logging.debug(self.prev_path, " TO ", self.cur_path)
         self.update_actions_status(self.cur_path)
         self._update_image()
 
@@ -323,87 +327,4 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.root_path = last_path
                 self.ui.filesTree.change_root(self.root_path)
         except FileNotFoundError:
-            print("Last opened folder not found")
-
-
-class EnterKeyDialog(QtWidgets.QDialog):
-    def __init__(self):
-        super(EnterKeyDialog, self).__init__()
-        self.ui = Ui_EnterKey()
-        self.ui.setupUi(self)
-        self.setWindowIcon(QIcon('images/icon.ico'))
-        self.ui.keyField.textChanged.connect(self._compare_key)
-        self.ui.keyRepeat.textChanged.connect(self._compare_key)
-        self.ui.keyField.setEchoMode(QLineEdit.Password)
-        self.ui.keyRepeat.setEchoMode(QLineEdit.Password)
-        self.palette_ok = QPalette()
-        self.palette_ok.setColor(QPalette.WindowText, QColor(0, 180, 0))
-        self.palette_not_ok = QPalette()
-        self.palette_not_ok.setColor(QPalette.WindowText, QColor(255, 0, 0))
-        self.palette_neutral = QPalette()
-        self.palette_neutral.setColor(QPalette.WindowText, QColor(0, 0, 0))
-
-    def _recalc_hash(self):
-        if self.ui.keyField.text() != '':
-            dummy_cipher = AESCipher(self.ui.keyField.text())
-            _hash = dummy_cipher.hash()[-4:]
-            self.ui.pushButton_apply.setEnabled(True)
-            self.ui.hash_field.setText(_hash)
-            self.ui.hash_field.setPalette(self.palette_ok)
-        else:
-            self.ui.pushButton_apply.setDisabled(True)
-            self.ui.hash_field.setText('HASH')
-            self.ui.hash_field.setPalette(self.palette_neutral)
-
-    def _compare_key(self):
-        dummy_cipher1 = AESCipher(self.ui.keyField.text())
-        dummy_cipher2 = AESCipher(self.ui.keyRepeat.text())
-        if (dummy_cipher1.hash() == dummy_cipher2.hash()) or self.ui.keyRepeat.text() == '':
-            self.ui.pushButton_apply.setEnabled(True)
-            self._recalc_hash()
-        else:
-            self.ui.pushButton_apply.setDisabled(True)
-            self.ui.hash_field.setText('Password mismatch')
-            self.ui.hash_field.setPalette(self.palette_not_ok)
-
-    def reset(self):
-        self.ui.keyField.setText('')
-        self.ui.keyRepeat.setText('')
-        self.ui.hash_field.setPalette(self.palette_neutral)
-
-
-class UserMessage(QtWidgets.QMessageBox):
-    def __init__(self, text, level="Critical"):
-        super(UserMessage, self).__init__()
-        if level == "Critical":
-            self.setIcon(QtWidgets.QMessageBox.Critical)
-            self.setWindowTitle("Critical error")
-        elif level == "Warning":
-            self.setIcon(QtWidgets.QMessageBox.Warning)
-            self.setWindowTitle("Warning")
-        else:
-            self.setIcon(QtWidgets.QMessageBox.Information)
-            self.setWindowTitle("Info")
-        self.setText(text)
-        self.exec()
-
-
-class FullScreen(QtWidgets.QGraphicsView):
-    escapeSignal = QtCore.pyqtSignal()
-    nextSignal = QtCore.pyqtSignal()
-    prevSignal = QtCore.pyqtSignal()
-
-    def __init__(self):
-        super(FullScreen, self).__init__()
-
-    def keyPressEvent(self, event):
-        if event.key() == 16777216:
-            self.escapeSignal.emit()
-        elif event.key() == 16777236:
-            self.nextSignal.emit()
-        elif event.key() == 16777234:
-            self.prevSignal.emit()
-
-    def update_image(self):
-        self.resize(QSize(1920, 1080))  # TODO: Get screen size
-        self.fitInView(self.scene().itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
+            logging.info("Last opened folder not found")
