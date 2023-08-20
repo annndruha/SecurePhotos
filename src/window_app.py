@@ -31,7 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.image = None
         self.cipher = None
-        self.cur_path = None
+        # self.cur_path = None
         self.full_screen = False
         self.fit_in_view = True
         self.enterKeyDialog = EnterKeyDialog()
@@ -89,6 +89,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.showMaximized()
         self._open_last_folder()
         self.update_actions_status('sample.path')
+
+    @property
+    def cur_path(self):
+        ptah = QFileSystemModel().filePath(self.ui.filesTree.selectionModel().currentIndex())
+        print(type(ptah), ptah)
+        # print(self.ui.filesTree.selectionModel().currentIndex().isValid())
+        return QFileSystemModel().filePath(self.ui.filesTree.selectionModel().currentIndex())
 
     # ===SLOTS===
     def _change_fullscreen(self):
@@ -353,10 +360,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_fit_status()
 
     def _select_item(self, cur, prev):
-        # idx = self.ui.filesTree.selectionModel().currentIndex()
-        # flag = self.ui.filesTree.selectionModel().SelectionFlag.Select
-        # self.ui.filesTree.selectionModel().setCurrentIndex(idx, flag)
-        self.cur_path = QFileSystemModel().filePath(cur)
+        print(QFileSystemModel().filePath(cur))
+        # self.cur_path = QFileSystemModel().filePath(cur)
         self.prev_path = QFileSystemModel().filePath(prev)
         self.update_actions_status(self.cur_path)
         self._update_image()
@@ -370,7 +375,7 @@ class MainWindow(QtWidgets.QMainWindow):
         with open('metadata.txt', 'w+', encoding="utf-8") as f:
             f.write(str(self.root_path))
 
-        self.cur_path = None
+        # self.cur_path = None
         self.prev_path = None
         self.image = None
         self._update_image()

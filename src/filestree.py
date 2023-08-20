@@ -77,15 +77,18 @@ class FilesTree(QTreeView):
         self.hideColumn(1)
         self.hideColumn(2)
         self.hideColumn(3)
+        self.file_model.directoryLoaded.connect(self.on_directory_loaded)
+
+    def on_directory_loaded(self, rootpath):
+        idx = self.file_model.index(rootpath)
+        self.selectionModel().clearSelection()
+        self.selectionModel().setCurrentIndex()
+        if self.file_model.rowCount(idx) > 0:
+            index = self.file_model.index(0, 0, idx)
+            self.selectionModel().setCurrentIndex(index, self.selectionModel().SelectionFlag.Select)
+        # print(self.selectionModel().currentIndex())
 
     def change_root(self, rootpath):
         self.file_model.set_header_name(rootpath)
         self.file_model.setRootPath(rootpath)
         self.setRootIndex(self.file_model.index(rootpath))
-
-        self.selectionModel()
-        # self.selectionModel().currentChanged.emit(self.selectionModel().currentIndex(), self.selectionModel().currentIndex())
-        # idx = self.selectionModel().currentIndex()
-        # flag = self.selectionModel().SelectionFlag.Select
-        # print(idx)
-        # self.selectionModel().setCurrentIndex(idx, flag)
