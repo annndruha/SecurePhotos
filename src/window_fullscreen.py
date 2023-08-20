@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QBrush, QColor
 
 
 class FullScreen(QtWidgets.QGraphicsView):
@@ -10,6 +10,7 @@ class FullScreen(QtWidgets.QGraphicsView):
 
     def __init__(self):
         super(FullScreen, self).__init__()
+        self.setBackgroundBrush(QBrush(QColor('black')))
         self.setWindowIcon(QIcon('images/icon.png'))
 
     def keyPressEvent(self, event):

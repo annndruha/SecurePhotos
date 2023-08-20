@@ -203,18 +203,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionChangeFit.setDisabled(True)
 
     def update_actions_status(self, path):
-        # TODO: Is all image type can rotate?
-        if gettype(path) == 'image' and is_rotatable(path):
-            self.ui.actionRotateLeft.setEnabled(True)
-            self.ui.actionRotateRight.setEnabled(True)
-        else:
-            self.ui.actionRotateLeft.setDisabled(True)
-            self.ui.actionRotateRight.setDisabled(True)
+        rotation_available = is_rotatable(path)
+        self.ui.actionRotateLeft.setEnabled(rotation_available)
+        self.ui.actionRotateRight.setEnabled(rotation_available)
 
-        if gettype(path) == 'image':
-            self.ui.actionFullscreen.setEnabled(True)
-        else:
-            self.ui.actionFullscreen.setDisabled(True)
+        is_fullscreen_available = gettype(path) == 'image'
+        self.ui.actionFullscreen.setEnabled(is_fullscreen_available)
 
         self._update_fit_status()
         self.ui.actionFoldeDecrypt.setVisible(False)
@@ -225,31 +219,32 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionEncrypt.setDisabled(True)
             self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
             self.ui.actionEncrypt.mode = 'disable'
+            return
+
+        if gettype(path) is None:
+            self.ui.actionEncrypt.setText('Select file first')
+            self.ui.actionEncrypt.setDisabled(True)
+            self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
+            self.ui.actionEncrypt.mode = 'disable'
+        elif gettype(path) == 'folder':
+            self.ui.actionEncrypt.setText('Encrypt folder')
+            self.ui.actionEncrypt.setEnabled(True)
+            self.ui.actionEncrypt.setIcon(QIcon('images/icons/folder_lock.svg'))
+            self.ui.actionEncrypt.mode = 'folder'
+            self.ui.actionFoldeDecrypt.setVisible(True)
+        elif gettype(path) == 'aes_zip':
+            self.ui.actionEncrypt.setVisible(False)
+            self.ui.actionFoldeDecrypt.setVisible(True)
+        elif gettype(path) == 'aes':
+            self.ui.actionEncrypt.setText('Decrypt on disk')
+            self.ui.actionEncrypt.setEnabled(True)
+            self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock_open.svg'))
+            self.ui.actionEncrypt.mode = 'decrypt'
         else:
-            if gettype(path) is None:
-                self.ui.actionEncrypt.setText('Select file first')
-                self.ui.actionEncrypt.setDisabled(True)
-                self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
-                self.ui.actionEncrypt.mode = 'disable'
-            elif gettype(path) == 'folder':
-                self.ui.actionEncrypt.setText('Encrypt folder')
-                self.ui.actionEncrypt.setEnabled(True)
-                self.ui.actionEncrypt.setIcon(QIcon('images/icons/folder_lock.svg'))
-                self.ui.actionEncrypt.mode = 'folder'
-                self.ui.actionFoldeDecrypt.setVisible(True)
-            elif gettype(path) == 'aes_zip':
-                self.ui.actionEncrypt.setVisible(False)
-                self.ui.actionFoldeDecrypt.setVisible(True)
-            elif gettype(path) == 'aes':
-                self.ui.actionEncrypt.setText('Decrypt on disk')
-                self.ui.actionEncrypt.setEnabled(True)
-                self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock_open.svg'))
-                self.ui.actionEncrypt.mode = 'decrypt'
-            else:
-                self.ui.actionEncrypt.setText('Encrypt on disk')
-                self.ui.actionEncrypt.setEnabled(True)
-                self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
-                self.ui.actionEncrypt.mode = 'encrypt'
+            self.ui.actionEncrypt.setText('Encrypt on disk')
+            self.ui.actionEncrypt.setEnabled(True)
+            self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
+            self.ui.actionEncrypt.mode = 'encrypt'
 
     def _crypt(self):
         try:
