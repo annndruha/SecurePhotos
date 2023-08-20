@@ -25,6 +25,8 @@ def make_dir_writable(function, path, exception):
 
 
 def delete_path(path):
+    if path is None:
+        return
     try:
         if os.path.isdir(path):
             shutil.rmtree(path, onerror=make_dir_writable)

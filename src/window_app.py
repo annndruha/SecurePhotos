@@ -61,7 +61,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionFoldeDecrypt.setIcon(QIcon('images/icons/folder_lock_open.svg'))
 
         # Not done
-        self.ui.actionTreeView.setDisabled(True)
+        self.ui.actionTreeView.setVisible(False)
 
         # ===CONNECTS===
         self.ui.filesTree.selectionModel().currentChanged.connect(self._select_item)
@@ -86,9 +86,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fs.nextSignal.connect(self._next)
         self.fs.prevSignal.connect(self._prev)
 
-        self.update_actions_status('sample.path')
         self.showMaximized()
         self._open_last_folder()
+        self.update_actions_status('sample.path')
 
     # ===SLOTS===
     def _change_fullscreen(self):
@@ -358,9 +358,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_fit_status()
 
     def _select_item(self, cur, prev):
+        # idx = self.ui.filesTree.selectionModel().currentIndex()
+        # flag = self.ui.filesTree.selectionModel().SelectionFlag.Select
+        # self.ui.filesTree.selectionModel().setCurrentIndex(idx, flag)
         self.cur_path = QFileSystemModel().filePath(cur)
         self.prev_path = QFileSystemModel().filePath(prev)
-        # logging.debug(self.prev_path, " TO ", self.cur_path)
         self.update_actions_status(self.cur_path)
         self._update_image()
 
