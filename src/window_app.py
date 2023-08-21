@@ -50,7 +50,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # === TOOLBAR ICONS ===
         self.ui.actionOpenFolder.setIcon(QIcon('images/icons/folder_open.svg'))
-        self.ui.actionTreeView.setIcon(QIcon('images/icons/tree.svg'))
         self.ui.actionRotateLeft.setIcon(QIcon('images/icons/rotate_left.svg'))
         self.ui.actionRotateRight.setIcon(QIcon('images/icons/rotate_right.svg'))
         self.ui.actionDelete.setIcon(QIcon('images/icons/delete.svg'))
@@ -59,9 +58,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionEnterKey.setIcon(QIcon('images/icons/key.svg'))
         self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
         self.ui.actionFoldeDecrypt.setIcon(QIcon('images/icons/folder_lock_open.svg'))
-
-        # Not done
-        self.ui.actionTreeView.setVisible(False)
 
         # ===CONNECTS===
         self.ui.filesTree.selectionModel().currentChanged.connect(self._select_item)
@@ -75,9 +71,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionChangeFit.triggered.connect(self._change_fit)
         self.ui.actionFoldeDecrypt.triggered.connect(self._decrypt_folder)
 
-        self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
-        self.enterKeyDialog.rejected.connect(self._reject_enter_key)
+        self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
 
         self.folderEncrypt.ui.pushButton_cancel.clicked.connect(self._reject_folder_encrypt)
         self.folderEncrypt.ui.pushButton_apply.clicked.connect(self._apply_folder_encrypt)
@@ -151,7 +146,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_image()
 
     def _reject_folder_encrypt(self):
-        print('reject')
         self.folderEncrypt.reset()
         self.folderEncrypt.done(200)
 

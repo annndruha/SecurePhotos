@@ -85,7 +85,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpenFolder"/>
-   <addaction name="actionTreeView"/>
    <addaction name="separator"/>
    <addaction name="actionRotateLeft"/>
    <addaction name="actionRotateRight"/>
@@ -155,16 +154,6 @@
    </property>
    <property name="text">
     <string>Fullscreen</string>
-   </property>
-  </action>
-  <action name="actionTreeView">
-   <property name="icon">
-    <iconset>
-     <normalon>../images/icons/tree.svg</normalon>
-    </iconset>
-   </property>
-   <property name="text">
-    <string>Tree View</string>
    </property>
   </action>
   <action name="actionChangeFit">

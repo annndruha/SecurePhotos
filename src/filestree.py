@@ -82,7 +82,7 @@ class FilesTree(QTreeView):
     def on_directory_loaded(self, rootpath):
         idx = self.file_model.index(rootpath)
         self.selectionModel().clearSelection()
-        self.selectionModel().setCurrentIndex()
+        # self.selectionModel().setCurrentIndex()
         if self.file_model.rowCount(idx) > 0:
             index = self.file_model.index(0, 0, idx)
             self.selectionModel().setCurrentIndex(index, self.selectionModel().SelectionFlag.Select)
