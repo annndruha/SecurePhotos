@@ -81,6 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fs.nextSignal.connect(self._next)
         self.fs.prevSignal.connect(self._prev)
 
+        # ===START OPTIONS===
         self.showMaximized()
         self._open_last_folder()
         self.update_actions_status('sample.path')
@@ -88,7 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
     @property
     def cur_path(self):
         ptah = QFileSystemModel().filePath(self.ui.filesTree.selectionModel().currentIndex())
-        print(type(ptah), ptah)
+        # print(type(ptah), ptah)
         # print(self.ui.filesTree.selectionModel().currentIndex().isValid())
         return QFileSystemModel().filePath(self.ui.filesTree.selectionModel().currentIndex())
 
@@ -354,7 +355,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_fit_status()
 
     def _select_item(self, cur, prev):
-        print(QFileSystemModel().filePath(cur))
+        # print(QFileSystemModel().filePath(cur))
         # self.cur_path = QFileSystemModel().filePath(cur)
         self.prev_path = QFileSystemModel().filePath(prev)
         self.update_actions_status(self.cur_path)
