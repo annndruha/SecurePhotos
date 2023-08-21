@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_FolderEncrypt(object):
     def setupUi(self, FolderEncrypt):
         FolderEncrypt.setObjectName("FolderEncrypt")
-        FolderEncrypt.resize(585, 154)
+        FolderEncrypt.resize(585, 176)
         self.gridLayout = QtWidgets.QGridLayout(FolderEncrypt)
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
@@ -25,7 +25,7 @@ class Ui_FolderEncrypt(object):
         self.pushButton_cancel = QtWidgets.QPushButton(FolderEncrypt)
         self.pushButton_cancel.setObjectName("pushButton_cancel")
         self.horizontalLayout_4.addWidget(self.pushButton_cancel)
-        self.gridLayout.addLayout(self.horizontalLayout_4, 2, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_4, 3, 0, 1, 1)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.path = QtWidgets.QLabel(FolderEncrypt)
@@ -54,6 +54,12 @@ class Ui_FolderEncrypt(object):
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
+        self.progressBar = QtWidgets.QProgressBar(FolderEncrypt)
+        self.progressBar.setEnabled(True)
+        self.progressBar.setProperty("value", 0)
+        self.progressBar.setTextVisible(True)
+        self.progressBar.setObjectName("progressBar")
+        self.gridLayout.addWidget(self.progressBar, 2, 0, 1, 1)
 
         self.retranslateUi(FolderEncrypt)
         QtCore.QMetaObject.connectSlotsByName(FolderEncrypt)

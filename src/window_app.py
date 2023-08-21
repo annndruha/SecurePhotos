@@ -19,7 +19,7 @@ from src.filestree import gettype, is_rotatable
 from src.window_usermessage import UserMessage
 from src.window_enterkey import EnterKeyDialog
 from src.window_fullscreen import FullScreen
-from src.window_folderencrypt import FolderEncrypt
+from src.window_folderencrypt import FolderEncrypt, FolderDecrypt
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -36,6 +36,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fit_in_view = True
         self.enterKeyDialog = EnterKeyDialog()
         self.folderEncrypt = FolderEncrypt()
+        self.folderDecrypt = FolderDecrypt()
 
         # === Image scene ===
         self.scene = QGraphicsScene()
@@ -74,8 +75,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
 
-        self.folderEncrypt.ui.pushButton_cancel.clicked.connect(self._reject_folder_encrypt)
         self.folderEncrypt.ui.pushButton_apply.clicked.connect(self._apply_folder_encrypt)
+        self.folderEncrypt.ui.pushButton_cancel.clicked.connect(self._reject_folder_encrypt)
+        self.folderDecrypt.ui.pushButton_abort.clicked.connect(self._abort_decrypt)
 
         self.fs.escapeSignal.connect(self._fullscreen_onoff)
         self.fs.nextSignal.connect(self._fullscreen_next)
@@ -152,7 +154,7 @@ class MainWindow(QtWidgets.QMainWindow):
         cipher = self.folderEncrypt.cipher
 
         try:
-            encrypt_folder(encrypt_type, path, cipher, delete_original=True)
+            encrypt_folder(self.folderEncrypt, encrypt_type, path, cipher, delete_original=True)
         except EmptyCipher:
             UserMessage("No key!")
         except DecryptException:
@@ -165,18 +167,29 @@ class MainWindow(QtWidgets.QMainWindow):
         self.update_actions_status(self.cur_path)
         self._update_image()
 
+    def _abort_decrypt(self):
+        pass
+
     def _decrypt_folder(self):
+        self.folderDecrypt.show()
+        self.folderDecrypt.set_values(self.cur_path)
         try:
             if gettype(self.cur_path) == 'aes_zip':
                 decrypt_folder_file(self.cur_path, self.cipher, delete_original=True)
             else:
-                decrypt_folder(self.cur_path, self.cipher, delete_original=True)
+                # decrypt_folder(self.folderDecrypt, self.cur_path, self.cipher, delete_original=True)
+                for i in range(1, 100):
+                    import time
+                    time.sleep(0.1)
+                    self.folderDecrypt.set_progress_bar_value(i)
         except EmptyCipher:
             UserMessage("No key!")
         except DecryptException:
             UserMessage("Decrypt error, file probably broken!")
         except FileNotFoundError:
             return None
+        # self.folderDecrypt.reset()
+        # self.folderDecrypt.done(200)
 
     def _change_fit(self):
         self.fit_in_view = not self.fit_in_view

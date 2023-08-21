@@ -8,6 +8,8 @@ from Crypto import Random
 from Crypto.Hash import SHA256
 from Crypto.Cipher import AES
 
+from src.window_folderencrypt import FolderEncrypt, FolderDecrypt
+
 CRYPT_EXTENSION = '.aes'
 CRYPT_FOLDER_EXTENSION = '.aes_zip'
 UTF_8 = 'utf-8'
@@ -131,7 +133,11 @@ def decrypt_runtime(path: str, cipher: AESCipher):
         return decrypted_text
 
 
-def encrypt_folder(encrypt_type: str, folder_path: str, cipher: AESCipher, delete_original=False) -> None:
+def encrypt_folder(ui_object: FolderEncrypt,
+                   encrypt_type: str,
+                   folder_path: str,
+                   cipher: AESCipher,
+                   delete_original=False) -> None:
     match encrypt_type:
         case 'one':
             # TODO: Raise if file exist
@@ -141,14 +147,32 @@ def encrypt_folder(encrypt_type: str, folder_path: str, cipher: AESCipher, delet
             delete_path(folder_path)
 
         case 'files':
+            i, cnt_files = 0, sum([len(files) for r, d, files in os.walk(folder_path)])
             for path, _, files in os.walk(folder_path):
                 for name in files:
                     filepath = os.path.join(path, name)
                     ext = os.path.splitext(filepath)[1]
                     if ext != CRYPT_EXTENSION:
                         encrypt_file(filepath, cipher, delete_original=delete_original)
+                    i += 1
+                    ui_object.set_progress_bar_value(int(i * 100 / cnt_files))
         case _:
             pass
+
+
+def decrypt_folder(ui_object: FolderDecrypt,
+                   folder_path: str,
+                   cipher: AESCipher,
+                   delete_original=False) -> None:
+    i, cnt_files = 0, sum([len(files) for r, d, files in os.walk(folder_path)])
+    for path, _, files in os.walk(folder_path):
+        for name in files:
+            filepath = os.path.join(path, name)
+            ext = os.path.splitext(filepath)[1]
+            if ext == CRYPT_EXTENSION:
+                decrypt_file(filepath, cipher, delete_original=delete_original)
+            i += 1
+            ui_object.set_progress_bar_value(int(i * 100 / cnt_files))
 
 
 def decrypt_folder_file(path: str, cipher: AESCipher, delete_original=False) -> None:
@@ -160,15 +184,6 @@ def decrypt_folder_file(path: str, cipher: AESCipher, delete_original=False) -> 
     path_zipped = path.replace(CRYPT_FOLDER_EXTENSION, '.zip')
     shutil.unpack_archive(path_zipped, extract_dir=path.replace(CRYPT_FOLDER_EXTENSION, ''))
     delete_path(path_zipped)
-
-
-def decrypt_folder(path: str, cipher: AESCipher, delete_original=False) -> None:
-    for path, _, files in os.walk(path):
-        for name in files:
-            filepath = os.path.join(path, name)
-            ext = os.path.splitext(filepath)[1]
-            if ext == CRYPT_EXTENSION:
-                decrypt_file(filepath, cipher, delete_original=delete_original)
 
 
 def make_dir_writable(function, path, exception):
