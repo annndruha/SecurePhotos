@@ -67,7 +67,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionDelete.triggered.connect(self._delete_file)
         self.ui.actionEnterKey.triggered.connect(self._open_enter_key)
         self.ui.actionEncrypt.triggered.connect(self._crypt)
-        self.ui.actionFullscreen.triggered.connect(self._change_fullscreen)
+        self.ui.actionFullscreen.triggered.connect(self._fullscreen_onoff)
         self.ui.actionChangeFit.triggered.connect(self._change_fit)
         self.ui.actionFoldeDecrypt.triggered.connect(self._decrypt_folder)
 
@@ -77,9 +77,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.folderEncrypt.ui.pushButton_cancel.clicked.connect(self._reject_folder_encrypt)
         self.folderEncrypt.ui.pushButton_apply.clicked.connect(self._apply_folder_encrypt)
 
-        self.fs.escapeSignal.connect(self._change_fullscreen)
-        self.fs.nextSignal.connect(self._next)
-        self.fs.prevSignal.connect(self._prev)
+        self.fs.escapeSignal.connect(self._fullscreen_onoff)
+        self.fs.nextSignal.connect(self._fullscreen_next)
+        self.fs.prevSignal.connect(self._fullscreen_prev)
 
         # ===START OPTIONS===
         self.showMaximized()
@@ -94,7 +94,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return QFileSystemModel().filePath(self.ui.filesTree.selectionModel().currentIndex())
 
     # ===SLOTS===
-    def _change_fullscreen(self):
+    def _fullscreen_onoff(self):
         self.full_screen = not self.full_screen
         if self.full_screen:
             self.fs.show()
@@ -108,7 +108,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
             self.ui.actionFullscreen.setText('Fullscreen')
 
-    def _next(self):
+    def _fullscreen_next(self):
         cur = self.ui.filesTree.selectionModel().currentIndex()
         self.ui.filesTree.selectionModel()
         idx = cur.siblingAtRow(cur.row() + 1)
@@ -116,17 +116,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if idx.isValid() and gettype(QFileSystemModel().filePath(idx)) != 'folder':
             self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
             self.fs.update_image()
-        else:
-            self._change_fullscreen()
 
-    def _prev(self):
+    def _fullscreen_prev(self):
         cur = self.ui.filesTree.selectionModel().currentIndex()
         idx = cur.siblingAtRow(cur.row() - 1)
         if idx.isValid() and gettype(QFileSystemModel().filePath(idx)) != 'folder':
             self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
             self.fs.update_image()
-        else:
-            self._change_fullscreen()
 
     def _open_enter_key(self):
         if self.cipher is not None:
