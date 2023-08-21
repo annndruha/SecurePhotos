@@ -41,6 +41,7 @@
      <property name="font">
       <font>
        <pointsize>10</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -93,7 +94,7 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Validate you self by hash (last 4 digits):</string>
+        <string>Validate by hash (last 4 digits):</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -108,6 +109,7 @@
        <property name="font">
         <font>
          <pointsize>14</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
          <underline>false</underline>
          <strikeout>false</strikeout>

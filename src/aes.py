@@ -131,17 +131,17 @@ def decrypt_runtime(path: str, cipher: AESCipher):
         return decrypted_text
 
 
-def encrypt_folder(encrypt_type: str, path: str, cipher: AESCipher, delete_original=False) -> None:
+def encrypt_folder(encrypt_type: str, folder_path: str, cipher: AESCipher, delete_original=False) -> None:
     match encrypt_type:
         case 'one':
             # TODO: Raise if file exist
-            shutil.make_archive(path, 'zip', path)
-            encrypt_file(path + '.zip', cipher, delete_original=delete_original)
-            os.rename(path + '.zip' + CRYPT_EXTENSION, path + CRYPT_FOLDER_EXTENSION)
-            delete_path(path)
+            shutil.make_archive(folder_path, 'zip', folder_path)
+            encrypt_file(folder_path + '.zip', cipher, delete_original=delete_original)
+            os.rename(folder_path + '.zip' + CRYPT_EXTENSION, folder_path + CRYPT_FOLDER_EXTENSION)
+            delete_path(folder_path)
 
         case 'files':
-            for path, _, files in os.walk(path):
+            for path, _, files in os.walk(folder_path):
                 for name in files:
                     filepath = os.path.join(path, name)
                     ext = os.path.splitext(filepath)[1]
