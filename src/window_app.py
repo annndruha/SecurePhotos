@@ -88,7 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @property
     def cur_path(self):
-        ptah = QFileSystemModel().filePath(self.ui.filesTree.selectionModel().currentIndex())
+        # ptah = QFileSystemModel().filePath(self.ui.filesTree.selectionModel().currentIndex())
         # print(type(ptah), ptah)
         # print(self.ui.filesTree.selectionModel().currentIndex().isValid())
         return QFileSystemModel().filePath(self.ui.filesTree.selectionModel().currentIndex())
