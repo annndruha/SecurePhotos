@@ -84,7 +84,8 @@ class FilesTree(QTreeView):
         self.setRootIndex(self.file_model.index(rootpath))
 
         self.selectionModel()
-        # self.selectionModel().currentChanged.emit(self.selectionModel().currentIndex(), self.selectionModel().currentIndex())
+        # self.selectionModel().currentChanged.emit(self.selectionModel().currentIndex()
+        # self.selectionModel().currentIndex())
         # idx = self.selectionModel().currentIndex()
         # flag = self.selectionModel().SelectionFlag.Select
         # print(idx)
