@@ -24,6 +24,8 @@ def read_file(path: str) -> bytes:
 
 
 def write_file(path: str, data: bytes) -> None:
+    if os.path.exists(path):
+        raise FileExistsError(path)
     with open(path, 'wb') as f:
         f.write(data)
 
@@ -34,7 +36,6 @@ def encrypt_file(path: str, cipher: AESCipher, delete_original=False) -> None:
     file_bytes = read_file(path)
     encrypted_text = cipher.encrypt(file_bytes)
     aes_path = path + CRYPT_EXTENSION
-    # TODO: Raise if file exist
     write_file(aes_path, encrypted_text)
 
     if delete_original:
@@ -47,7 +48,6 @@ def decrypt_file(path: str, cipher: AESCipher, delete_original=False) -> None:
     file_bytes = read_file(path)
     decrypted_text = cipher.decrypt(file_bytes)
     orig_path = os.path.splitext(path)[0]
-    # TODO: Raise if file exist
     write_file(orig_path, decrypted_text)
 
     if delete_original:
@@ -68,10 +68,15 @@ def encrypt_folder(encrypt_type: str,
                    cipher: AESCipher,
                    progress: ProgressBarDialog,
                    delete_original=False) -> None:
-
     match encrypt_type:
         case 'one':
-            # TODO: Raise if file exist
+            if os.path.exists(path + '.zip'):
+                raise FileExistsError(path + '.zip')
+            if os.path.exists(path + '.zip' + CRYPT_EXTENSION):
+                raise FileExistsError(path + '.zip' + CRYPT_EXTENSION)
+            if os.path.exists(path + CRYPT_FOLDER_EXTENSION):
+                raise FileExistsError(path + CRYPT_FOLDER_EXTENSION)
+
             shutil.make_archive(path, 'zip', path)
             encrypt_file(path + '.zip', cipher, delete_original=delete_original)
             os.rename(path + '.zip' + CRYPT_EXTENSION, path + CRYPT_FOLDER_EXTENSION)
@@ -91,14 +96,21 @@ def encrypt_folder(encrypt_type: str,
 
 
 def decrypt_folder_file(path: str, cipher: AESCipher, delete_original=False) -> None:
-    # TODO: Raise if file exist
-    path_zipped_aes = path.replace(CRYPT_FOLDER_EXTENSION, '.zip' + CRYPT_EXTENSION)
-    os.rename(path, path_zipped_aes)
-    decrypt_file(path_zipped_aes, cipher, delete_original=delete_original)
+    temp_zip_aes = path.replace(CRYPT_FOLDER_EXTENSION, '.zip' + CRYPT_EXTENSION)
+    temp_zip = path.replace(CRYPT_FOLDER_EXTENSION, '.zip')
+    out_path = path.replace(CRYPT_FOLDER_EXTENSION, '')
+    if os.path.exists(out_path):
+        raise FileExistsError(out_path)
+    if os.path.exists(temp_zip):
+        raise FileExistsError(temp_zip)
+    if os.path.exists(temp_zip_aes):
+        raise FileExistsError(temp_zip_aes)
 
-    path_zipped = path.replace(CRYPT_FOLDER_EXTENSION, '.zip')
-    shutil.unpack_archive(path_zipped, extract_dir=path.replace(CRYPT_FOLDER_EXTENSION, ''))
-    delete_path(path_zipped)
+    os.rename(path, temp_zip_aes)
+    decrypt_file(temp_zip_aes, cipher, delete_original=delete_original)
+
+    shutil.unpack_archive(temp_zip, extract_dir=out_path)
+    delete_path(temp_zip)
 
 
 def decrypt_folder(path: str,
