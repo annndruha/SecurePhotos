@@ -1,3 +1,4 @@
+import glob
 import os
 import stat
 import argparse
@@ -141,12 +142,10 @@ def encrypt_folder(encrypt_type: str, path: str, cipher: AESCipher, delete_origi
             delete_path(path)
 
         case 'files':
-            for path, _, files in os.walk(path):
-                for name in files:
-                    filepath = os.path.join(path, name)
-                    ext = os.path.splitext(filepath)[1]
-                    if ext != CRYPT_EXTENSION:
-                        encrypt_file(filepath, cipher, delete_original=delete_original)
+            files = glob.glob(os.path.join(path, '*'), recursive=True)
+            for filepath in files:
+                if os.path.isfile(filepath) and os.path.basename(filepath) != CRYPT_EXTENSION:
+                    encrypt_file(filepath, cipher, delete_original=delete_original)
         case _:
             pass
 
@@ -163,12 +162,10 @@ def decrypt_folder_file(path: str, cipher: AESCipher, delete_original=False) -> 
 
 
 def decrypt_folder(path: str, cipher: AESCipher, delete_original=False) -> None:
-    for path, _, files in os.walk(path):
-        for name in files:
-            filepath = os.path.join(path, name)
-            ext = os.path.splitext(filepath)[1]
-            if ext == CRYPT_EXTENSION:
-                decrypt_file(filepath, cipher, delete_original=delete_original)
+    files = glob.glob(os.path.join(path, '*'), recursive=True)
+    for filepath in files:
+        if os.path.isfile(filepath) and os.path.basename(filepath) != CRYPT_EXTENSION:
+            decrypt_file(filepath, cipher, delete_original=delete_original)
 
 
 def make_dir_writable(function, path, exception):
