@@ -38,4 +38,4 @@ python main.py
 
 
 ### Contact
-Andrey Marakulin [annndruha.github@gmail.com](mailto:annndruha.github@gmail.com)
+Feel free to report bugs and suggest improvements on [annndruha.github@gmail.com](mailto:annndruha.github@gmail.com)

@@ -1,3 +1,4 @@
+import glob
 import os
 import stat
 import argparse
@@ -184,6 +185,13 @@ def decrypt_folder_file(path: str, cipher: AESCipher, delete_original=False) -> 
     path_zipped = path.replace(CRYPT_FOLDER_EXTENSION, '.zip')
     shutil.unpack_archive(path_zipped, extract_dir=path.replace(CRYPT_FOLDER_EXTENSION, ''))
     delete_path(path_zipped)
+
+
+def decrypt_folder(path: str, cipher: AESCipher, delete_original=False) -> None:
+    files = glob.glob(os.path.join(path, '*'), recursive=True)
+    for filepath in files:
+        if os.path.isfile(filepath) and os.path.basename(filepath) != CRYPT_EXTENSION:
+            decrypt_file(filepath, cipher, delete_original=delete_original)
 
 
 def make_dir_writable(function, path, exception):
