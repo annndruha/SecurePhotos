@@ -23,6 +23,24 @@ from src.window_folderencrypt import FolderEncrypt
 from src.window_progressbar import ProgressBarDialog
 
 
+def crypt_errors(func):
+    def wrapper(*args, **kwargs):
+        self = args[0]
+        try:
+            return func(*args, **kwargs)
+        except EmptyCipher:
+            UserMessage("No key!")
+        except DecryptException:
+            UserMessage("Decrypt error, file probably broken!")
+        except FileNotFoundError:
+            return None
+        except FileExistsError as err:
+            self.progressBarDialog.reset()
+            self.progressBarDialog.done(200)
+            UserMessage(f"{err.args[0]}\nFile already exist!\nOperation aborted.")
+    return wrapper
+
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -153,7 +171,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.folderEncrypt.reset()
         self.folderEncrypt.done(200)
 
-    def _apply_folder_encrypt(self):
+    @crypt_errors
+    def _apply_folder_encrypt(self, _=None):
         encrypt_type = self.folderEncrypt.get_select()
         path = self.folderEncrypt.cur_path
         cipher = self.folderEncrypt.cipher
@@ -163,41 +182,20 @@ class MainWindow(QtWidgets.QMainWindow):
         if encrypt_type == 'files':
             self.progressBarDialog.show()
 
-        try:
-            encrypt_folder(encrypt_type, path, cipher, self.progressBarDialog, delete_original=True)
-        except FileExistsError as err:
-            self.progressBarDialog.reset()
-            self.progressBarDialog.done(200)
-            UserMessage(f"{err.args[0]}\nFile already exist!\nOperation aborted.")
-        except EmptyCipher:
-            UserMessage("No key!")
-        except DecryptException:
-            UserMessage("Decrypt error, file probably broken!")
-        except FileNotFoundError:
-            return None
+        encrypt_folder(encrypt_type, path, cipher, self.progressBarDialog, delete_original=True)
 
         self.progressBarDialog.reset()
         self.progressBarDialog.done(200)
         self.update_actions_status(self.cur_path)
         self._update_image()
 
-    def _decrypt_folder(self):
-        try:
-            if gettype(self.cur_path) == 'aes_zip':
-                decrypt_folder_file(self.cur_path, self.cipher, delete_original=True)
-            else:
-                self.progressBarDialog.show()
-                decrypt_folder(self.cur_path, self.cipher, self.progressBarDialog, delete_original=True)
-        except FileExistsError as err:
-            self.progressBarDialog.reset()
-            self.progressBarDialog.done(200)
-            UserMessage(f"{err.args[0]}\nFile already exist!\nOperation aborted.")
-        except EmptyCipher:
-            UserMessage("No key!")
-        except DecryptException:
-            UserMessage("Decrypt error, file probably broken!")
-        except FileNotFoundError:
-            return None
+    @crypt_errors
+    def _decrypt_folder(self, _=None):
+        if gettype(self.cur_path) == 'aes_zip':
+            decrypt_folder_file(self.cur_path, self.cipher, delete_original=True)
+        else:
+            self.progressBarDialog.show()
+            decrypt_folder(self.cur_path, self.cipher, self.progressBarDialog, delete_original=True)
         self.progressBarDialog.reset()
         self.progressBarDialog.done(200)
 
@@ -270,24 +268,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
             self.ui.actionEncrypt.mode = 'encrypt'
 
-    def _crypt(self):
-        try:
-            if self.ui.actionEncrypt.mode == 'folder':
-                self.folderEncrypt.set_values(self.cur_path, self.cipher)
-                self.folderEncrypt.show()
-            elif self.ui.actionEncrypt.mode == 'encrypt':
-                encrypt_file(self.cur_path, self.cipher, delete_original=True)
-            elif self.ui.actionEncrypt.mode == 'decrypt':
-                decrypt_file(self.cur_path, self.cipher, delete_original=True)
-            self._update_image()
-        except FileExistsError as err:
-            UserMessage(f"{err.args[0]}\nFile already exist!\nOperation aborted.")
-        except EmptyCipher:
-            UserMessage("No key!")
-        except DecryptException:
-            UserMessage("Decrypt error, file probably broken!")
-        except FileNotFoundError:
-            return None
+    @crypt_errors
+    def _crypt(self, _=None):
+        if self.ui.actionEncrypt.mode == 'folder':
+            self.folderEncrypt.set_values(self.cur_path, self.cipher)
+            self.folderEncrypt.show()
+        elif self.ui.actionEncrypt.mode == 'encrypt':
+            encrypt_file(self.cur_path, self.cipher, delete_original=True)
+        elif self.ui.actionEncrypt.mode == 'decrypt':
+            decrypt_file(self.cur_path, self.cipher, delete_original=True)
+        self._update_image()
 
     def _read_image(self, path):
         try:
@@ -407,3 +397,5 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.filesTree.change_root(self.root_path)
         except FileNotFoundError:
             logging.info("Last opened folder not found")
+
+
