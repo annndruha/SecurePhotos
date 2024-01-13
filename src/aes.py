@@ -4,10 +4,15 @@ import stat
 import argparse
 import logging
 import shutil
+import time
 
 from Crypto import Random
 from Crypto.Hash import SHA256
 from Crypto.Cipher import AES
+
+from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene, QProgressDialog, QApplication
+import PyQt5
+from src.window_progressbar import ProgressBarDialog
 
 CRYPT_EXTENSION = '.aes'
 CRYPT_FOLDER_EXTENSION = '.aes_zip'
@@ -132,7 +137,12 @@ def decrypt_runtime(path: str, cipher: AESCipher):
         return decrypted_text
 
 
-def encrypt_folder(encrypt_type: str, path: str, cipher: AESCipher, delete_original=False) -> None:
+def encrypt_folder(encrypt_type: str,
+                   path: str,
+                   cipher: AESCipher,
+                   progress: ProgressBarDialog,
+                   delete_original=False) -> None:
+
     match encrypt_type:
         case 'one':
             # TODO: Raise if file exist
@@ -143,9 +153,15 @@ def encrypt_folder(encrypt_type: str, path: str, cipher: AESCipher, delete_origi
 
         case 'files':
             files = glob.glob(os.path.join(path, '*'), recursive=True)
-            for filepath in files:
-                if os.path.isfile(filepath) and os.path.basename(filepath) != CRYPT_EXTENSION:
+            for i, filepath in enumerate(files):
+                progress.set_progress_bar_value(int(i * 100 / len(files)))
+                progress.set_progress_text(filepath)
+                if progress.was_canceled():
+                    break
+                if os.path.isfile(filepath) and os.path.splitext(filepath)[1] != CRYPT_EXTENSION:
                     encrypt_file(filepath, cipher, delete_original=delete_original)
+                QApplication.processEvents()
+            progress.set_progress_bar_value(100)
         case _:
             pass
 
@@ -161,11 +177,20 @@ def decrypt_folder_file(path: str, cipher: AESCipher, delete_original=False) -> 
     delete_path(path_zipped)
 
 
-def decrypt_folder(path: str, cipher: AESCipher, delete_original=False) -> None:
+def decrypt_folder(path: str,
+                   cipher: AESCipher,
+                   progress: ProgressBarDialog,
+                   delete_original=False) -> None:
     files = glob.glob(os.path.join(path, '*'), recursive=True)
-    for filepath in files:
-        if os.path.isfile(filepath) and os.path.basename(filepath) != CRYPT_EXTENSION:
+    for i, filepath in enumerate(files):
+        progress.set_progress_bar_value(int(i * 100 / len(files)))
+        progress.set_progress_text(filepath)
+        if progress.was_canceled():
+            break
+        if os.path.isfile(filepath) and os.path.splitext(filepath)[1] == CRYPT_EXTENSION:
             decrypt_file(filepath, cipher, delete_original=delete_original)
+        QApplication.processEvents()
+    progress.set_progress_bar_value(100)
 
 
 def make_dir_writable(function, path, exception):

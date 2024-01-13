@@ -6,8 +6,7 @@ import logging
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel
 from PyQt5.QtGui import QIcon, QPixmap, QImageReader
-from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene
-
+from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene, QProgressDialog
 from gui.ui_mainwindow import Ui_MainWindow
 from src.aes import (AESCipher,
                      encrypt_file, decrypt_file,
@@ -20,6 +19,7 @@ from src.window_usermessage import UserMessage
 from src.window_enterkey import EnterKeyDialog
 from src.window_fullscreen import FullScreen
 from src.window_folderencrypt import FolderEncrypt
+from src.window_progressbar import ProgressBarDialog
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -36,6 +36,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fit_in_view = True
         self.enterKeyDialog = EnterKeyDialog()
         self.folderEncrypt = FolderEncrypt()
+        self.progressBarDialog = ProgressBarDialog()
+        # self.progress = QProgressDialog(parent=self)
 
         # === Image scene ===
         self.scene = QGraphicsScene()
@@ -82,9 +84,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.folderEncrypt.ui.pushButton_cancel.clicked.connect(self._reject_folder_encrypt)
         self.folderEncrypt.ui.pushButton_apply.clicked.connect(self._apply_folder_encrypt)
 
+        self.progressBarDialog.ui.pushButton_abort.clicked.connect(self._abort_folder_crypt)
+
         self.fs.escapeSignal.connect(self._change_fullscreen)
-        self.fs.nextSignal.connect(self._next)
-        self.fs.prevSignal.connect(self._prev)
+        self.fs.nextSignal.connect(self._fullscreen_next)
+        self.fs.prevSignal.connect(self._fullscreen_prev)
 
         self.showMaximized()
         self._open_last_folder()
@@ -105,7 +109,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
             self.ui.actionFullscreen.setText('Fullscreen')
 
-    def _next(self):
+    def _fullscreen_next(self):
         cur = self.ui.filesTree.selectionModel().currentIndex()
         self.ui.filesTree.selectionModel()
         idx = cur.siblingAtRow(cur.row() + 1)
@@ -116,7 +120,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self._change_fullscreen()
 
-    def _prev(self):
+    def _fullscreen_prev(self):
         cur = self.ui.filesTree.selectionModel().currentIndex()
         idx = cur.siblingAtRow(cur.row() - 1)
         if idx.isValid() and gettype(QFileSystemModel().filePath(idx)) != 'folder':
@@ -153,8 +157,13 @@ class MainWindow(QtWidgets.QMainWindow):
         path = self.folderEncrypt.cur_path
         cipher = self.folderEncrypt.cipher
 
+        self.folderEncrypt.reset()
+        self.folderEncrypt.done(200)
+        if encrypt_type == 'files':
+            self.progressBarDialog.show()
+
         try:
-            encrypt_folder(encrypt_type, path, cipher, delete_original=True)
+            encrypt_folder(encrypt_type, path, cipher, self.progressBarDialog, delete_original=True)
         except EmptyCipher:
             UserMessage("No key!")
         except DecryptException:
@@ -162,8 +171,8 @@ class MainWindow(QtWidgets.QMainWindow):
         except FileNotFoundError:
             return None
 
-        self.folderEncrypt.reset()
-        self.folderEncrypt.done(200)
+        self.progressBarDialog.reset()
+        self.progressBarDialog.done(200)
         self.update_actions_status(self.cur_path)
         self._update_image()
 
@@ -172,13 +181,19 @@ class MainWindow(QtWidgets.QMainWindow):
             if gettype(self.cur_path) == 'aes_zip':
                 decrypt_folder_file(self.cur_path, self.cipher, delete_original=True)
             else:
-                decrypt_folder(self.cur_path, self.cipher, delete_original=True)
+                self.progressBarDialog.show()
+                decrypt_folder(self.cur_path, self.cipher, self.progressBarDialog, delete_original=True)
+                self.progressBarDialog.reset()
+                self.progressBarDialog.done(200)
         except EmptyCipher:
             UserMessage("No key!")
         except DecryptException:
             UserMessage("Decrypt error, file probably broken!")
         except FileNotFoundError:
             return None
+
+    def _abort_folder_crypt(self):
+        self.progressBarDialog.cancel()
 
     def _change_fit(self):
         self.fit_in_view = not self.fit_in_view
