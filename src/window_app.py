@@ -8,10 +8,11 @@ from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel
 from PyQt5.QtGui import QIcon, QPixmap, QImageReader
 from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene, QProgressDialog
 from gui.ui_mainwindow import Ui_MainWindow
-from src.aes import (AESCipher,
-                     encrypt_file, decrypt_file,
-                     encrypt_folder, decrypt_folder, decrypt_folder_file,
-                     decrypt_runtime, EmptyCipher, DecryptException)
+
+from src.aes import AESCipher, DecryptException
+from src.crypt_utils import (encrypt_file, decrypt_file,
+                             encrypt_folder, decrypt_folder, decrypt_folder_file,
+                             decrypt_runtime, EmptyCipher)
 from src.utils import rotate_file_right, rotate_file_left, delete_path
 from src.filestree import gettype, is_rotatable
 

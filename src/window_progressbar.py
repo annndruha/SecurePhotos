@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication
 
 from gui.ui_progressbar import Ui_ProgressBarDialog
 
@@ -12,11 +13,10 @@ class ProgressBarDialog(QtWidgets.QDialog):
         self.setWindowIcon(QIcon('images/icon.png'))
         self._canceled = False
 
-    def set_progress_bar_value(self, percent: int):
-        self.ui.progressBar.setValue(percent)
-
-    def set_progress_text(self, text):
+    def set_state(self, percent: int, text: str):
         self.ui.progress_text.setText(text)
+        self.ui.progressBar.setValue(percent)
+        QApplication.processEvents()
 
     def reset(self):
         self.ui.progressBar.setValue(0)
