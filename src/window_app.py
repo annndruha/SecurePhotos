@@ -106,6 +106,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.folderEncrypt.ui.pushButton_apply.clicked.connect(self._apply_folder_encrypt)
 
         self.progressBarDialog.ui.pushButton_abort.clicked.connect(self._abort_folder_crypt)
+        self.progressBarOneFileDialog.ui.pushButton_ok.clicked.connect(self._done_onefile)
+        self.progressBarOneFileDialog.ui.pushButton_abort.clicked.connect(self._abort_onefile)
 
         self.fs.escapeSignal.connect(self._change_fullscreen)
         self.fs.nextSignal.connect(self._fullscreen_next)
@@ -204,6 +206,15 @@ class MainWindow(QtWidgets.QMainWindow):
             decrypt_folder(self.cur_path, self.cipher, self.progressBarDialog, delete_original=True)
         self.progressBarDialog.reset()
         self.progressBarDialog.done(200)
+
+    def _done_onefile(self):
+        self.progressBarOneFileDialog.done(200)
+        self.progressBarOneFileDialog.reset()
+
+    def _abort_onefile(self):
+        self.progressBarOneFileDialog.cancel()
+        self.progressBarOneFileDialog.reset()
+        self.progressBarOneFileDialog.done(200)
 
     def _abort_folder_crypt(self):
         self.progressBarDialog.cancel()

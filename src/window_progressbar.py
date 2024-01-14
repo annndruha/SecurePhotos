@@ -19,6 +19,7 @@ class ProgressBarDialog(QtWidgets.QDialog):
         QApplication.processEvents()
 
     def reset(self):
+        self._canceled = False
         self.ui.progressBar.setValue(0)
         self.ui.progress_text.setText('Initializing...')
 
