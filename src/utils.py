@@ -33,7 +33,15 @@ def get_folder_size(path) -> float:
     for filepath in files:
         if os.path.isfile(filepath):
             res += os.path.getsize(filepath)
-    return res / (1024*1024*1024)  # B to GB
+    return res
+
+
+def size_to_text(size):
+    for unit in ("B", "K", "M", "G", "T"):
+        if size < 1024:
+            break
+        size /= 1024
+    return f"{size:.1f}{unit}"
 
 
 def delete_path(path):
