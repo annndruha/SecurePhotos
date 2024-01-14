@@ -1,6 +1,7 @@
 import os
 import stat
 import shutil
+import glob
 from PIL import Image
 
 
@@ -22,6 +23,17 @@ def make_dir_writable(function, path, exception):
     """
     os.chmod(path, stat.S_IWRITE)
     function(path)
+
+
+def get_folder_size(path) -> float:
+    if not os.path.isdir(path):
+        raise ValueError(f'Given path not a dir: {path}')
+    res = 0
+    files = glob.glob(os.path.join(path, '**'), recursive=True)
+    for filepath in files:
+        if os.path.isfile(filepath):
+            res += os.path.getsize(filepath)
+    return res / (1024*1024*1024)  # B to GB
 
 
 def delete_path(path):
