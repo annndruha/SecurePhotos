@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 
 from gui.ui_folderencrypt import Ui_FolderEncrypt
+from src.utils import get_folder_size
 
 
 class FolderEncrypt(QtWidgets.QDialog):
@@ -18,6 +19,11 @@ class FolderEncrypt(QtWidgets.QDialog):
         self.cipher = cipher
         self.ui.path.setText(cur_path)
 
+    def check_size(self):
+        size = get_folder_size(self.cur_path)
+        if size > 1024 * 1024 * 1024 * 2:  # Maximum 2GB
+            self.ui.radioButton_one.setDisabled(True)
+
     def get_select(self):
         if self.ui.radioButton_one.isChecked():
             return 'one'
@@ -29,3 +35,5 @@ class FolderEncrypt(QtWidgets.QDialog):
     def reset(self):
         self.cur_path = None
         self.cipher = None
+        self.ui.radioButton_one.setEnabled(True)
+        self.ui.radioButton_files.setChecked(True)

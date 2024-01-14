@@ -96,20 +96,17 @@ def encrypt_folder_to_one_file(
 
     progress_onefile.set_state('calc_size')
     size = get_folder_size(path)
-    if size > 1024*1024*1024*5:  # Maximum 5GB
-        # TODO: Raise exception UserMessage
-        pass
-    if progress_onefile.was_canceled():
-        return
 
     progress_onefile.set_state('archiving', size=size)
     shutil.make_archive(path, 'zip', path)
     if progress_onefile.was_canceled():
+        delete_path(path + '.zip')
         return
 
     progress_onefile.set_state('encrypting')
     encrypt_file(path + '.zip', cipher, delete_original=delete_original)
     if progress_onefile.was_canceled():
+        delete_path(path + '.zip' + CRYPT_EXTENSION)
         return
 
     progress_onefile.set_state('deleting')

@@ -171,7 +171,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_image()
 
     def _reject_folder_encrypt(self):
-        print('reject')
         self.folderEncrypt.reset()
         self.folderEncrypt.done(200)
 
@@ -192,6 +191,9 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             raise ValueError(f'Unknown encrypt type: {encrypt_type}')
 
+        if self.progressBarOneFileDialog.was_canceled():
+            self.progressBarOneFileDialog.reset()
+            self.progressBarOneFileDialog.done(200)
         self.progressBarDialog.reset()
         self.progressBarDialog.done(200)
         self.update_actions_status(self.cur_path)
@@ -213,8 +215,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _abort_onefile(self):
         self.progressBarOneFileDialog.cancel()
-        self.progressBarOneFileDialog.reset()
-        self.progressBarOneFileDialog.done(200)
 
     def _abort_folder_crypt(self):
         self.progressBarDialog.cancel()
@@ -289,6 +289,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _crypt(self, _=None):
         if self.ui.actionEncrypt.mode == 'folder':
             self.folderEncrypt.set_values(self.cur_path, self.cipher)
+            self.folderEncrypt.check_size()
             self.folderEncrypt.show()
         elif self.ui.actionEncrypt.mode == 'encrypt':
             encrypt_file(self.cur_path, self.cipher, delete_original=True)
