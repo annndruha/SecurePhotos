@@ -6,12 +6,13 @@ import logging
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel
 from PyQt5.QtGui import QIcon, QPixmap, QImageReader
-from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene, QProgressDialog
+from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene
 from gui.ui_mainwindow import Ui_MainWindow
 
 from src.aes import AESCipher, DecryptException
 from src.crypt_utils import (encrypt_file, decrypt_file,
-                             encrypt_folder, decrypt_folder, decrypt_folder_file,
+                             encrypt_folder_each_file, encrypt_folder_to_one_file,
+                             decrypt_folder, decrypt_folder_file,
                              decrypt_runtime, EmptyCipher)
 from src.utils import rotate_file_right, rotate_file_left, delete_path
 from src.filestree import gettype, is_rotatable
@@ -21,6 +22,7 @@ from src.window_enterkey import EnterKeyDialog
 from src.window_fullscreen import FullScreen
 from src.window_folderencrypt import FolderEncrypt
 from src.window_progressbar import ProgressBarDialog
+from src.window_progressbar_onefile import ProgressBarOneFileDialog
 
 
 def crypt_errors(func):
@@ -56,7 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.enterKeyDialog = EnterKeyDialog()
         self.folderEncrypt = FolderEncrypt()
         self.progressBarDialog = ProgressBarDialog()
-        # self.progress = QProgressDialog(parent=self)
+        self.progressBarOneFileDialog = ProgressBarOneFileDialog()
 
         # === Image scene ===
         self.scene = QGraphicsScene()
@@ -181,8 +183,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.folderEncrypt.done(200)
         if encrypt_type == 'files':
             self.progressBarDialog.show()
-
-        encrypt_folder(encrypt_type, path, cipher, self.progressBarDialog, delete_original=True)
+            encrypt_folder_each_file(path, cipher, self.progressBarDialog, delete_original=True)
+        elif encrypt_type == 'one':
+            self.progressBarOneFileDialog.show()
+            encrypt_folder_to_one_file(path, cipher, self.progressBarOneFileDialog, delete_original=True)
+        else:
+            raise ValueError(f'Unknown encrypt type: {encrypt_type}')
 
         self.progressBarDialog.reset()
         self.progressBarDialog.done(200)
@@ -397,5 +403,3 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.filesTree.change_root(self.root_path)
         except FileNotFoundError:
             logging.info("Last opened folder not found")
-
-

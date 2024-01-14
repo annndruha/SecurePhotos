@@ -7,6 +7,8 @@ import shutil
 
 from src.aes import AESCipher
 from src.window_progressbar import ProgressBarDialog
+from src.window_progressbar_onefile import ProgressBarOneFileDialog
+from src.utils import get_folder_size
 
 CRYPT_EXTENSION = '.aes'
 CRYPT_FOLDER_EXTENSION = '.aes_zip'
@@ -63,36 +65,52 @@ def decrypt_runtime(path: str, cipher: AESCipher):
         return decrypted_text
 
 
-def encrypt_folder(encrypt_type: str,
-                   path: str,
-                   cipher: AESCipher,
-                   progress: ProgressBarDialog,
-                   delete_original=False) -> None:
-    match encrypt_type:
-        case 'one':
-            if os.path.exists(path + '.zip'):
-                raise FileExistsError(path + '.zip')
-            if os.path.exists(path + '.zip' + CRYPT_EXTENSION):
-                raise FileExistsError(path + '.zip' + CRYPT_EXTENSION)
-            if os.path.exists(path + CRYPT_FOLDER_EXTENSION):
-                raise FileExistsError(path + CRYPT_FOLDER_EXTENSION)
+def encrypt_folder_each_file(
+        path: str,
+        cipher: AESCipher,
+        progress: ProgressBarDialog,
+        delete_original=False) -> None:
 
-            shutil.make_archive(path, 'zip', path)
-            encrypt_file(path + '.zip', cipher, delete_original=delete_original)
-            os.rename(path + '.zip' + CRYPT_EXTENSION, path + CRYPT_FOLDER_EXTENSION)
-            delete_path(path)
+    files = glob.glob(os.path.join(path, '**'), recursive=True)
+    for i, filepath in enumerate(files):
+        progress.set_state(int(i * 100 / len(files)), filepath)
+        if progress.was_canceled():
+            break
+        if os.path.isfile(filepath) and os.path.splitext(filepath)[1] != CRYPT_EXTENSION:
+            encrypt_file(filepath, cipher, delete_original=delete_original)
+    progress.set_state(100, 'Done')
 
-        case 'files':
-            files = glob.glob(os.path.join(path, '*'), recursive=True)
-            for i, filepath in enumerate(files):
-                progress.set_state(int(i * 100 / len(files)), filepath)
-                if progress.was_canceled():
-                    break
-                if os.path.isfile(filepath) and os.path.splitext(filepath)[1] != CRYPT_EXTENSION:
-                    encrypt_file(filepath, cipher, delete_original=delete_original)
-            progress.set_state(100, 'Done')
-        case _:
-            pass
+
+def encrypt_folder_to_one_file(
+                               path: str,
+                               cipher: AESCipher,
+                               progress_onefile: ProgressBarOneFileDialog,
+                               delete_original=False) -> None:
+
+    if os.path.exists(path + '.zip'):
+        raise FileExistsError(path + '.zip')
+    if os.path.exists(path + '.zip' + CRYPT_EXTENSION):
+        raise FileExistsError(path + '.zip' + CRYPT_EXTENSION)
+    if os.path.exists(path + CRYPT_FOLDER_EXTENSION):
+        raise FileExistsError(path + CRYPT_FOLDER_EXTENSION)
+
+    progress_onefile.set_state('calc_size')
+    size_in_gb = get_folder_size(path)
+    if size_in_gb > 2.0:
+        # TODO: Raise exception UserMessage
+        pass
+
+    progress_onefile.set_state('archiving')
+    shutil.make_archive(path, 'zip', path)
+
+    progress_onefile.set_state('encrypting')
+    encrypt_file(path + '.zip', cipher, delete_original=delete_original)
+
+    progress_onefile.set_state('deleting')
+    os.rename(path + '.zip' + CRYPT_EXTENSION, path + CRYPT_FOLDER_EXTENSION)
+    delete_path(path)
+
+    progress_onefile.set_state('done')
 
 
 def decrypt_folder_file(path: str, cipher: AESCipher, delete_original=False) -> None:
@@ -117,7 +135,7 @@ def decrypt_folder(path: str,
                    cipher: AESCipher,
                    progress: ProgressBarDialog,
                    delete_original=False) -> None:
-    files = glob.glob(os.path.join(path, '*'), recursive=True)
+    files = glob.glob(os.path.join(path, '**'), recursive=True)
     for i, filepath in enumerate(files):
         progress.set_state(int(i * 100 / len(files)), filepath)
         if progress.was_canceled():
