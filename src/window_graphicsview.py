@@ -49,6 +49,7 @@ class FullScreen(ZoomQGraphicsView):
 
     def update_image(self):
         border = 1
+        screen_size = QtWidgets.QDesktopWidget().screenGeometry(-1)
         self.move(-border, -border)
-        self.resize(QSize(1920 + 2*border, 1080 + 2*border))
-        self.fitInView(self.scene().itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
+        self.resize(QSize(screen_size.width() + 2*border, screen_size.height() + 2*border))
+        self.fitInView(self.scene().itemsBoundingRect(), Qt.KeepAspectRatio)
