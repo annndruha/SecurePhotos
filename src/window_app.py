@@ -19,11 +19,10 @@ from src.filestree import gettype, is_rotatable
 
 from src.window_usermessage import UserMessage
 from src.window_enterkey import EnterKeyDialog
-from src.window_fullscreen import FullScreen
 from src.window_folderencrypt import FolderEncrypt
 from src.window_progressbar import ProgressBarDialog
 from src.window_progressbar_onefile import ProgressBarOneFileDialog
-from src.window_graphicsview import ZoomQGraphicsView
+from src.window_graphicsview import FullScreen, ZoomQGraphicsView
 
 
 def crypt_errors(func):
@@ -126,6 +125,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # ===SLOTS===
     def _change_fullscreen(self):
         self.full_screen = not self.full_screen
+        print(self.full_screen)
         if self.full_screen:
             self.fs.show()
             self.fs.showFullScreen()
@@ -133,7 +133,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.actionFullscreen.setIcon(QIcon('images/icons/close_full.svg'))
             self.ui.actionFullscreen.setText('Window')
         else:
-            self.fs.showMinimized()
+            self.fs.showNormal()
             self.fs.close()
             self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
             self.ui.actionFullscreen.setText('Fullscreen')
