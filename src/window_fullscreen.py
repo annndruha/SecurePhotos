@@ -2,8 +2,10 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon, QBrush, QColor
 
+from src.window_graphicsview import ZoomQGraphicsView
 
-class FullScreen(QtWidgets.QGraphicsView):
+
+class FullScreen(ZoomQGraphicsView):
     escapeSignal = QtCore.pyqtSignal()
     nextSignal = QtCore.pyqtSignal()
     prevSignal = QtCore.pyqtSignal()

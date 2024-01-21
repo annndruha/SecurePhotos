@@ -23,6 +23,7 @@ from src.window_fullscreen import FullScreen
 from src.window_folderencrypt import FolderEncrypt
 from src.window_progressbar import ProgressBarDialog
 from src.window_progressbar_onefile import ProgressBarOneFileDialog
+from src.window_graphicsview import ZoomQGraphicsView
 
 
 def crypt_errors(func):
@@ -62,6 +63,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # === Image scene ===
         self.scene = QGraphicsScene()
+
+        self.ui.graphicsView = ZoomQGraphicsView(self.ui.widget)
+        self.ui.graphicsView.setObjectName("graphicsView")
+        self.ui.horizontalLayout.addWidget(self.ui.graphicsView)
+
         self.ui.graphicsView.setScene(self.scene)
         self.fs = FullScreen()
         self.fs.setScene(self.scene)
