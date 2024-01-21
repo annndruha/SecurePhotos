@@ -118,6 +118,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fs.nextSignal.connect(self._fullscreen_next)
         self.fs.prevSignal.connect(self._fullscreen_prev)
 
+        self.ui.graphicsView.zoomedSignal.connect(self._update_fit_status)
+
         self.showMaximized()
         self._open_last_folder()
         self.update_actions_status('sample.path')
@@ -125,7 +127,6 @@ class MainWindow(QtWidgets.QMainWindow):
     # ===SLOTS===
     def _change_fullscreen(self):
         self.full_screen = not self.full_screen
-        print(self.full_screen)
         if self.full_screen:
             self.fs.show()
             self.fs.showFullScreen()
@@ -228,10 +229,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def _change_fit(self):
         self.fit_in_view = not self.fit_in_view
         self._update_image(lazily=False)
+        self.ui.graphicsView.reset_zoomed()
+        self._update_fit_status()
 
     def _update_fit_status(self):
         nothing_to_fit = self.ui.graphicsView.sceneRect().width() > self.ui.graphicsView.rect().width() or \
                          self.ui.graphicsView.sceneRect().height() > self.ui.graphicsView.rect().height()
+        if self.ui.graphicsView.zoomed():
+            nothing_to_fit = False
         if gettype(self.cur_path) not in ['image', 'aes']:
             nothing_to_fit = True
         if self.fit_in_view and not nothing_to_fit:

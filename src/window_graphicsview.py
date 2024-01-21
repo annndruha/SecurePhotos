@@ -5,12 +5,21 @@ from PyQt5.QtGui import QIcon, QBrush, QColor
 
 
 class ZoomQGraphicsView(QtWidgets.QGraphicsView):
+    zoomedSignal = QtCore.pyqtSignal()
+
     def __init__(self, parent=None):
         super(ZoomQGraphicsView, self).__init__(parent)
         self.verticalScrollBar().hide()
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+        self.__zoomed = False
+
+    def zoomed(self):
+        return self.__zoomed
+
+    def reset_zoomed(self):
+        self.__zoomed = False
 
     def wheelEvent(self, event):
         zoom_in_factor = 1.25
@@ -26,6 +35,8 @@ class ZoomQGraphicsView(QtWidgets.QGraphicsView):
         new_pos = self.mapToScene(event.pos())
         delta = new_pos - old_pos
         self.translate(delta.x(), delta.y())
+        self.__zoomed = True
+        self.zoomedSignal.emit()
 
 
 class FullScreen(ZoomQGraphicsView):
