@@ -2,9 +2,9 @@ name: Windows Build by Pyinstaller
 
 on:
   push:
-    branches: [ dev ]
-  pull_request:
-    branches: [ dev ]
+    branches: [ 'main' ]
+    tags:
+      - 'v*'
 
 jobs:
   build:
