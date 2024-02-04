@@ -7,7 +7,9 @@
 SecurePhotos - Gallery for photos with encryption for your photos or any files. Also, it's faster than windows default gallery!
 
 ### Screenshots:
-![image](https://user-images.githubusercontent.com/51162917/180698988-6f879719-0c9d-436e-834a-a3f0550e4a53.png)
+
+![image](https://github.com/annndruha/SecurePhotos/assets/51162917/5fb7e01c-fed6-4ab7-8777-9eace9cf5ea8)
+
 
 ### Features
 
