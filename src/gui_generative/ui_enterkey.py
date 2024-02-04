@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'enterkey.ui'
+# Form implementation generated from reading ui file 'qt_designer\enterkey.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -18,9 +18,6 @@ class Ui_EnterKey(object):
         font = QtGui.QFont()
         font.setPointSize(10)
         EnterKey.setFont(font)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../images/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        EnterKey.setWindowIcon(icon)
         EnterKey.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(EnterKey)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -32,6 +29,7 @@ class Ui_EnterKey(object):
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
+        font.setWeight(75)
         self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
@@ -66,6 +64,7 @@ class Ui_EnterKey(object):
         font.setPointSize(14)
         font.setBold(True)
         font.setUnderline(False)
+        font.setWeight(75)
         font.setStrikeOut(False)
         self.hash_field.setFont(font)
         self.hash_field.setObjectName("hash_field")

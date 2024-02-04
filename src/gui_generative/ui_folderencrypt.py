@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'folderencrypt.ui'
+# Form implementation generated from reading ui file 'qt_designer\folderencrypt.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #

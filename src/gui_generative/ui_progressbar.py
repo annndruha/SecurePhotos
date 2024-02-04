@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'progressbar.ui'
+# Form implementation generated from reading ui file 'qt_designer\progressbar.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -14,26 +14,26 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ProgressBarDialog(object):
     def setupUi(self, ProgressBarDialog):
         ProgressBarDialog.setObjectName("ProgressBarDialog")
-        ProgressBarDialog.resize(500, 112)
+        ProgressBarDialog.resize(700, 112)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ProgressBarDialog.sizePolicy().hasHeightForWidth())
         ProgressBarDialog.setSizePolicy(sizePolicy)
         ProgressBarDialog.setMinimumSize(QtCore.QSize(500, 112))
-        ProgressBarDialog.setMaximumSize(QtCore.QSize(500, 112))
+        ProgressBarDialog.setMaximumSize(QtCore.QSize(700, 112))
         self.gridLayout = QtWidgets.QGridLayout(ProgressBarDialog)
         self.gridLayout.setObjectName("gridLayout")
+        self.progressBar = QtWidgets.QProgressBar(ProgressBarDialog)
+        self.progressBar.setProperty("value", 0)
+        self.progressBar.setObjectName("progressBar")
+        self.gridLayout.addWidget(self.progressBar, 1, 0, 1, 1)
         self.pushButton_abort = QtWidgets.QDialogButtonBox(ProgressBarDialog)
         self.pushButton_abort.setOrientation(QtCore.Qt.Horizontal)
         self.pushButton_abort.setStandardButtons(QtWidgets.QDialogButtonBox.Abort)
         self.pushButton_abort.setCenterButtons(True)
         self.pushButton_abort.setObjectName("pushButton_abort")
         self.gridLayout.addWidget(self.pushButton_abort, 2, 0, 1, 1)
-        self.progressBar = QtWidgets.QProgressBar(ProgressBarDialog)
-        self.progressBar.setProperty("value", 0)
-        self.progressBar.setObjectName("progressBar")
-        self.gridLayout.addWidget(self.progressBar, 1, 0, 1, 1)
         self.progress_text = QtWidgets.QLabel(ProgressBarDialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)

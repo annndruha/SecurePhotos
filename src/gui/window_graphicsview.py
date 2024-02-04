@@ -3,6 +3,8 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon, QBrush, QColor
 
+from src.utils.utils import resource_path as rp
+
 
 class ZoomQGraphicsView(QtWidgets.QGraphicsView):
     zoomedSignal = QtCore.pyqtSignal()
@@ -48,7 +50,7 @@ class FullScreen(ZoomQGraphicsView):
         super(FullScreen, self).__init__()
         self.setWindowFlags(Qt.CustomizeWindowHint | Qt.FramelessWindowHint)
         self.setBackgroundBrush(QBrush(QColor('black')))
-        self.setWindowIcon(QIcon('images/icon.png'))
+        self.setWindowIcon(QIcon(rp('src/img/icon.svg')))
 
     def keyPressEvent(self, event):
         if event.key() == 16777216:

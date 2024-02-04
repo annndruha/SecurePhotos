@@ -3,23 +3,16 @@
 I am use the simplest way to make gui - QtCreator.
 
 That's mean that `.ui` files with gui compile to `.py` file.
-It's also means that not relevant to edit `.py` files in gui, and files will have many lints errors.
+It's also means that not relevant to edit `.py` files in `gui_generative`, and py-files will have many linter errors.
 
 **There are no linter in this folder. Don't add not-gui files here!**
 
-### After create venv:
-* Activate venv (from this folder)
-    ```commandline
-    cd ../venv/Scripts
-    activate
-    cd ../../gui
-    ```
+* Install `pyuic5`
 * Run `ui_to_py.bat` or `ui_to_py.sh`
-
 
 ### Second way
 
-Without generation a py files, change lines from this:
+Without generation a py files, possible to load raw `.ui` files. Change lines in all gui from this:
 ```
 self.ui = Ui_MainWindow()
 self.ui.setupUi(self)

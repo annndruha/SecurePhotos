@@ -1,8 +1,9 @@
 import os
 
-from PyQt5 import QtGui
 from PyQt5.QtCore import QFileInfo, Qt
-from PyQt5.QtWidgets import QTreeView, QFileSystemModel, QFileIconProvider
+from PyQt5.QtWidgets import QWidget, QTreeView, QFileSystemModel, QFileIconProvider, QVBoxLayout
+
+from src.gui.icons import SPIcon
 
 SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xpm', 'svg'],
                  'aes': ['aes'],
@@ -14,7 +15,10 @@ SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xp
 
 
 def is_rotatable(fullpath):
-    ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
+    try:
+        ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
+    except Exception:
+        return False
     if ext in ['bmp', 'jpg', 'jpeg', 'png']:
         return True
     return False
@@ -36,20 +40,17 @@ class IconProvider(QFileIconProvider):
     def icon(self, parameter):
         if isinstance(parameter, QFileInfo):
             if parameter.isDir():
-                icon = QtGui.QIcon("images/icons/folder.svg")
-                # noinspection PyUnresolvedReferences
-                icon.addFile("images/icons/folder_open.svg", state=icon.On)
-                return icon
+                return self.sp_icon.folder
             if gettype(parameter.absoluteFilePath()) == 'aes':
-                return QtGui.QIcon("images/icons/lock.svg")
+                return self.sp_icon.lock
             if gettype(parameter.absoluteFilePath()) == 'aes_zip':
-                return QtGui.QIcon("images/icons/folder_lock.svg")
+                return self.sp_icon.folder_lock
             if gettype(parameter.absoluteFilePath()) == 'image':
-                return QtGui.QIcon("images/icons/image.svg")
+                return self.sp_icon.image
             if gettype(parameter.absoluteFilePath()) == 'video':
-                return QtGui.QIcon("images/icons/movie.svg")
+                return self.sp_icon.movie
             if gettype(parameter.absoluteFilePath()) == 'zip':
-                return QtGui.QIcon("images/icons/file_zip.svg")
+                return self.sp_icon.file_zip
         return super().icon(parameter)
 
 
@@ -68,11 +69,21 @@ class ProxyQFileSystemModel(QFileSystemModel):
         self.column_name = name
 
 
+class TitleBarWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 15, 0, 0)
+        self.setLayout(layout)
+
+
 class FilesTree(QTreeView):
     def __init__(self, parent):
         super().__init__(parent)
         self.file_model = ProxyQFileSystemModel()
-        self.file_model.setIconProvider(IconProvider())
+        icon_provide = IconProvider()
+        icon_provide.sp_icon = SPIcon()
+        self.file_model.setIconProvider(icon_provide)
         self.setModel(self.file_model)
         self.hideColumn(1)
         self.hideColumn(2)
@@ -96,5 +107,4 @@ class FilesTree(QTreeView):
         # self.selectionModel().currentIndex())
         # idx = self.selectionModel().currentIndex()
         # flag = self.selectionModel().SelectionFlag.Select
-        # print(idx)
         # self.selectionModel().setCurrentIndex(idx, flag)

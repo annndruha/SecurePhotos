@@ -12,10 +12,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
+
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: "3.11"
 
     - name: Install dependencies
       run: |
@@ -24,4 +25,4 @@ jobs:
 
     - name: Lint
       run: |
-        flake8 --exclude=gui/* --max-line-length 120 .
+        flake8 --exclude=src/gui_generative/* --max-line-length 120 .

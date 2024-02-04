@@ -5,10 +5,10 @@ import argparse
 import logging
 import shutil
 
-from src.aes import AESCipher
-from src.window_progressbar import ProgressBarDialog
-from src.window_progressbar_onefile import ProgressBarOneFileDialog
-from src.utils import get_folder_size
+from src.utils.aes import AESCipher
+from src.utils.utils import get_folder_size
+from src.gui.window_progressbar import ProgressBarDialog
+from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
 
 CRYPT_EXTENSION = '.aes'
 CRYPT_FOLDER_EXTENSION = '.aes_zip'

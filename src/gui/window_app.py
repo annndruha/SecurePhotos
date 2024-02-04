@@ -1,28 +1,45 @@
 import os
 import ctypes
 import platform
-import logging
+import webbrowser
 
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel
-from PyQt5.QtGui import QIcon, QPixmap, QImageReader
-from PyQt5.QtWidgets import QFileSystemModel, QGraphicsScene
-from gui.ui_mainwindow import Ui_MainWindow
+from PyQt5 import QtCore
+from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel, QSize
+from PyQt5.QtGui import QPixmap, QImageReader
+from PyQt5.QtWidgets import (QApplication,
+                             QMainWindow,
+                             QFileSystemModel,
+                             QGraphicsScene,
+                             QFileDialog,
+                             QMenu,
+                             QDockWidget
+                             )
 
-from src.aes import AESCipher, DecryptException
-from src.crypt_utils import (encrypt_file, decrypt_file,
-                             encrypt_folder_each_file, encrypt_folder_to_one_file,
-                             decrypt_folder, decrypt_folder_file,
-                             decrypt_runtime, EmptyCipher)
-from src.utils import rotate_file_right, rotate_file_left, delete_path
-from src.filestree import gettype, is_rotatable
+from src.gui_generative.ui_mainwindow import Ui_MainWindow
 
-from src.window_usermessage import UserMessage
-from src.window_enterkey import EnterKeyDialog
-from src.window_folderencrypt import FolderEncrypt
-from src.window_progressbar import ProgressBarDialog
-from src.window_progressbar_onefile import ProgressBarOneFileDialog
-from src.window_graphicsview import FullScreen, ZoomQGraphicsView
+from src.gui.view_filestree import gettype, is_rotatable, TitleBarWidget
+from src.gui.window_usermessage import UserMessage
+from src.gui.window_enterkey import EnterKeyDialog
+from src.gui.window_folderencrypt import FolderEncrypt
+from src.gui.window_progressbar import ProgressBarDialog
+from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
+from src.gui.window_graphicsview import FullScreen, ZoomQGraphicsView
+
+from src.utils.aes import AESCipher, DecryptException
+from src.utils.crypt_utils import (encrypt_file,
+                                   decrypt_file,
+                                   encrypt_folder_each_file,
+                                   encrypt_folder_to_one_file,
+                                   decrypt_folder,
+                                   decrypt_folder_file,
+                                   decrypt_runtime,
+                                   EmptyCipher)
+from src.utils.utils import (rotate_file_right,
+                             rotate_file_left,
+                             delete_path,
+                             config_get_last_path,
+                             config_set_last_path)
+from src.gui.icons import SPIcon, SPPlaceholder
 
 
 def crypt_errors(func):
@@ -40,15 +57,17 @@ def crypt_errors(func):
             self.progressBarDialog.reset()
             self.progressBarDialog.done(200)
             UserMessage(f"{err.args[0]}\nFile already exist!\nOperation aborted.")
+
     return wrapper
 
 
-class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+class MainWindow(QMainWindow):
+    def __init__(self, version):
         super(MainWindow, self).__init__()
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.setWindowTitle(f"SecurePhotos v{version}")
 
         self.image = None
         self.cipher = None
@@ -62,33 +81,46 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # === Image scene ===
         self.scene = QGraphicsScene()
-
         self.ui.graphicsView = ZoomQGraphicsView(self.ui.widget)
         self.ui.graphicsView.setObjectName("graphicsView")
+        self.ui.horizontalLayout.setContentsMargins(5, 15, 5, 5)
         self.ui.horizontalLayout.addWidget(self.ui.graphicsView)
 
         self.ui.graphicsView.setScene(self.scene)
         self.fs = FullScreen()
         self.fs.setScene(self.scene)
 
+        # === IMAGE RESOURCES ===
+        self.sp_icon = SPIcon()
+        self.sp_placeholder = SPPlaceholder()
+
         # === APP ICON ===
         if platform.uname()[0] == "Windows":
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('annndruha.SecurePhotos')
-        self.setWindowIcon(QIcon('images/icon.png'))
+        self.setWindowIcon(self.sp_icon.favicon)
 
         # === TOOLBAR ICONS ===
-        self.ui.actionOpenFolder.setIcon(QIcon('images/icons/folder_open.svg'))
-        self.ui.actionRotateLeft.setIcon(QIcon('images/icons/rotate_left.svg'))
-        self.ui.actionRotateRight.setIcon(QIcon('images/icons/rotate_right.svg'))
-        self.ui.actionDelete.setIcon(QIcon('images/icons/delete.svg'))
-        self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_none.svg'))
-        self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
-        self.ui.actionEnterKey.setIcon(QIcon('images/icons/key.svg'))
-        self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
-        self.ui.actionFoldeDecrypt.setIcon(QIcon('images/icons/folder_lock_open.svg'))
+        self.ui.actionOpenFolder.setIcon(self.sp_icon.folder_open)
+        self.ui.actionRotateLeft.setIcon(self.sp_icon.rotate_left)
+        self.ui.actionRotateRight.setIcon(self.sp_icon.rotate_right)
+        self.ui.actionDelete.setIcon(self.sp_icon.delete)
+        self.ui.actionChangeFit.setIcon(self.sp_icon.zoom_none)
+        self.ui.actionFullscreen.setIcon(self.sp_icon.open_full)
+        self.ui.actionEnterKey.setIcon(self.sp_icon.key)
+        self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
+        self.ui.actionFoldeDecrypt.setIcon(self.sp_icon.folder_lock_open)
+
+        docked_files_tree = QDockWidget()
+        docked_files_tree.setWidget(self.ui.filesTree)
+        docked_files_tree.setTitleBarWidget(TitleBarWidget())
+        docked_files_tree.setContentsMargins(5, 0, 5, 5)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, docked_files_tree)
 
         # ===CONNECTS===
         self.ui.filesTree.selectionModel().currentChanged.connect(self._select_item)
+        self.ui.filesTree.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy(3))
+        self.ui.filesTree.customContextMenuRequested.connect(self._open_files_tree_context)
+
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
         self.ui.actionRotateLeft.triggered.connect(self._rotate_left)
         self.ui.actionRotateRight.triggered.connect(self._rotate_right)
@@ -127,12 +159,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fs.show()
             self.fs.showFullScreen()
             self.fs.update_image()
-            self.ui.actionFullscreen.setIcon(QIcon('images/icons/close_full.svg'))
+            self.ui.actionFullscreen.setIcon(self.sp_icon.close_full)
             self.ui.actionFullscreen.setText('Window')
         else:
             self.fs.showNormal()
             self.fs.close()
-            self.ui.actionFullscreen.setIcon(QIcon('images/icons/open_full.svg'))
+            self.ui.actionFullscreen.setIcon(self.sp_icon.open_full)
             self.ui.actionFullscreen.setText('Fullscreen')
 
     def _fullscreen_next(self):
@@ -154,6 +186,39 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fs.update_image()
         else:
             self._change_fullscreen()
+
+    def _open_files_tree_context(self, position):
+        cur = self.ui.filesTree.selectionModel().currentIndex()
+        idx = cur.siblingAtRow(cur.row())
+        path = QFileSystemModel().filePath(idx)
+
+        menu = QMenu()
+        menu.addAction(self.sp_icon.filetree_menu_copy, "Copy fullpath")
+        if gettype(path) != 'folder':
+            menu.addAction(self.sp_icon.filetree_menu_copy, "Copy filename")
+            menu.addSeparator()
+            menu.addAction(self.sp_icon.filetree_menu_open, "Show in explorer")
+            menu.addAction(self.sp_icon.filetree_menu_open, "Open in associated app")
+        else:
+            menu.addSeparator()
+            menu.addAction(self.sp_icon.filetree_menu_open, "Show in explorer")
+            menu.addAction(self.sp_icon.filetree_menu_open, "Open in explorer")
+
+        action = menu.exec_(self.ui.filesTree.viewport().mapToGlobal(position))
+        if action is None:
+            return
+        if action.text() == "Copy fullpath":
+            cb = QApplication.clipboard()
+            cb.setText(QFileSystemModel().filePath(idx), mode=cb.Clipboard)
+        elif action.text() == "Copy filename":
+            cb = QApplication.clipboard()
+            cb.setText(os.path.basename(QFileSystemModel().filePath(idx)), mode=cb.Clipboard)
+        elif action.text() == "Show in explorer":
+            webbrowser.open(os.path.split(path)[0], new=2)
+        elif action.text() == "Open in associated app":
+            webbrowser.open(path, new=2)
+        elif action.text() == "Open in explorer":
+            webbrowser.open(path, new=2)
 
     def _open_enter_key(self):
         if self.cipher is not None:
@@ -238,14 +303,14 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.fit_in_view and not nothing_to_fit:
             self.ui.actionChangeFit.setEnabled(True)
             self.ui.actionChangeFit.setText('Fit view')
-            self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_in.svg'))
+            self.ui.actionChangeFit.setIcon(self.sp_icon.zoom_in)
         elif not self.fit_in_view and not nothing_to_fit:
             self.ui.actionChangeFit.setEnabled(True)
             self.ui.actionChangeFit.setText('Fit view')
-            self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_out.svg'))
+            self.ui.actionChangeFit.setIcon(self.sp_icon.zoom_out)
         else:
             self.ui.actionChangeFit.setText("Fit view")
-            self.ui.actionChangeFit.setIcon(QIcon('images/icons/zoom_none.svg'))
+            self.ui.actionChangeFit.setIcon(self.sp_icon.zoom_none)
             self.ui.actionChangeFit.setDisabled(True)
 
     def update_actions_status(self, path):
@@ -263,19 +328,19 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.cipher is None:
             self.ui.actionEncrypt.setText('Need key')
             self.ui.actionEncrypt.setDisabled(True)
-            self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
+            self.ui.actionEncrypt.setIcon(self.sp_icon.not_locked)
             self.ui.actionEncrypt.mode = 'disable'
             return
 
         if gettype(path) is None:
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setDisabled(True)
-            self.ui.actionEncrypt.setIcon(QIcon('images/icons/not_locked.svg'))
+            self.ui.actionEncrypt.setIcon(self.sp_icon.not_locked)
             self.ui.actionEncrypt.mode = 'disable'
         elif gettype(path) == 'folder':
             self.ui.actionEncrypt.setText('Encrypt folder')
             self.ui.actionEncrypt.setEnabled(True)
-            self.ui.actionEncrypt.setIcon(QIcon('images/icons/folder_lock.svg'))
+            self.ui.actionEncrypt.setIcon(self.sp_icon.folder_lock)
             self.ui.actionEncrypt.mode = 'folder'
             self.ui.actionFoldeDecrypt.setVisible(True)
         elif gettype(path) == 'aes_zip':
@@ -284,12 +349,12 @@ class MainWindow(QtWidgets.QMainWindow):
         elif gettype(path) == 'aes':
             self.ui.actionEncrypt.setText('Decrypt on disk')
             self.ui.actionEncrypt.setEnabled(True)
-            self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock_open.svg'))
+            self.ui.actionEncrypt.setIcon(self.sp_icon.lock_open)
             self.ui.actionEncrypt.mode = 'decrypt'
         else:
             self.ui.actionEncrypt.setText('Encrypt on disk')
             self.ui.actionEncrypt.setEnabled(True)
-            self.ui.actionEncrypt.setIcon(QIcon('images/icons/lock.svg'))
+            self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
             self.ui.actionEncrypt.mode = 'encrypt'
 
     @crypt_errors
@@ -307,14 +372,18 @@ class MainWindow(QtWidgets.QMainWindow):
     def _read_image(self, path):
         try:
             img_reader = QImageReader(path)
+            if img_reader.format() == 'svg':
+                # TODO: Fix cut svg images. May by not here
+                sz = img_reader.size()
+                hw_ratio = sz.height() / sz.width()
+                widget_width = self.ui.graphicsView.frameSize().width()
+                img_reader.setScaledSize(QSize(widget_width, int(widget_width * hw_ratio)))
             img_reader.setAutoTransform(True)
             image = img_reader.read()
             if img_reader.error() != 0:
                 self.ui.actionRotateRight.setDisabled(True)
                 self.ui.actionRotateLeft.setDisabled(True)
-                img_reader = QImageReader('images/broken_image.png')
-                image = img_reader.read()
-                return QPixmap.fromImage(image)
+                return self.sp_placeholder.broken_image
             else:
                 return QPixmap.fromImage(image)
         except FileNotFoundError:
@@ -331,16 +400,13 @@ class MainWindow(QtWidgets.QMainWindow):
             img_reader.setAutoTransform(True)
             qimage = img_reader.read()
             if img_reader.error() != 0:
-                img_reader = QImageReader('images/encrypted_with_another_key.png')
-                return QPixmap.fromImage(img_reader.read())
+                return self.sp_placeholder.try_another_key
             else:
                 return QPixmap.fromImage(qimage)
         except EmptyCipher:
-            img_reader = QImageReader('images/encrypted_placeholder.png')
-            return QPixmap.fromImage(img_reader.read())
+            return self.sp_placeholder.encrypted
         except DecryptException:
-            img_reader = QImageReader('images/encrypted_with_another_key.png')
-            return QPixmap.fromImage(img_reader.read())
+            return self.sp_placeholder.try_another_key
         except FileNotFoundError:
             return None
 
@@ -351,11 +417,9 @@ class MainWindow(QtWidgets.QMainWindow):
             elif gettype(self.cur_path) == 'aes':
                 self.image = self._runtime_decrypt(self.cur_path)
             elif gettype(self.cur_path) == 'aes_zip':
-                img_reader = QImageReader('images/encrypted_placeholder.png')
-                self.image = QPixmap.fromImage(img_reader.read())
+                self.image = self.sp_placeholder.encrypted
             elif gettype(self.cur_path) == 'video':
-                img_reader = QImageReader('images/video_placeholder.png')
-                self.image = QPixmap.fromImage(img_reader.read())
+                self.image = self.sp_placeholder.video
             else:
                 self.image = None
 
@@ -370,8 +434,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.graphicsView.resetTransform()
             self._update_fit_status()
         else:
-            img_reader = QImageReader('images/nothing_to_show.png')
-            image = QPixmap.fromImage(img_reader.read())
+            image = self.sp_placeholder.nothing_to_show
             self.scene.clear()
             self.scene.addPixmap(image)
             self.scene.setSceneRect(0, 0, image.width(), image.height())
@@ -400,25 +463,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_image()
 
     def _open_folder(self):
-        folder_dialog = QtWidgets.QFileDialog()
+        folder_dialog = QFileDialog()
         self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")
         if self.root_path == '':
             return
-        self.ui.filesTree.change_root(self.root_path)
-        with open('metadata.txt', 'w+', encoding="utf-8") as f:
-            f.write(str(self.root_path))
+        config_set_last_path(str(self.root_path))
 
+        self.ui.filesTree.change_root(self.root_path)
         self.cur_path = None
         self.prev_path = None
         self.image = None
         self._update_image()
 
     def _open_last_folder(self):
-        try:
-            with open('metadata.txt', encoding="utf-8") as f:
-                last_path = f.read()
-            if os.path.exists(last_path):
-                self.root_path = last_path
-                self.ui.filesTree.change_root(self.root_path)
-        except FileNotFoundError:
-            logging.info("Last opened folder not found")
+        last_path = config_get_last_path()
+        if last_path is not None:
+            self.root_path = last_path
+            self.ui.filesTree.change_root(self.root_path)

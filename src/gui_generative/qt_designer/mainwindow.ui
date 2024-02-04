@@ -41,10 +41,16 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="FilesTree" name="filesTree">
-      <property name="maximumSize">
+      <property name="minimumSize">
        <size>
-        <width>500</width>
-        <height>16777215</height>
+        <width>100</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="baseSize">
+       <size>
+        <width>350</width>
+        <height>0</height>
        </size>
       </property>
       <column>
@@ -83,60 +89,31 @@
    <addaction name="actionFoldeDecrypt"/>
   </widget>
   <action name="actionEnterKey">
-   <property name="icon">
-    <iconset>
-     <normalon>../images/icons/key.svg</normalon>
-    </iconset>
-   </property>
    <property name="text">
     <string>Enter Key</string>
    </property>
   </action>
   <action name="actionEncrypt">
-   <property name="icon">
-    <iconset>
-     <normalon>../images/icons/lock.svg</normalon>
-    </iconset>
-   </property>
    <property name="text">
     <string>Encrypt</string>
    </property>
   </action>
   <action name="actionOpenFolder">
-   <property name="icon">
-    <iconset>
-     <normalon>../images/icons/folder_open.svg</normalon>
-    </iconset>
-   </property>
    <property name="text">
     <string>Open Folder</string>
    </property>
   </action>
   <action name="actionRotateLeft">
-   <property name="icon">
-    <iconset>
-     <normalon>../images/icons/rotate_left.svg</normalon>
-    </iconset>
-   </property>
    <property name="text">
     <string>Rotate Left</string>
    </property>
   </action>
   <action name="actionRotateRight">
-   <property name="icon">
-    <iconset>
-     <normalon>../images/icons/rotate_right.svg</normalon>
-    </iconset>
-   </property>
    <property name="text">
     <string>Rotate Right</string>
    </property>
   </action>
   <action name="actionFullscreen">
-   <property name="icon">
-    <iconset>
-     <normaloff>../images/icons/open_full.svg</normaloff>../images/icons/open_full.svg</iconset>
-   </property>
    <property name="text">
     <string>Fullscreen</string>
    </property>
@@ -145,29 +122,16 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
-   <property name="icon">
-    <iconset>
-     <normaloff>../images/icons/zoom_in.svg</normaloff>../images/icons/zoom_in.svg</iconset>
-   </property>
    <property name="text">
     <string>Can't fit</string>
    </property>
   </action>
   <action name="actionDelete">
-   <property name="icon">
-    <iconset>
-     <normalon>../images/icons/delete.svg</normalon>
-    </iconset>
-   </property>
    <property name="text">
     <string>Delete</string>
    </property>
   </action>
   <action name="actionFoldeDecrypt">
-   <property name="icon">
-    <iconset>
-     <normaloff>../images/icons/folder.svg</normaloff>../images/icons/folder.svg</iconset>
-   </property>
    <property name="text">
     <string>Decrypt Folder</string>
    </property>
@@ -177,7 +141,7 @@
   <customwidget>
    <class>FilesTree</class>
    <extends>QTreeWidget</extends>
-   <header location="global">src/filestree.h</header>
+   <header location="global">src/gui/view_filestree.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

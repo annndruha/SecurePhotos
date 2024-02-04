@@ -1,11 +1,13 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 
+from src.utils.utils import resource_path as rp
+
 
 class UserMessage(QtWidgets.QMessageBox):
     def __init__(self, text, level="Critical"):
         super(UserMessage, self).__init__()
-        self.setWindowIcon(QIcon('images/icon.png'))
+        self.setWindowIcon(QIcon(rp('src/img/icon.svg')))
         if level == "Critical":
             self.setIcon(QtWidgets.QMessageBox.Critical)
             self.setWindowTitle("Critical error")
