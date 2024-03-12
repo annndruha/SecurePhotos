@@ -3,6 +3,7 @@ import ctypes
 import platform
 import webbrowser
 
+from PyQt5 import Qt
 from PyQt5 import QtCore
 from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel, QSize
 from PyQt5.QtGui import QPixmap, QImageReader
@@ -12,7 +13,8 @@ from PyQt5.QtWidgets import (QApplication,
                              QGraphicsScene,
                              QFileDialog,
                              QMenu,
-                             QDockWidget
+                             QDockWidget,
+                             QSizePolicy
                              )
 
 from src.gui_generative.ui_mainwindow import Ui_MainWindow
@@ -110,10 +112,14 @@ class MainWindow(QMainWindow):
         self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
         self.ui.actionFoldeDecrypt.setIcon(self.sp_icon.folder_lock_open)
 
+        # self.ui.filesTree
         docked_files_tree = QDockWidget()
+        # docked_files_tree.layout().addWidget(TitleBarWidget())
+        # docked_files_tree.layout().addWidget(self.ui.filesTree)
         docked_files_tree.setWidget(self.ui.filesTree)
         docked_files_tree.setTitleBarWidget(TitleBarWidget())
-        docked_files_tree.setContentsMargins(5, 0, 5, 5)
+        docked_files_tree.setContentsMargins(5, 5, 5, 5)
+        # docked_files_tree.layout().setContentsMargins(10, 10, 10, 10)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, docked_files_tree)
 
         # ===CONNECTS===

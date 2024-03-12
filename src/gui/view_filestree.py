@@ -1,7 +1,7 @@
 import os
 
-from PyQt5.QtCore import QFileInfo, Qt
-from PyQt5.QtWidgets import QWidget, QTreeView, QFileSystemModel, QFileIconProvider, QVBoxLayout
+from PyQt5.QtCore import QFileInfo, Qt, QEvent
+from PyQt5.QtWidgets import QWidget, QTreeView, QFileSystemModel, QFileIconProvider, QVBoxLayout, QSizePolicy
 
 from src.gui.icons import SPIcon
 
@@ -73,8 +73,20 @@ class TitleBarWidget(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout()
-        layout.setContentsMargins(0, 15, 0, 0)
+        layout.setContentsMargins(5, 5, 5, 5)
+        # self.setContentsMargins(0, 0, 0, 0)
+        # self.setMinimumHeight(10)
         self.setLayout(layout)
+        self.setAttribute(Qt.WA_Hover)
+
+    def event(self, event):
+        if event.type() == QEvent.HoverEnter:
+            self.setAttribute(Qt.WA_StyledBackground, True)
+            self.setStyleSheet('background-color: gray;')
+        elif event.type() == QEvent.HoverLeave:
+            self.setAttribute(Qt.WA_StyledBackground, True)
+            self.setStyleSheet('background: palette(window);')
+        return super().event(event)
 
 
 class FilesTree(QTreeView):
@@ -88,6 +100,8 @@ class FilesTree(QTreeView):
         self.hideColumn(1)
         self.hideColumn(2)
         self.hideColumn(3)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
     #     self.file_model.directoryLoaded.connect(self.on_directory_loaded)
     #
     # def on_directory_loaded(self, rootpath):
