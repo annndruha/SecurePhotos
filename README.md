@@ -35,7 +35,7 @@ python -m src
 
 
 ### Algorithm:
-![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/assets/encrypt_scheme.drawio.svg)
+![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/docs/encrypt_scheme.drawio.svg)
 
 
 ### Contact
