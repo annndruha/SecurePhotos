@@ -1,6 +1,6 @@
 import os
 
-from PyQt5.QtCore import QFileInfo, Qt
+from PyQt5.QtCore import QFileInfo, Qt, QEvent
 from PyQt5.QtWidgets import QWidget, QTreeView, QFileSystemModel, QFileIconProvider, QVBoxLayout
 
 from src.gui.icons import SPIcon
@@ -75,6 +75,14 @@ class TitleBarWidget(QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 15, 0, 0)
         self.setLayout(layout)
+        self.setAttribute(Qt.WA_Hover)
+
+    def event(self, event):
+        if event.type() == QEvent.HoverEnter:
+            self.setCursor(Qt.SizeAllCursor)
+        elif event.type() == QEvent.HoverLeave:
+            self.setCursor(Qt.ArrowCursor)
+        return super().event(event)
 
 
 class FilesTree(QTreeView):
