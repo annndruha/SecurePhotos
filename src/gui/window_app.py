@@ -79,12 +79,15 @@ class MainWindow(QMainWindow):
         self.progressBarDialog = ProgressBarDialog()
         self.progressBarOneFileDialog = ProgressBarOneFileDialog()
 
-        # === Image scene ===
+        # === Widget settings ===
         self.scene = QGraphicsScene()
         self.ui.graphicsView = ZoomQGraphicsView(self.ui.widget)
         self.ui.graphicsView.setObjectName("graphicsView")
         self.ui.horizontalLayout.setContentsMargins(5, 15, 5, 5)
         self.ui.horizontalLayout.addWidget(self.ui.graphicsView)
+
+        self.ui.dockFilesTree.setContentsMargins(5, 0, 5, 5)
+        self.ui.dockFilesTree.setTitleBarWidget(TitleBarWidget())
 
         self.ui.graphicsView.setScene(self.scene)
         self.fs = FullScreen()
@@ -110,13 +113,6 @@ class MainWindow(QMainWindow):
         self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
         self.ui.actionFoldeDecrypt.setIcon(self.sp_icon.folder_lock_open)
         self.ui.toolBar.setStyleSheet("QToolBar { border-style: none; }")
-
-        docked_files_tree = QDockWidget()
-        docked_files_tree.setWidget(self.ui.filesTree)
-        docked_files_tree.setTitleBarWidget(TitleBarWidget())
-        docked_files_tree.setContentsMargins(5, 0, 5, 5)
-        docked_files_tree.setWindowTitle("Files Tree")
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, docked_files_tree)
 
         # ===CONNECTS===
         self.ui.filesTree.selectionModel().currentChanged.connect(self._select_item)
