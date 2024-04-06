@@ -18,7 +18,7 @@ from src.gui.window_enterkey import EnterKeyDialog
 from src.gui.window_folderencrypt import FolderEncrypt
 from src.gui.window_progressbar import ProgressBarDialog
 from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
-from src.gui.window_graphicsview import FullScreen, GraphicsView
+from src.gui.window_graphicsview import FullScreen
 
 from src.utils.aes import AESCipher, DecryptException
 from src.utils.crypt_utils import (encrypt_file,
