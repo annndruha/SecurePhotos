@@ -78,7 +78,7 @@ class TitleBarWidget(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout()
-        layout.setContentsMargins(0, 15, 0, 0)
+        layout.setContentsMargins(5, 15, 5, 0)
         self.setLayout(layout)
         self.setAttribute(Qt.WA_Hover)
 

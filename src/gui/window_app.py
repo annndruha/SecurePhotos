@@ -75,10 +75,7 @@ class MainWindow(QMainWindow):
         self.progressBarOneFileDialog = ProgressBarOneFileDialog()
 
         # === Widget settings ===
-        self.ui.horizontalLayout.setContentsMargins(5, 15, 5, 5)
-        self.ui.dockFilesTree.setContentsMargins(5, 0, 5, 5)
         self.ui.dockFilesTree.setTitleBarWidget(TitleBarWidget())
-
         self.scene = QGraphicsScene()
         self.ui.graphicsView.setScene(self.scene)
         self.fs = FullScreen()
