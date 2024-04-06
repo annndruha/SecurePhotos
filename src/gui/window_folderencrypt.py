@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
 from src.gui_generative.ui_folderencrypt import Ui_FolderEncrypt
@@ -11,6 +12,7 @@ class FolderEncrypt(QtWidgets.QDialog):
         super().__init__()
         self.ui = Ui_FolderEncrypt()
         self.ui.setupUi(self)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QIcon(rp('src/img/icon.svg')))
         self.cur_path = None
         self.cipher = None

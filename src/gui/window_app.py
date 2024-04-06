@@ -109,6 +109,7 @@ class MainWindow(QMainWindow):
         self.ui.actionEnterKey.setIcon(self.sp_icon.key)
         self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
         self.ui.actionFoldeDecrypt.setIcon(self.sp_icon.folder_lock_open)
+        self.ui.toolBar.setStyleSheet("QToolBar { border-style: none; }")
 
         docked_files_tree = QDockWidget()
         docked_files_tree.setWidget(self.ui.filesTree)

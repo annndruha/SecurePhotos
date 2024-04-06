@@ -90,7 +90,7 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Validate you self by hash (last 4 digits):</string>
+        <string>Validate youself by hash (last 4 digits):</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

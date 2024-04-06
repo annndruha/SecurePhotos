@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPalette, QColor
 from PyQt5.QtWidgets import QLineEdit
 
@@ -23,6 +24,7 @@ class EnterKeyDialog(QtWidgets.QDialog):
         self.palette_not_ok.setColor(QPalette.WindowText, QColor(255, 0, 0))
         self.palette_neutral = QPalette()
         self.palette_neutral.setColor(QPalette.WindowText, QColor(0, 0, 0))
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
     def _recalc_hash(self):
         if self.ui.keyField.text() != '':
