@@ -1,19 +1,14 @@
 import os
 import ctypes
 import platform
-import webbrowser
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel, QSize
 from PyQt5.QtGui import QPixmap, QImageReader
-from PyQt5.QtWidgets import (QApplication,
-                             QMainWindow,
+from PyQt5.QtWidgets import (QMainWindow,
                              QFileSystemModel,
                              QGraphicsScene,
-                             QFileDialog,
-                             QMenu,
-                             QDockWidget
-                             )
+                             QFileDialog)
 
 from src.gui_generative.ui_mainwindow import Ui_MainWindow
 
@@ -117,7 +112,6 @@ class MainWindow(QMainWindow):
         # ===CONNECTS===
         self.ui.filesTree.selectionModel().currentChanged.connect(self._select_item)
         self.ui.filesTree.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy(3))
-        self.ui.filesTree.customContextMenuRequested.connect(self._open_files_tree_context)
 
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
         self.ui.actionRotateLeft.triggered.connect(self._rotate_left)
@@ -184,39 +178,6 @@ class MainWindow(QMainWindow):
             self.fs.update_image()
         else:
             self._change_fullscreen()
-
-    def _open_files_tree_context(self, position):
-        cur = self.ui.filesTree.selectionModel().currentIndex()
-        idx = cur.siblingAtRow(cur.row())
-        path = QFileSystemModel().filePath(idx)
-
-        menu = QMenu()
-        menu.addAction(self.sp_icon.filetree_menu_copy, "Copy fullpath")
-        if gettype(path) != 'folder':
-            menu.addAction(self.sp_icon.filetree_menu_copy, "Copy filename")
-            menu.addSeparator()
-            menu.addAction(self.sp_icon.filetree_menu_open, "Show in explorer")
-            menu.addAction(self.sp_icon.filetree_menu_open, "Open in associated app")
-        else:
-            menu.addSeparator()
-            menu.addAction(self.sp_icon.filetree_menu_open, "Show in explorer")
-            menu.addAction(self.sp_icon.filetree_menu_open, "Open in explorer")
-
-        action = menu.exec_(self.ui.filesTree.viewport().mapToGlobal(position))
-        if action is None:
-            return
-        if action.text() == "Copy fullpath":
-            cb = QApplication.clipboard()
-            cb.setText(QFileSystemModel().filePath(idx), mode=cb.Clipboard)
-        elif action.text() == "Copy filename":
-            cb = QApplication.clipboard()
-            cb.setText(os.path.basename(QFileSystemModel().filePath(idx)), mode=cb.Clipboard)
-        elif action.text() == "Show in explorer":
-            webbrowser.open(os.path.split(path)[0], new=2)
-        elif action.text() == "Open in associated app":
-            webbrowser.open(path, new=2)
-        elif action.text() == "Open in explorer":
-            webbrowser.open(path, new=2)
 
     def _open_enter_key(self):
         if self.cipher is not None:
