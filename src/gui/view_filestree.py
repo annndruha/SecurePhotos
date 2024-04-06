@@ -1,7 +1,7 @@
 import os
 
 from PyQt5.QtCore import QFileInfo, Qt, QEvent
-from PyQt5.QtWidgets import QWidget, QTreeView, QFileSystemModel, QFileIconProvider, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QTreeView, QFileSystemModel, QFileIconProvider, QVBoxLayout, QSizePolicy
 
 from src.gui.icons import SPIcon
 
@@ -96,6 +96,8 @@ class FilesTree(QTreeView):
         self.hideColumn(1)
         self.hideColumn(2)
         self.hideColumn(3)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
     #     self.file_model.directoryLoaded.connect(self.on_directory_loaded)
     #
     # def on_directory_loaded(self, rootpath):
