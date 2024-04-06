@@ -18,7 +18,7 @@ from src.gui.window_enterkey import EnterKeyDialog
 from src.gui.window_folderencrypt import FolderEncrypt
 from src.gui.window_progressbar import ProgressBarDialog
 from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
-from src.gui.window_graphicsview import FullScreen, ZoomQGraphicsView
+from src.gui.window_graphicsview import FullScreen, GraphicsView
 
 from src.utils.aes import AESCipher, DecryptException
 from src.utils.crypt_utils import (encrypt_file,
@@ -75,15 +75,11 @@ class MainWindow(QMainWindow):
         self.progressBarOneFileDialog = ProgressBarOneFileDialog()
 
         # === Widget settings ===
-        self.scene = QGraphicsScene()
-        self.ui.graphicsView = ZoomQGraphicsView(self.ui.widget)
-        self.ui.graphicsView.setObjectName("graphicsView")
         self.ui.horizontalLayout.setContentsMargins(5, 15, 5, 5)
-        self.ui.horizontalLayout.addWidget(self.ui.graphicsView)
-
         self.ui.dockFilesTree.setContentsMargins(5, 0, 5, 5)
         self.ui.dockFilesTree.setTitleBarWidget(TitleBarWidget())
 
+        self.scene = QGraphicsScene()
         self.ui.graphicsView.setScene(self.scene)
         self.fs = FullScreen()
         self.fs.setScene(self.scene)

@@ -30,6 +30,9 @@ class Ui_MainWindow(object):
         self.widget.setObjectName("widget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.graphicsView = GraphicsView(self.widget)
+        self.graphicsView.setObjectName("graphicsView")
+        self.horizontalLayout.addWidget(self.graphicsView)
         MainWindow.setCentralWidget(self.widget)
         self.toolBar = QtWidgets.QToolBar(MainWindow)
         self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
@@ -99,3 +102,4 @@ class Ui_MainWindow(object):
         self.actionDelete.setText(_translate("MainWindow", "Delete"))
         self.actionFoldeDecrypt.setText(_translate("MainWindow", "Decrypt Folder"))
 from src.gui.view_filestree import FilesTree
+from src.gui.window_graphicsview import GraphicsView

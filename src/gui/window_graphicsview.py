@@ -6,11 +6,11 @@ from PyQt5.QtGui import QIcon, QBrush, QColor
 from src.utils.utils import resource_path as rp
 
 
-class ZoomQGraphicsView(QtWidgets.QGraphicsView):
+class GraphicsView(QtWidgets.QGraphicsView):
     zoomedSignal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        super(ZoomQGraphicsView, self).__init__(parent)
+        super(GraphicsView, self).__init__(parent)
         self.verticalScrollBar().hide()
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -41,7 +41,7 @@ class ZoomQGraphicsView(QtWidgets.QGraphicsView):
         self.zoomedSignal.emit()
 
 
-class FullScreen(ZoomQGraphicsView):
+class FullScreen(GraphicsView):
     escapeSignal = QtCore.pyqtSignal()
     nextSignal = QtCore.pyqtSignal()
     prevSignal = QtCore.pyqtSignal()

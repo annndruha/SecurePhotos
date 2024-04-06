@@ -38,7 +38,11 @@
    <string>SecurePhotos</string>
   </property>
   <widget class="QWidget" name="widget">
-   <layout class="QHBoxLayout" name="horizontalLayout"/>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="GraphicsView" name="graphicsView" native="true"/>
+    </item>
+   </layout>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
@@ -162,6 +166,12 @@
    <class>FilesTree</class>
    <extends>QTreeWidget</extends>
    <header location="global">src/gui/view_filestree.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GraphicsView</class>
+   <extends>QWidget</extends>
+   <header location="global">src/gui/window_graphicsview.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
