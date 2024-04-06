@@ -115,6 +115,7 @@ class MainWindow(QMainWindow):
         docked_files_tree.setWidget(self.ui.filesTree)
         docked_files_tree.setTitleBarWidget(TitleBarWidget())
         docked_files_tree.setContentsMargins(5, 0, 5, 5)
+        docked_files_tree.setWindowTitle("Files Tree")
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, docked_files_tree)
 
         # ===CONNECTS===

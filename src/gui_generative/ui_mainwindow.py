@@ -78,7 +78,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "SecurePhotos"))
-        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
+        self.toolBar.setWindowTitle(_translate("MainWindow", "Tool Bar"))
         self.actionEnterKey.setText(_translate("MainWindow", "Enter Key"))
         self.actionEncrypt.setText(_translate("MainWindow", "Encrypt"))
         self.actionOpenFolder.setText(_translate("MainWindow", "Open Folder"))
