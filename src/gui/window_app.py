@@ -3,8 +3,8 @@ import ctypes
 import platform
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel, QSize, QPoint
-from PyQt5.QtGui import QPixmap, QImageReader, QPainter, QColor
+from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel, QSize
+from PyQt5.QtGui import QPixmap, QImageReader
 from PyQt5.QtWidgets import (QMainWindow,
                              QFileSystemModel,
                              QGraphicsScene,
@@ -330,7 +330,6 @@ class MainWindow(QMainWindow):
                 hw_ratio = sz.height() / sz.width()
                 widget_width = self.ui.graphicsView.frameSize().width()
                 img_reader.setScaledSize(QSize(widget_width, int(widget_width * hw_ratio)))
-
             img_reader.setAutoTransform(True)
             image = img_reader.read()
             if img_reader.error() != 0:
@@ -387,30 +386,7 @@ class MainWindow(QMainWindow):
                 self.ui.graphicsView.resetTransform()
             self._update_fit_status()
         else:
-            if self.cur_path is not None:
-                try:
-                    with open(self.cur_path, 'r') as f:
-                        lines = f.readlines()
-                    # p = QPainter(QPixmap(1, 1))
-                    # w = max([p.fontMetrics().horizontalAdvance(line) for line in lines])
-                    # h = p.fontMetrics().height() * len(lines)
-                    # pixmap = QPixmap(QSize(w, h))
-                    pixmap = QPixmap(self.ui.graphicsView.size())
-                    pixmap.fill(QColor('white'))
-                    painter = QPainter(pixmap)
-                    font = painter.fontMetrics()
-                    painter.setPen(QColor('red'))
-                    painter.drawText(QPoint(0, font.height()), "Experimental view")
-
-                    painter.setPen(QColor('black'))
-                    for i, line in enumerate(lines):
-                        painter.drawText(QPoint(0, (i+2)*font.height()), line)
-                    image = pixmap
-                except Exception as err:
-                    print(err)
-                    image = self.sp_placeholder.nothing_to_show
-            else:
-                image = self.sp_placeholder.nothing_to_show
+            image = self.sp_placeholder.nothing_to_show
             self.scene.clear()
             self.scene.addPixmap(image)
             self.scene.setSceneRect(0, 0, image.width(), image.height())
