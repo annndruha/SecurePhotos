@@ -11,7 +11,7 @@ from PyQt5.QtCore import QT_VERSION_STR, PYQT_VERSION_STR
 
 from src.gui.window_app import MainWindow
 
-__version__ = "3.0.0"
+__version__ = "3.0.3"
 
 
 def except_hook(exc_type, exc_value, exc_tb):
