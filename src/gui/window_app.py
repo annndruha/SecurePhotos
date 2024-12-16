@@ -80,6 +80,7 @@ class MainWindow(QMainWindow):
         self.ui.graphicsView.setScene(self.scene)
         self.fs = FullScreen()
         self.fs.setScene(self.scene)
+        self.file_sys = QFileSystemModel()
 
         # === IMAGE RESOURCES ===
         self.sp_icon = SPIcon()
@@ -157,7 +158,7 @@ class MainWindow(QMainWindow):
         self.ui.filesTree.selectionModel()
         idx = cur.siblingAtRow(cur.row() + 1)
 
-        if idx.isValid() and gettype(QFileSystemModel().filePath(idx)) != 'folder':
+        if idx.isValid() and gettype(self.file_sys.filePath(idx)) != 'folder':
             self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
             self.fs.update_image()
         else:
@@ -166,7 +167,7 @@ class MainWindow(QMainWindow):
     def _fullscreen_prev(self):
         cur = self.ui.filesTree.selectionModel().currentIndex()
         idx = cur.siblingAtRow(cur.row() - 1)
-        if idx.isValid() and gettype(QFileSystemModel().filePath(idx)) != 'folder':
+        if idx.isValid() and gettype(self.file_sys.filePath(idx)) != 'folder':
             self.ui.filesTree.selectionModel().setCurrentIndex(idx, QItemSelectionModel.ToggleCurrent)
             self.fs.update_image()
         else:
@@ -409,8 +410,8 @@ class MainWindow(QMainWindow):
         self._update_fit_status()
 
     def _select_item(self, cur, prev):
-        self.cur_path = QFileSystemModel().filePath(cur)
-        self.prev_path = QFileSystemModel().filePath(prev)
+        self.cur_path = self.file_sys.filePath(cur)
+        self.prev_path = self.file_sys.filePath(prev)
         self.update_actions_status(self.cur_path)
         self._update_image()
 
