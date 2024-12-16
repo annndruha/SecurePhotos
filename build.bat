@@ -10,6 +10,7 @@ pyinstaller --clean ^
   --distpath . ^
   --hidden-import json ^
   --hidden-import ctypes ^
+  --hidden-import webbrowser ^
   --hidden-import platform ^
   --hidden-import Crypto ^
   --hidden-import Crypto.Random ^
