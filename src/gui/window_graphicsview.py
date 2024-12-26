@@ -11,6 +11,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
     def __init__(self, parent=None):
         super(GraphicsView, self).__init__(parent)
+        self.setStyleSheet("background:transparent;")
         self.verticalScrollBar().hide()
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -61,8 +62,8 @@ class FullScreen(GraphicsView):
             self.prevSignal.emit()
 
     def update_image(self):
-        border = 1
+        fs_window_padding = 1
         screen_size = QtWidgets.QDesktopWidget().screenGeometry(-1)
-        self.move(-border, -border)
-        self.resize(QSize(screen_size.width() + 2*border, screen_size.height() + 2*border))
+        self.move(-fs_window_padding, -fs_window_padding)
+        self.resize(QSize(screen_size.width() + 2*fs_window_padding, screen_size.height() + 2*fs_window_padding))
         self.fitInView(self.scene().itemsBoundingRect(), Qt.KeepAspectRatio)

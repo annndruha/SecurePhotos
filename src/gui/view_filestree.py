@@ -14,7 +14,7 @@ SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xp
                  'aes': ['aes'],
                  'text': ['txt', 'md', 'doc', 'docx', 'pdf', 'rtf', 'odt'],
                  'audio': ['aac', 'wav', 'mp3', 'ac3', 'ogg', 'wma'],
-                 'video': ['mkv', 'mp4', 'avi', 'mov'],
+                 'video': ['mkv', 'mp4', 'avi', 'mov', 'webm'],
                  'zip': ['rar', 'zip'],
                  'aes_zip': ['aes_zip']}
 
