@@ -11,7 +11,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
     def __init__(self, parent=None):
         super(GraphicsView, self).__init__(parent)
-        self.setStyleSheet("background:transparent;")
+        self.setStyleSheet("""background:rgb(240,240,240);""")
         self.verticalScrollBar().hide()
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
