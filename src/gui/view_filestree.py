@@ -1,4 +1,5 @@
 import os
+import shutil
 import webbrowser
 
 from PyQt5.QtCore import QFileInfo, Qt, QEvent
@@ -132,6 +133,8 @@ class FilesTree(QTreeView):
         path = QFileSystemModel().filePath(idx)
 
         menu = QMenu()
+        menu.addAction(self.sp_icon.filetree_menu_copy, "Copy file to target")
+        menu.addSeparator()
         menu.addAction(self.sp_icon.filetree_menu_copy, "Copy fullpath")
         if gettype(path) != 'folder':
             menu.addAction(self.sp_icon.filetree_menu_copy, "Copy filename")
@@ -158,3 +161,5 @@ class FilesTree(QTreeView):
             webbrowser.open(path, new=2)
         elif action.text() == "Open in explorer":
             webbrowser.open(path, new=2)
+        elif action.text() == "Copy file to target":
+            shutil.copy(path, fr'somepath\{os.path.basename(path)}')
