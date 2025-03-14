@@ -71,17 +71,15 @@
    </attribute>
    <addaction name="actionOpenFolder"/>
    <addaction name="actionSettings"/>
-   <addaction name="separator"/>
    <addaction name="actionRotateLeft"/>
    <addaction name="actionRotateRight"/>
    <addaction name="actionDelete"/>
-   <addaction name="separator"/>
    <addaction name="actionChangeFit"/>
    <addaction name="actionFullscreen"/>
-   <addaction name="separator"/>
    <addaction name="actionEnterKey"/>
    <addaction name="actionEncrypt"/>
    <addaction name="actionFolderDecrypt"/>
+   <addaction name="actionCopyToTarget"/>
   </widget>
   <widget class="QDockWidget" name="dockFilesTree">
    <property name="windowTitle">
@@ -161,9 +159,6 @@
    </property>
   </action>
   <action name="actionChangeFit">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
    <property name="text">
     <string>Fit view</string>
    </property>
@@ -176,6 +171,11 @@
   <action name="actionFolderDecrypt">
    <property name="text">
     <string>Decrypt Folder</string>
+   </property>
+  </action>
+  <action name="actionCopyToTarget">
+   <property name="text">
+    <string>Copy to Target</string>
    </property>
   </action>
  </widget>

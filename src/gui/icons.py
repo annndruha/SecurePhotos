@@ -30,8 +30,8 @@ class SPIcon:
         self.folder = QIcon(rp("src/img/icons/folder.svg"))
         self.folder.addFile(rp("src/img/icons/folder_open.svg"), state=self.folder.On)
 
-        self.filetree_menu_copy = QIcon(rp("src/img/icons/copy.svg"))
-        self.filetree_menu_open = QIcon(rp("src/img/icons/open_in.svg"))
+        self.copy = QIcon(rp("src/img/icons/copy.svg"))
+        self.open = QIcon(rp("src/img/icons/open_in.svg"))
 
 
 class SPPlaceholder:

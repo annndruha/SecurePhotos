@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>499</width>
-    <height>515</height>
+    <height>391</height>
    </rect>
   </property>
   <property name="font">
@@ -97,6 +97,13 @@
     </layout>
    </item>
    <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Additional features</string>
@@ -107,17 +114,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="2">
-      <widget class="QLineEdit" name="targetPath"/>
-     </item>
      <item row="0" column="2">
       <widget class="QCheckBox" name="enableCopyToTarget">
        <property name="text">
@@ -126,9 +123,16 @@
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="labelTarget">
        <property name="text">
-        <string>Copy traget</string>
+        <string>Copy traget path</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="selectCopyFolder">
+       <property name="text">
+        <string>Select target</string>
        </property>
       </widget>
      </item>
@@ -140,17 +144,6 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QCheckBox" name="showCoords">
-       <property name="text">
-        <string>Show pixel coordiantes</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout_2">

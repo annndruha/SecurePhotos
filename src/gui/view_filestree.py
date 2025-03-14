@@ -133,16 +133,16 @@ class FilesTree(QTreeView):
         path = QFileSystemModel().filePath(idx)
 
         menu = QMenu()
-        menu.addAction(self.sp_icon.filetree_menu_copy, "Copy fullpath")
+        menu.addAction(self.sp_icon.copy, "Copy fullpath")
         if gettype(path) != 'folder':
-            menu.addAction(self.sp_icon.filetree_menu_copy, "Copy filename")
+            menu.addAction(self.sp_icon.copy, "Copy filename")
             menu.addSeparator()
-            menu.addAction(self.sp_icon.filetree_menu_open, "Show in explorer")
-            menu.addAction(self.sp_icon.filetree_menu_open, "Open in associated app")
+            menu.addAction(self.sp_icon.open, "Show in explorer")
+            menu.addAction(self.sp_icon.open, "Open in associated app")
         else:
             menu.addSeparator()
-            menu.addAction(self.sp_icon.filetree_menu_open, "Show in explorer")
-            menu.addAction(self.sp_icon.filetree_menu_open, "Open in explorer")
+            menu.addAction(self.sp_icon.open, "Show in explorer")
+            menu.addAction(self.sp_icon.open, "Open in explorer")
 
         action = menu.exec_(self.viewport().mapToGlobal(position))
         if action is None:

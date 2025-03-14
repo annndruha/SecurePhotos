@@ -1,6 +1,7 @@
 import os
 import ctypes
 import platform
+import shutil
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel, QSize
@@ -104,6 +105,8 @@ class MainWindow(QMainWindow):
         self.ui.actionEnterKey.setIcon(self.sp_icon.key)
         self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
         self.ui.actionFolderDecrypt.setIcon(self.sp_icon.folder_lock_open)
+        self.ui.actionCopyToTarget.setIcon(self.sp_icon.copy)
+
         self.ui.toolBar.setStyleSheet("QToolBar { border-style: none; }")
 
         # ===CONNECTS===
@@ -120,6 +123,7 @@ class MainWindow(QMainWindow):
         self.ui.actionFullscreen.triggered.connect(self._change_fullscreen)
         self.ui.actionChangeFit.triggered.connect(self._change_fit)
         self.ui.actionFolderDecrypt.triggered.connect(self._decrypt_folder)
+        self.ui.actionCopyToTarget.triggered.connect(self._copy_to_target)
 
         self.settingsDialog.ui.pushButton_cancel.clicked.connect(self._reject_settings)
         self.settingsDialog.ui.pushButton_apply.clicked.connect(self._apply_settings)
@@ -438,6 +442,15 @@ class MainWindow(QMainWindow):
     def _delete_file(self):
         delete_path(self.cur_path)
         self._update_image()
+
+    def _copy_to_target(self):
+        if not self.db['copy_to_target']:
+            UserMessage("Copy to target disabled!", "Info")
+            return
+        if not self.db['copy_to_target_path']:
+            UserMessage("Target path is empty!\n Setup it in settings.", "Info")
+            return
+        shutil.copy(self.cur_path, self.db['copy_to_target_path'])
 
     def resizeEvent(self, event):
         self._update_image(lazily=True)
