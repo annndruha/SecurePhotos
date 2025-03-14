@@ -7,6 +7,7 @@ class SPIcon:
     def __init__(self):
         self.favicon = QIcon(rp('src/img/icon.svg'))
         self.folder_open = QIcon(rp('src/img/icons/folder_open.svg'))
+        self.settings = QIcon(rp('src/img/icons/settings.svg'))
         self.rotate_left = QIcon(rp('src/img/icons/rotate_left.svg'))
         self.rotate_right = QIcon(rp('src/img/icons/rotate_right.svg'))
         self.delete = QIcon(rp('src/img/icons/delete.svg'))

@@ -70,6 +70,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpenFolder"/>
+   <addaction name="actionSettings"/>
    <addaction name="separator"/>
    <addaction name="actionRotateLeft"/>
    <addaction name="actionRotateRight"/>
@@ -137,6 +138,11 @@
   <action name="actionOpenFolder">
    <property name="text">
     <string>Open Folder</string>
+   </property>
+  </action>
+    <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
   <action name="actionRotateLeft">

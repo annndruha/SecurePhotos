@@ -19,6 +19,7 @@ from src.gui.window_folderencrypt import FolderEncrypt
 from src.gui.window_progressbar import ProgressBarDialog
 from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
 from src.gui.window_graphicsview import FullScreen
+from src.gui.window_settings import SettingsDialog
 
 from src.utils.aes import AESCipher, DecryptException
 from src.utils.crypt_utils import (encrypt_file,
@@ -72,6 +73,7 @@ class MainWindow(QMainWindow):
         self.folderEncrypt = FolderEncrypt()
         self.progressBarDialog = ProgressBarDialog()
         self.progressBarOneFileDialog = ProgressBarOneFileDialog()
+        self.settingsDialog = SettingsDialog()
         self.db = DBJsonFile()
 
         # === Widget settings ===
@@ -93,6 +95,7 @@ class MainWindow(QMainWindow):
 
         # === TOOLBAR ICONS ===
         self.ui.actionOpenFolder.setIcon(self.sp_icon.folder_open)
+        self.ui.actionSettings.setIcon(self.sp_icon.settings)
         self.ui.actionRotateLeft.setIcon(self.sp_icon.rotate_left)
         self.ui.actionRotateRight.setIcon(self.sp_icon.rotate_right)
         self.ui.actionDelete.setIcon(self.sp_icon.delete)
@@ -108,6 +111,7 @@ class MainWindow(QMainWindow):
         self.ui.filesTree.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy(3))
 
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
+        self.ui.actionSettings.triggered.connect(self._open_settings)
         self.ui.actionRotateLeft.triggered.connect(self._rotate_left)
         self.ui.actionRotateRight.triggered.connect(self._rotate_right)
         self.ui.actionDelete.triggered.connect(self._delete_file)
@@ -116,6 +120,10 @@ class MainWindow(QMainWindow):
         self.ui.actionFullscreen.triggered.connect(self._change_fullscreen)
         self.ui.actionChangeFit.triggered.connect(self._change_fit)
         self.ui.actionFoldeDecrypt.triggered.connect(self._decrypt_folder)
+
+        self.settingsDialog.ui.pushButton_cancel.clicked.connect(self._reject_settings)
+        self.settingsDialog.ui.pushButton_apply.clicked.connect(self._apply_settings)
+        self.settingsDialog.rejected.connect(self._reject_settings)
 
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
@@ -172,6 +180,18 @@ class MainWindow(QMainWindow):
             self.fs.update_image()
         else:
             self._change_fullscreen()
+
+    def _open_settings(self):
+        self.settingsDialog.show()
+
+    def _apply_settings(self):
+        self.settingsDialog.apply()
+        self.settingsDialog.reset()
+        self.settingsDialog.done(200)
+
+    def _reject_settings(self):
+        self.settingsDialog.reset()
+        self.settingsDialog.done(200)
 
     def _open_enter_key(self):
         if self.cipher is not None:
