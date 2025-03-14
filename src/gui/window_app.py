@@ -31,9 +31,8 @@ from src.utils.crypt_utils import (encrypt_file,
                                    EmptyCipher)
 from src.utils.utils import (rotate_file_right,
                              rotate_file_left,
-                             delete_path,
-                             config_get_last_path,
-                             config_set_last_path)
+                             delete_path)
+from src.utils.settings import DBJsonFile
 from src.gui.icons import SPIcon, SPPlaceholder
 
 
@@ -73,6 +72,7 @@ class MainWindow(QMainWindow):
         self.folderEncrypt = FolderEncrypt()
         self.progressBarDialog = ProgressBarDialog()
         self.progressBarOneFileDialog = ProgressBarOneFileDialog()
+        self.db = DBJsonFile()
 
         # === Widget settings ===
         self.ui.dockFilesTree.setTitleBarWidget(TitleBarWidget())
@@ -420,8 +420,7 @@ class MainWindow(QMainWindow):
         self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")
         if self.root_path == '':
             return
-        config_set_last_path(str(self.root_path))
-
+        self.db['last_path'] = str(self.root_path)
         self.ui.filesTree.change_root(self.root_path)
         self.cur_path = None
         self.prev_path = None
@@ -429,7 +428,7 @@ class MainWindow(QMainWindow):
         self._update_image()
 
     def _open_last_folder(self):
-        last_path = config_get_last_path()
+        last_path = self.db['last_path']
         if last_path is not None:
             self.root_path = last_path
             self.ui.filesTree.change_root(self.root_path)
