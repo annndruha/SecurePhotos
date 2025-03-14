@@ -185,7 +185,7 @@ class MainWindow(QMainWindow):
         self.settingsDialog.show()
 
     def _apply_settings(self):
-        self.settingsDialog.apply()
+        self.settingsDialog.apply(self)
         self.settingsDialog.reset()
         self.settingsDialog.done(200)
 
@@ -286,6 +286,16 @@ class MainWindow(QMainWindow):
             self.ui.actionChangeFit.setIcon(self.sp_icon.zoom_none)
             self.ui.actionChangeFit.setDisabled(True)
 
+    def update_actions_visible(self):
+        self.ui.actionRotateLeft.setVisible(self.db['action_rotate_left'])
+        self.ui.actionRotateRight.setVisible(self.db['action_rotate_right'])
+        self.ui.actionDelete.setVisible(self.db['action_delete'])
+        self.ui.actionChangeFit.setVisible(self.db['action_fit_view'])
+        self.ui.actionFullscreen.setVisible(self.db['action_fullscreen'])
+        self.ui.actionFoldeDecrypt.setVisible(self.db['action_encrypt_decrypt'])
+        self.ui.actionEncrypt.setVisible(self.db['action_encrypt_decrypt'])
+        self.ui.actionEnterKey.setVisible(self.db['action_encrypt_decrypt'])
+
     def update_actions_status(self, path):
         rotation_available = is_rotatable(path)
         self.ui.actionRotateLeft.setEnabled(rotation_available)
@@ -295,8 +305,10 @@ class MainWindow(QMainWindow):
         self.ui.actionFullscreen.setEnabled(is_fullscreen_available)
 
         self._update_fit_status()
-        self.ui.actionFoldeDecrypt.setVisible(False)
-        self.ui.actionEncrypt.setVisible(True)
+        self.update_actions_visible()
+        if self.db['action_encrypt_decrypt']:
+            self.ui.actionFoldeDecrypt.setVisible(False)
+            self.ui.actionEncrypt.setVisible(True)
 
         if self.cipher is None:
             self.ui.actionEncrypt.setText('Need key')
@@ -304,7 +316,6 @@ class MainWindow(QMainWindow):
             self.ui.actionEncrypt.setIcon(self.sp_icon.not_locked)
             self.ui.actionEncrypt.mode = 'disable'
             return
-
         if gettype(path) is None:
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setDisabled(True)
@@ -315,10 +326,12 @@ class MainWindow(QMainWindow):
             self.ui.actionEncrypt.setEnabled(True)
             self.ui.actionEncrypt.setIcon(self.sp_icon.folder_lock)
             self.ui.actionEncrypt.mode = 'folder'
-            self.ui.actionFoldeDecrypt.setVisible(True)
+            if self.db['action_encrypt_decrypt']:
+                self.ui.actionFoldeDecrypt.setVisible(True)
         elif gettype(path) == 'aes_zip':
-            self.ui.actionEncrypt.setVisible(False)
-            self.ui.actionFoldeDecrypt.setVisible(True)
+            if self.db['action_encrypt_decrypt']:
+                self.ui.actionEncrypt.setVisible(False)
+                self.ui.actionFoldeDecrypt.setVisible(True)
         elif gettype(path) == 'aes':
             self.ui.actionEncrypt.setText('Decrypt on disk')
             self.ui.actionEncrypt.setEnabled(True)
@@ -329,6 +342,7 @@ class MainWindow(QMainWindow):
             self.ui.actionEncrypt.setEnabled(True)
             self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
             self.ui.actionEncrypt.mode = 'encrypt'
+
 
     @crypt_errors
     def _crypt(self, _=None):

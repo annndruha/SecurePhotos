@@ -29,7 +29,7 @@ class DBJsonFile:
     def __getitem__(self, key: str):
         key = str(key)
         if key not in self.store:
-            return None
+            return False
         return self.store[key]
 
     def __setitem__(self, key: str, value):
@@ -59,7 +59,7 @@ class DBJsonFile:
     def get(self, key: str, default=None):
         key = str(key)
         if key not in self.store:
-            return None
+            return False
         return self.store.get(key, default)
 
     def pop(self, key: str, default=None):
@@ -74,7 +74,3 @@ class DBJsonFile:
 
     def __repr__(self):
         return repr(self.store)
-
-
-db = DBJsonFile()
-print('')
