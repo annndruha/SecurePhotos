@@ -300,14 +300,13 @@ class MainWindow(QMainWindow):
         self.ui.actionFolderDecrypt.setVisible(self.db['action_encrypt_decrypt'])
         self.ui.actionEncrypt.setVisible(self.db['action_encrypt_decrypt'])
         self.ui.actionEnterKey.setVisible(self.db['action_encrypt_decrypt'])
+        self.ui.actionCopyToTarget.setVisible(self.db['copy_to_target'])
 
     def update_actions_status(self, path):
-        rotation_available = is_rotatable(path)
-        self.ui.actionRotateLeft.setEnabled(rotation_available)
-        self.ui.actionRotateRight.setEnabled(rotation_available)
-
-        is_fullscreen_available = gettype(path) == 'image'
-        self.ui.actionFullscreen.setEnabled(is_fullscreen_available)
+        self.ui.actionRotateLeft.setEnabled(is_rotatable(path))
+        self.ui.actionRotateRight.setEnabled(is_rotatable(path))
+        self.ui.actionFullscreen.setEnabled(gettype(path) == 'image')
+        self.ui.actionDelete.setEnabled(gettype(path) is not None and path != 'sample.path')
 
         self._update_fit_status()
         self.update_actions_visible()
@@ -321,6 +320,7 @@ class MainWindow(QMainWindow):
             self.ui.actionEncrypt.setIcon(self.sp_icon.not_locked)
             self.ui.actionEncrypt.mode = 'disable'
             return
+
         if gettype(path) is None:
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setDisabled(True)
@@ -444,13 +444,20 @@ class MainWindow(QMainWindow):
         self._update_image()
 
     def _copy_to_target(self):
+        if not self.cur_path and self.cur_path != 'sample.path':
+            UserMessage("Select file first", "Info")
+            return
         if not self.db['copy_to_target']:
             UserMessage("Copy to target disabled!", "Info")
             return
         if not self.db['copy_to_target_path']:
-            UserMessage("Target path is empty!\n Setup it in settings.", "Info")
+            UserMessage("Target path is empty!\n Setup it in settings.", "Error")
             return
-        shutil.copy(self.cur_path, self.db['copy_to_target_path'])
+        if not os.path.exists(self.db['copy_to_target_path']):
+            UserMessage("Target path doesn't exist!", "Error")
+            return
+        if not os.path.isdir(self.cur_path):
+            shutil.copy(self.cur_path, self.db['copy_to_target_path'])
 
     def resizeEvent(self, event):
         self._update_image(lazily=True)

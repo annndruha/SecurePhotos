@@ -22,6 +22,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self.setWindowIcon(QIcon(rp('src/img/icon.svg')))
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.ui.selectCopyFolder.clicked.connect(self._select_target_folder)
+        self.ui.enableCopyToTarget.clicked.connect(self._disable_enable_target)
 
     def apply(self, parent):
         parent.db['action_rotate_left'] = self.ui.checkRotateLeft.isChecked()
@@ -45,9 +46,16 @@ class SettingsDialog(QtWidgets.QDialog):
         self.ui.checkFullscreen.setChecked(parent.db['action_fullscreen'])
         self.ui.checkEncrypt.setChecked(parent.db['action_encrypt_decrypt'])
         self.ui.enableCopyToTarget.setChecked(parent.db['copy_to_target'])
+        self.ui.labelTarget.setEnabled(parent.db['copy_to_target'])
+        self.ui.selectCopyFolder.setEnabled(parent.db['copy_to_target'])
         if 'copy_to_target_path' in parent.db:
             self.ui.labelTarget.setText(str(parent.db['copy_to_target_path']))
 
     def _select_target_folder(self):
         folder_dialog = QFileDialog()
         self.ui.labelTarget.setText(folder_dialog.getExistingDirectory(None, "Select Folder"))
+
+    def _disable_enable_target(self):
+        self.ui.labelTarget.setEnabled(self.ui.enableCopyToTarget.isChecked())
+        self.ui.selectCopyFolder.setEnabled(self.ui.enableCopyToTarget.isChecked())
+
