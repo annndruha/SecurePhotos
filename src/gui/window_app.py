@@ -103,7 +103,7 @@ class MainWindow(QMainWindow):
         self.ui.actionFullscreen.setIcon(self.sp_icon.open_full)
         self.ui.actionEnterKey.setIcon(self.sp_icon.key)
         self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
-        self.ui.actionFoldeDecrypt.setIcon(self.sp_icon.folder_lock_open)
+        self.ui.actionFolderDecrypt.setIcon(self.sp_icon.folder_lock_open)
         self.ui.toolBar.setStyleSheet("QToolBar { border-style: none; }")
 
         # ===CONNECTS===
@@ -119,7 +119,7 @@ class MainWindow(QMainWindow):
         self.ui.actionEncrypt.triggered.connect(self._crypt)
         self.ui.actionFullscreen.triggered.connect(self._change_fullscreen)
         self.ui.actionChangeFit.triggered.connect(self._change_fit)
-        self.ui.actionFoldeDecrypt.triggered.connect(self._decrypt_folder)
+        self.ui.actionFolderDecrypt.triggered.connect(self._decrypt_folder)
 
         self.settingsDialog.ui.pushButton_cancel.clicked.connect(self._reject_settings)
         self.settingsDialog.ui.pushButton_apply.clicked.connect(self._apply_settings)
@@ -293,7 +293,7 @@ class MainWindow(QMainWindow):
         self.ui.actionDelete.setVisible(self.db['action_delete'])
         self.ui.actionChangeFit.setVisible(self.db['action_fit_view'])
         self.ui.actionFullscreen.setVisible(self.db['action_fullscreen'])
-        self.ui.actionFoldeDecrypt.setVisible(self.db['action_encrypt_decrypt'])
+        self.ui.actionFolderDecrypt.setVisible(self.db['action_encrypt_decrypt'])
         self.ui.actionEncrypt.setVisible(self.db['action_encrypt_decrypt'])
         self.ui.actionEnterKey.setVisible(self.db['action_encrypt_decrypt'])
 
@@ -308,7 +308,7 @@ class MainWindow(QMainWindow):
         self._update_fit_status()
         self.update_actions_visible()
         if self.db['action_encrypt_decrypt']:
-            self.ui.actionFoldeDecrypt.setVisible(False)
+            self.ui.actionFolderDecrypt.setVisible(False)
             self.ui.actionEncrypt.setVisible(True)
 
         if self.cipher is None:
@@ -328,11 +328,11 @@ class MainWindow(QMainWindow):
             self.ui.actionEncrypt.setIcon(self.sp_icon.folder_lock)
             self.ui.actionEncrypt.mode = 'folder'
             if self.db['action_encrypt_decrypt']:
-                self.ui.actionFoldeDecrypt.setVisible(True)
+                self.ui.actionFolderDecrypt.setVisible(True)
         elif gettype(path) == 'aes_zip':
             if self.db['action_encrypt_decrypt']:
                 self.ui.actionEncrypt.setVisible(False)
-                self.ui.actionFoldeDecrypt.setVisible(True)
+                self.ui.actionFolderDecrypt.setVisible(True)
         elif gettype(path) == 'aes':
             self.ui.actionEncrypt.setText('Decrypt on disk')
             self.ui.actionEncrypt.setEnabled(True)
@@ -343,7 +343,6 @@ class MainWindow(QMainWindow):
             self.ui.actionEncrypt.setEnabled(True)
             self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
             self.ui.actionEncrypt.mode = 'encrypt'
-
 
     @crypt_errors
     def _crypt(self, _=None):

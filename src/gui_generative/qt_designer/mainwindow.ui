@@ -81,7 +81,7 @@
    <addaction name="separator"/>
    <addaction name="actionEnterKey"/>
    <addaction name="actionEncrypt"/>
-   <addaction name="actionFoldeDecrypt"/>
+   <addaction name="actionFolderDecrypt"/>
   </widget>
   <widget class="QDockWidget" name="dockFilesTree">
    <property name="windowTitle">
@@ -173,7 +173,7 @@
     <string>Delete</string>
    </property>
   </action>
-  <action name="actionFoldeDecrypt">
+  <action name="actionFolderDecrypt">
    <property name="text">
     <string>Decrypt Folder</string>
    </property>

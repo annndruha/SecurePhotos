@@ -72,8 +72,8 @@ class Ui_MainWindow(object):
         self.actionChangeFit.setObjectName("actionChangeFit")
         self.actionDelete = QtWidgets.QAction(MainWindow)
         self.actionDelete.setObjectName("actionDelete")
-        self.actionFoldeDecrypt = QtWidgets.QAction(MainWindow)
-        self.actionFoldeDecrypt.setObjectName("actionFoldeDecrypt")
+        self.actionFolderDecrypt = QtWidgets.QAction(MainWindow)
+        self.actionFolderDecrypt.setObjectName("actionFolderDecrypt")
         self.toolBar.addAction(self.actionOpenFolder)
         self.toolBar.addAction(self.actionSettings)
         self.toolBar.addSeparator()
@@ -86,7 +86,7 @@ class Ui_MainWindow(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionEnterKey)
         self.toolBar.addAction(self.actionEncrypt)
-        self.toolBar.addAction(self.actionFoldeDecrypt)
+        self.toolBar.addAction(self.actionFolderDecrypt)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -105,6 +105,6 @@ class Ui_MainWindow(object):
         self.actionFullscreen.setText(_translate("MainWindow", "Fullscreen"))
         self.actionChangeFit.setText(_translate("MainWindow", "Fit view"))
         self.actionDelete.setText(_translate("MainWindow", "Delete"))
-        self.actionFoldeDecrypt.setText(_translate("MainWindow", "Decrypt Folder"))
+        self.actionFolderDecrypt.setText(_translate("MainWindow", "Decrypt Folder"))
 from src.gui.view_filestree import FilesTree
 from src.gui.window_graphicsview import GraphicsView

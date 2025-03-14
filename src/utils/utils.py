@@ -3,7 +3,6 @@ import sys
 import stat
 import shutil
 import glob
-import json
 
 from PIL import Image
 
@@ -69,42 +68,3 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
-
-
-def config_get_last_path():
-    """
-    Return last path from config if it's exist
-    """
-    try:
-        config_path = os.path.join(os.path.expanduser("~"), '.SecurePhotos', 'config.json')
-        if not os.path.exists(config_path):
-            return None
-        with open(config_path, 'r') as f:
-            data = json.load(f)
-        if os.path.exists(data['last_path']):
-            return data['last_path']
-    except Exception:
-        return None
-
-
-def config_set_last_path(path):
-    try:
-        if not os.path.exists(os.path.expanduser("~")):
-            return None
-
-        config_folder = os.path.join(os.path.expanduser("~"), '.SecurePhotos')
-        if not os.path.exists(config_folder):
-            os.makedirs(config_folder, exist_ok=True)
-
-        config_path = os.path.join(config_folder, 'config.json')
-        if not os.path.exists(config_path):
-            with open(config_path, 'w+', encoding="utf-8") as f:
-                json.dump({'last_path': path}, f)
-        else:
-            with open(config_path, 'r') as f:
-                data = json.load(f)
-            data['last_path'] = path
-            with open(config_path, 'w+') as f:
-                json.dump(data, f)
-    except Exception:
-        return None
