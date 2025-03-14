@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QLineEdit
 
 from src.gui_generative.ui_settings import Ui_SettingsDialog
 from src.utils.utils import resource_path as rp
+
+
 # from src.gui.window_app import MainWindow
 
 
@@ -14,11 +16,6 @@ class SettingsDialog(QtWidgets.QDialog):
         self.ui = Ui_SettingsDialog()
         self.ui.setupUi(self)
         self.setWindowIcon(QIcon(rp('src/img/icon.svg')))
-        # self.ui.keyField.textChanged.connect(self._compare_key)
-        # self.ui.keyRepeat.textChanged.connect(self._compare_key)
-        # self.ui.keyField.setEchoMode(QLineEdit.Password)
-        # self.ui.keyRepeat.setEchoMode(QLineEdit.Password)
-
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
     def apply(self, parent):
@@ -32,8 +29,11 @@ class SettingsDialog(QtWidgets.QDialog):
 
         parent.update_actions_status(parent.cur_path)
 
-    def reset(self):
-        pass
-        # self.ui.keyField.setText('')
-        # self.ui.keyRepeat.setText('')
-        # self.ui.hash_field.setPalette(self.palette_neutral)
+    def reset(self, parent):
+        self.ui.checkRotateLeft.setChecked(parent.db['action_rotate_left'])
+        self.ui.checkRotateRight.setChecked(parent.db['action_rotate_right'])
+        self.ui.checkDelete.setChecked(parent.db['action_delete'])
+        self.ui.checkFitView.setChecked(parent.db['action_fit_view'])
+        self.ui.checkFullscreen.setChecked(parent.db['action_fullscreen'])
+        self.ui.checkFullscreen.setChecked(parent.db['action_fullscreen'])
+        self.ui.checkEncrypt.setChecked(parent.db['action_encrypt_decrypt'])

@@ -124,6 +124,7 @@ class MainWindow(QMainWindow):
         self.settingsDialog.ui.pushButton_cancel.clicked.connect(self._reject_settings)
         self.settingsDialog.ui.pushButton_apply.clicked.connect(self._apply_settings)
         self.settingsDialog.rejected.connect(self._reject_settings)
+        self._reject_settings()
 
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
@@ -186,11 +187,11 @@ class MainWindow(QMainWindow):
 
     def _apply_settings(self):
         self.settingsDialog.apply(self)
-        self.settingsDialog.reset()
+        self.settingsDialog.reset(self)
         self.settingsDialog.done(200)
 
     def _reject_settings(self):
-        self.settingsDialog.reset()
+        self.settingsDialog.reset(self)
         self.settingsDialog.done(200)
 
     def _open_enter_key(self):

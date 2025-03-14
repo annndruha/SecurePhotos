@@ -140,7 +140,7 @@
     <string>Open Folder</string>
    </property>
   </action>
-    <action name="actionSettings">
+  <action name="actionSettings">
    <property name="text">
     <string>Settings</string>
    </property>
@@ -162,10 +162,10 @@
   </action>
   <action name="actionChangeFit">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Can't fit</string>
+    <string>Fit view</string>
    </property>
   </action>
   <action name="actionDelete">

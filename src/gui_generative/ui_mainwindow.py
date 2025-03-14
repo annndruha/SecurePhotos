@@ -68,7 +68,7 @@ class Ui_MainWindow(object):
         self.actionFullscreen = QtWidgets.QAction(MainWindow)
         self.actionFullscreen.setObjectName("actionFullscreen")
         self.actionChangeFit = QtWidgets.QAction(MainWindow)
-        self.actionChangeFit.setEnabled(False)
+        self.actionChangeFit.setEnabled(True)
         self.actionChangeFit.setObjectName("actionChangeFit")
         self.actionDelete = QtWidgets.QAction(MainWindow)
         self.actionDelete.setObjectName("actionDelete")
@@ -103,7 +103,7 @@ class Ui_MainWindow(object):
         self.actionRotateLeft.setText(_translate("MainWindow", "Rotate Left"))
         self.actionRotateRight.setText(_translate("MainWindow", "Rotate Right"))
         self.actionFullscreen.setText(_translate("MainWindow", "Fullscreen"))
-        self.actionChangeFit.setText(_translate("MainWindow", "Can\'t fit"))
+        self.actionChangeFit.setText(_translate("MainWindow", "Fit view"))
         self.actionDelete.setText(_translate("MainWindow", "Delete"))
         self.actionFoldeDecrypt.setText(_translate("MainWindow", "Decrypt Folder"))
 from src.gui.view_filestree import FilesTree
