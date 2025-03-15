@@ -165,6 +165,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="copyAbout">
+         <property name="text">
+          <string>Copy info to clipboard</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

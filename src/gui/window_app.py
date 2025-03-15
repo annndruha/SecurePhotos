@@ -1,5 +1,4 @@
 import ctypes
-import logging
 import os
 import platform
 import shutil
@@ -454,7 +453,6 @@ class MainWindow(QMainWindow):
             else:
                 shutil.copy(self.cur_path, self.db['copy_to_target_path'])
         except Exception as e:
-            logging.exception(e)
             UserMessage(str(e), "Error")
 
     def resizeEvent(self, event):

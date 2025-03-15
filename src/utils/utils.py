@@ -6,29 +6,50 @@ import sys
 
 import Crypto
 import PIL
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import PYQT_VERSION_STR, QT_VERSION_STR
 from PIL import Image
+from PyQt5.QtCore import PYQT_VERSION_STR, QT_VERSION_STR
 
 from src.version import __version__
 
 
-def about():
-    info = f"""
-    SecurePhotos: {__version__}
-    App code: https://github.com/annndruha/SecurePhotos
-    
-    Python: {sys.version}
-    Crypto: {Crypto.__version__}
-    PIL: {PIL.__version__}
-    Qt: {QT_VERSION_STR}
-    PyQt5: {PYQT_VERSION_STR}
-    
-    Autor: https://github.com/annndruha
-    Report problem: https://github.com/annndruha/SecurePhotos/issues
-    """
-    return info
+class About:
+    def __init__(self):
+        self._python_version = sys.version.split('(')[0] if '(' in sys.version else sys.version
 
+    @property
+    def info(self):
+        return f"""
+                SecurePhotos: <a href="https://github.com/annndruha/SecurePhotos/releases">{__version__}</a>
+                <p>
+                <a href="https://github.com/annndruha/SecurePhotos">Source code</a>
+                <p>
+                Autor: <a href="https://github.com/annndruha">@annndruha</a>
+                <p>
+                <h4>
+                <a href="https://github.com/annndruha/SecurePhotos/issues">Report problem</a>
+                </h4>
+                <hr>
+                """
+
+    @property
+    def versions(self):
+        versions_list = [
+            f'SecurePhotos: {__version__}',
+            f'Python: {self._python_version}',
+            f'Crypto: {Crypto.__version__}',
+            f'PIL: {PIL.__version__}',
+            f'Qt: {QT_VERSION_STR}',
+            f'PyQt5: {PYQT_VERSION_STR}'
+        ]
+        return versions_list
+
+    @property
+    def system_info(self):
+        return '<p>'.join(self.versions)
+
+    @property
+    def system_info_clipboard(self):
+        return '\n'.join(self.versions)
 
 def rotate_file_right(img_path):
     img = Image.open(img_path)

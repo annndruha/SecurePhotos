@@ -1,11 +1,11 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QApplication, QFileDialog
 
 from src.gui_generative.ui_settings import Ui_SettingsDialog
+from src.utils.utils import About
 from src.utils.utils import resource_path as rp
-from src.utils.utils import about
 
 
 class SettingsDialog(QtWidgets.QDialog):
@@ -17,6 +17,10 @@ class SettingsDialog(QtWidgets.QDialog):
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.ui.selectCopyFolder.clicked.connect(self._select_target_folder)
         self.ui.enableCopyToTarget.clicked.connect(self._disable_enable_target)
+        self.ui.copyAbout.clicked.connect(self._copy_info_to_clipboard)
+        self.ui.label_about.setTextFormat(Qt.RichText)
+        self.ui.label_about.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        self.ui.label_about.setOpenExternalLinks(True)
 
     def apply(self, parent):
         parent.db['action_rotate_left'] = self.ui.checkRotateLeft.isChecked()
@@ -46,7 +50,7 @@ class SettingsDialog(QtWidgets.QDialog):
             self.ui.labelTarget.setText(str(parent.db['copy_to_target_path']))
         else:
             self.ui.labelTarget.setText('Copy target path')
-        self.ui.label_about.setText(about())
+        self.ui.label_about.setText(About().info + About().system_info)
 
     def _select_target_folder(self):
         folder_dialog = QFileDialog()
@@ -55,3 +59,8 @@ class SettingsDialog(QtWidgets.QDialog):
     def _disable_enable_target(self):
         self.ui.labelTarget.setEnabled(self.ui.enableCopyToTarget.isChecked())
         self.ui.selectCopyFolder.setEnabled(self.ui.enableCopyToTarget.isChecked())
+
+    @staticmethod
+    def _copy_info_to_clipboard():
+        cb = QApplication.clipboard()
+        cb.setText(About().system_info_clipboard, mode=cb.Clipboard)
