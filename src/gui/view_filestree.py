@@ -1,12 +1,10 @@
 import os
 import webbrowser
 
-from PyQt5.QtCore import QFileInfo, Qt, QEvent
-from PyQt5.QtWidgets import (QWidget,
-                             QTreeView,
-                             QFileSystemModel,
-                             QApplication,
-                             QFileIconProvider, QVBoxLayout, QSizePolicy, QMenu)
+from PyQt5.QtCore import QEvent, QFileInfo, Qt
+from PyQt5.QtWidgets import (QApplication, QFileIconProvider, QFileSystemModel,
+                             QMenu, QSizePolicy, QTreeView, QVBoxLayout,
+                             QWidget)
 
 from src.gui.icons import SPIcon
 
@@ -105,26 +103,12 @@ class FilesTree(QTreeView):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.customContextMenuRequested.connect(self._open_files_tree_context)
 
-    #     self.file_model.directoryLoaded.connect(self.on_directory_loaded)
-    #
-    # def on_directory_loaded(self, rootpath):
-    #     idx = self.file_model.index(rootpath)
-    #     self.selectionModel().clearSelection()
-    #     if self.file_model.rowCount(idx) > 0:
-    #         index = self.file_model.index(0, 0, idx)
-    #         self.selectionModel().setCurrentIndex(index, self.selectionModel().SelectionFlag.Select)
-
     def change_root(self, rootpath):
         self.file_model.set_header_name(rootpath)
         self.file_model.setRootPath(rootpath)
         self.setRootIndex(self.file_model.index(rootpath))
 
         self.selectionModel()
-        # self.selectionModel().currentChanged.emit(self.selectionModel().currentIndex()
-        # self.selectionModel().currentIndex())
-        # idx = self.selectionModel().currentIndex()
-        # flag = self.selectionModel().SelectionFlag.Select
-        # self.selectionModel().setCurrentIndex(idx, flag)
 
     def _open_files_tree_context(self, position):
         cur = self.selectionModel().currentIndex()
@@ -132,16 +116,16 @@ class FilesTree(QTreeView):
         path = QFileSystemModel().filePath(idx)
 
         menu = QMenu()
-        menu.addAction(self.sp_icon.filetree_menu_copy, "Copy fullpath")
+        menu.addAction(self.sp_icon.copy, "Copy fullpath")
         if gettype(path) != 'folder':
-            menu.addAction(self.sp_icon.filetree_menu_copy, "Copy filename")
+            menu.addAction(self.sp_icon.copy, "Copy filename")
             menu.addSeparator()
-            menu.addAction(self.sp_icon.filetree_menu_open, "Show in explorer")
-            menu.addAction(self.sp_icon.filetree_menu_open, "Open in associated app")
+            menu.addAction(self.sp_icon.open, "Show in explorer")
+            menu.addAction(self.sp_icon.open, "Open in associated app")
         else:
             menu.addSeparator()
-            menu.addAction(self.sp_icon.filetree_menu_open, "Show in explorer")
-            menu.addAction(self.sp_icon.filetree_menu_open, "Open in explorer")
+            menu.addAction(self.sp_icon.open, "Show in explorer")
+            menu.addAction(self.sp_icon.open, "Open in explorer")
 
         action = menu.exec_(self.viewport().mapToGlobal(position))
         if action is None:

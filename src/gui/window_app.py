@@ -1,40 +1,31 @@
-import os
 import ctypes
+import os
 import platform
+import shutil
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel, QSize
-from PyQt5.QtGui import QPixmap, QImageReader
-from PyQt5.QtWidgets import (QMainWindow,
-                             QFileSystemModel,
-                             QGraphicsScene,
-                             QFileDialog)
+from PyQt5.QtCore import QBuffer, QByteArray, QItemSelectionModel, QSize
+from PyQt5.QtGui import QImageReader, QPixmap
+from PyQt5.QtWidgets import (QFileDialog, QFileSystemModel, QGraphicsScene,
+                             QMainWindow)
 
-from src.gui_generative.ui_mainwindow import Ui_MainWindow
-
-from src.gui.view_filestree import gettype, is_rotatable, TitleBarWidget
-from src.gui.window_usermessage import UserMessage
+from src.gui.icons import SPIcon, SPPlaceholder
+from src.gui.view_filestree import TitleBarWidget, gettype, is_rotatable
 from src.gui.window_enterkey import EnterKeyDialog
 from src.gui.window_folderencrypt import FolderEncrypt
+from src.gui.window_graphicsview import FullScreen
 from src.gui.window_progressbar import ProgressBarDialog
 from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
-from src.gui.window_graphicsview import FullScreen
-
+from src.gui.window_settings import SettingsDialog
+from src.gui.window_usermessage import UserMessage
+from src.gui_generative.ui_mainwindow import Ui_MainWindow
 from src.utils.aes import AESCipher, DecryptException
-from src.utils.crypt_utils import (encrypt_file,
-                                   decrypt_file,
-                                   encrypt_folder_each_file,
-                                   encrypt_folder_to_one_file,
-                                   decrypt_folder,
-                                   decrypt_folder_file,
-                                   decrypt_runtime,
-                                   EmptyCipher)
-from src.utils.utils import (rotate_file_right,
-                             rotate_file_left,
-                             delete_path,
-                             config_get_last_path,
-                             config_set_last_path)
-from src.gui.icons import SPIcon, SPPlaceholder
+from src.utils.crypt_utils import (EmptyCipher, decrypt_file, decrypt_folder,
+                                   decrypt_folder_file, decrypt_runtime,
+                                   encrypt_file, encrypt_folder_each_file,
+                                   encrypt_folder_to_one_file)
+from src.utils.settings import DBJsonFile
+from src.utils.utils import delete_path, rotate_file_left, rotate_file_right
 
 
 def crypt_errors(func):
@@ -73,6 +64,8 @@ class MainWindow(QMainWindow):
         self.folderEncrypt = FolderEncrypt()
         self.progressBarDialog = ProgressBarDialog()
         self.progressBarOneFileDialog = ProgressBarOneFileDialog()
+        self.settingsDialog = SettingsDialog()
+        self.db = DBJsonFile()
 
         # === Widget settings ===
         self.ui.dockFilesTree.setTitleBarWidget(TitleBarWidget())
@@ -93,6 +86,7 @@ class MainWindow(QMainWindow):
 
         # === TOOLBAR ICONS ===
         self.ui.actionOpenFolder.setIcon(self.sp_icon.folder_open)
+        self.ui.actionSettings.setIcon(self.sp_icon.settings)
         self.ui.actionRotateLeft.setIcon(self.sp_icon.rotate_left)
         self.ui.actionRotateRight.setIcon(self.sp_icon.rotate_right)
         self.ui.actionDelete.setIcon(self.sp_icon.delete)
@@ -100,7 +94,9 @@ class MainWindow(QMainWindow):
         self.ui.actionFullscreen.setIcon(self.sp_icon.open_full)
         self.ui.actionEnterKey.setIcon(self.sp_icon.key)
         self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
-        self.ui.actionFoldeDecrypt.setIcon(self.sp_icon.folder_lock_open)
+        self.ui.actionFolderDecrypt.setIcon(self.sp_icon.folder_lock_open)
+        self.ui.actionCopyToTarget.setIcon(self.sp_icon.copy)
+
         self.ui.toolBar.setStyleSheet("QToolBar { border-style: none; }")
 
         # ===CONNECTS===
@@ -108,6 +104,7 @@ class MainWindow(QMainWindow):
         self.ui.filesTree.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy(3))
 
         self.ui.actionOpenFolder.triggered.connect(self._open_folder)
+        self.ui.actionSettings.triggered.connect(self._open_settings)
         self.ui.actionRotateLeft.triggered.connect(self._rotate_left)
         self.ui.actionRotateRight.triggered.connect(self._rotate_right)
         self.ui.actionDelete.triggered.connect(self._delete_file)
@@ -115,7 +112,13 @@ class MainWindow(QMainWindow):
         self.ui.actionEncrypt.triggered.connect(self._crypt)
         self.ui.actionFullscreen.triggered.connect(self._change_fullscreen)
         self.ui.actionChangeFit.triggered.connect(self._change_fit)
-        self.ui.actionFoldeDecrypt.triggered.connect(self._decrypt_folder)
+        self.ui.actionFolderDecrypt.triggered.connect(self._decrypt_folder)
+        self.ui.actionCopyToTarget.triggered.connect(self._copy_to_target)
+
+        self.settingsDialog.ui.pushButton_cancel.clicked.connect(self._reject_settings)
+        self.settingsDialog.ui.pushButton_apply.clicked.connect(self._apply_settings)
+        self.settingsDialog.rejected.connect(self._reject_settings)
+        self._reject_settings()
 
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
@@ -135,8 +138,8 @@ class MainWindow(QMainWindow):
         self.ui.graphicsView.zoomedSignal.connect(self._update_fit_status)
 
         self.showMaximized()
-        self._open_last_folder()
         self.update_actions_status('sample.path')
+        self._open_last_folder()
 
     # ===SLOTS===
     def _change_fullscreen(self):
@@ -172,6 +175,18 @@ class MainWindow(QMainWindow):
             self.fs.update_image()
         else:
             self._change_fullscreen()
+
+    def _open_settings(self):
+        self.settingsDialog.show()
+
+    def _apply_settings(self):
+        self.settingsDialog.apply(self)
+        self.settingsDialog.reset(self)
+        self.settingsDialog.done(200)
+
+    def _reject_settings(self):
+        self.settingsDialog.reset(self)
+        self.settingsDialog.done(200)
 
     def _open_enter_key(self):
         if self.cipher is not None:
@@ -266,17 +281,28 @@ class MainWindow(QMainWindow):
             self.ui.actionChangeFit.setIcon(self.sp_icon.zoom_none)
             self.ui.actionChangeFit.setDisabled(True)
 
-    def update_actions_status(self, path):
-        rotation_available = is_rotatable(path)
-        self.ui.actionRotateLeft.setEnabled(rotation_available)
-        self.ui.actionRotateRight.setEnabled(rotation_available)
+    def update_actions_visible(self):
+        self.ui.actionRotateLeft.setVisible(self.db['action_rotate_left'])
+        self.ui.actionRotateRight.setVisible(self.db['action_rotate_right'])
+        self.ui.actionDelete.setVisible(self.db['action_delete'])
+        self.ui.actionChangeFit.setVisible(self.db['action_fit_view'])
+        self.ui.actionFullscreen.setVisible(self.db['action_fullscreen'])
+        self.ui.actionFolderDecrypt.setVisible(self.db['action_encrypt_decrypt'])
+        self.ui.actionEncrypt.setVisible(self.db['action_encrypt_decrypt'])
+        self.ui.actionEnterKey.setVisible(self.db['action_encrypt_decrypt'])
+        self.ui.actionCopyToTarget.setVisible(self.db['copy_to_target'])
 
-        is_fullscreen_available = gettype(path) == 'image'
-        self.ui.actionFullscreen.setEnabled(is_fullscreen_available)
+    def update_actions_status(self, path):
+        self.ui.actionRotateLeft.setEnabled(is_rotatable(path))
+        self.ui.actionRotateRight.setEnabled(is_rotatable(path))
+        self.ui.actionFullscreen.setEnabled(gettype(path) == 'image')
+        self.ui.actionDelete.setEnabled(gettype(path) is not None and path != 'sample.path')
 
         self._update_fit_status()
-        self.ui.actionFoldeDecrypt.setVisible(False)
-        self.ui.actionEncrypt.setVisible(True)
+        self.update_actions_visible()
+        if self.db['action_encrypt_decrypt']:
+            self.ui.actionFolderDecrypt.setVisible(False)
+            self.ui.actionEncrypt.setVisible(True)
 
         if self.cipher is None:
             self.ui.actionEncrypt.setText('Need key')
@@ -295,10 +321,12 @@ class MainWindow(QMainWindow):
             self.ui.actionEncrypt.setEnabled(True)
             self.ui.actionEncrypt.setIcon(self.sp_icon.folder_lock)
             self.ui.actionEncrypt.mode = 'folder'
-            self.ui.actionFoldeDecrypt.setVisible(True)
+            if self.db['action_encrypt_decrypt']:
+                self.ui.actionFolderDecrypt.setVisible(True)
         elif gettype(path) == 'aes_zip':
-            self.ui.actionEncrypt.setVisible(False)
-            self.ui.actionFoldeDecrypt.setVisible(True)
+            if self.db['action_encrypt_decrypt']:
+                self.ui.actionEncrypt.setVisible(False)
+                self.ui.actionFolderDecrypt.setVisible(True)
         elif gettype(path) == 'aes':
             self.ui.actionEncrypt.setText('Decrypt on disk')
             self.ui.actionEncrypt.setEnabled(True)
@@ -405,6 +433,28 @@ class MainWindow(QMainWindow):
         delete_path(self.cur_path)
         self._update_image()
 
+    def _copy_to_target(self):
+        if not self.cur_path and self.cur_path != 'sample.path':
+            UserMessage("Select file first", "Info")
+            return
+        if not self.db['copy_to_target']:
+            UserMessage("Copy to target disabled!", "Info")
+            return
+        if not self.db['copy_to_target_path']:
+            UserMessage("Target path is empty!\nSelect target path in settings", "Error")
+            return
+        if not os.path.exists(self.db['copy_to_target_path']):
+            UserMessage("Target path doesn't exist!\nCreate it ot select another target path in settings", "Error")
+            return
+        try:
+            if os.path.isdir(self.cur_path):
+                target_folder = str(os.path.join(self.db['copy_to_target_path'], os.path.basename(self.cur_path)))
+                shutil.copytree(self.cur_path, target_folder, dirs_exist_ok=True)
+            else:
+                shutil.copy(self.cur_path, self.db['copy_to_target_path'])
+        except Exception as e:
+            UserMessage(str(e), "Error")
+
     def resizeEvent(self, event):
         self._update_image(lazily=True)
         self._update_fit_status()
@@ -420,8 +470,7 @@ class MainWindow(QMainWindow):
         self.root_path = folder_dialog.getExistingDirectory(None, "Select Folder")
         if self.root_path == '':
             return
-        config_set_last_path(str(self.root_path))
-
+        self.db['last_path'] = str(self.root_path)
         self.ui.filesTree.change_root(self.root_path)
         self.cur_path = None
         self.prev_path = None
@@ -429,7 +478,12 @@ class MainWindow(QMainWindow):
         self._update_image()
 
     def _open_last_folder(self):
-        last_path = config_get_last_path()
-        if last_path is not None:
-            self.root_path = last_path
-            self.ui.filesTree.change_root(self.root_path)
+        last_path = self.db['last_path']
+        if last_path:
+            if os.path.exists(last_path) and os.path.isdir(last_path):
+                self.root_path = last_path
+                self.ui.filesTree.change_root(self.root_path)
+            else:
+                self._open_folder()
+        else:
+            self._open_folder()

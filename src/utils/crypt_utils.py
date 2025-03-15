@@ -1,14 +1,12 @@
 import glob
 import os
-import stat
-import argparse
-import logging
 import shutil
+import stat
 
-from src.utils.aes import AESCipher
-from src.utils.utils import get_folder_size
 from src.gui.window_progressbar import ProgressBarDialog
 from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
+from src.utils.aes import AESCipher
+from src.utils.utils import get_folder_size
 
 CRYPT_EXTENSION = '.aes'
 CRYPT_FOLDER_EXTENSION = '.aes_zip'
@@ -164,25 +162,3 @@ def delete_path(path):
             os.remove(path)
     except FileNotFoundError:
         pass
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Encrypt files with console. Usage:"
-                                                 "\n python aes.py -e -f test.jpg -p mypassword")
-    parser.add_argument("-e", action="store_true", help="Encrypt mode")
-    parser.add_argument("-d", action="store_true", help="Decrypt mode")
-    parser.add_argument("-f", default=None, help="Path to file to encrypt/decrypt")
-    parser.add_argument("-p", default=None, help="""Password for encrypt/decrypt. Password -> sha256 -> aes256 key""")
-
-    args = parser.parse_args()
-    if bool(args.e) != bool(args.d):
-        pass
-        if args.f is not None and args.p is not None:
-            if args.e is True:
-                encrypt_file(args.f, args.p)
-            else:
-                decrypt_file(args.f, args.p)
-        else:
-            logging.error('File path "-f" or password "-p" not specified.')
-    else:
-        logging.error('Unknown mode, use "-e" or "-d" for encrypt or decrypt respectively.')

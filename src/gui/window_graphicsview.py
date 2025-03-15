@@ -1,7 +1,6 @@
-from PyQt5.QtCore import Qt
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QIcon, QBrush, QColor
+from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtGui import QBrush, QColor, QIcon
 
 from src.utils.utils import resource_path as rp
 
