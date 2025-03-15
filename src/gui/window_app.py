@@ -147,7 +147,7 @@ class MainWindow(QMainWindow):
         self.ui.graphicsView.zoomedSignal.connect(self._update_action_fit_status)
 
         self.showMaximized()
-        self.update_actions_status('sample.path')
+        self._update_actions_status('sample.path')
         self._open_last_folder()
 
     # SLOTS: FullScreen
@@ -210,7 +210,7 @@ class MainWindow(QMainWindow):
             self.cipher = AESCipher(self.enterKeyDialog.ui.keyField.text())
         self.enterKeyDialog.reset()
         self.enterKeyDialog.done(200)
-        self.update_actions_status(self.cur_path)
+        self._update_actions_status(self.cur_path)
         self._update_image()
 
     def _reject_enter_key(self):
@@ -257,7 +257,7 @@ class MainWindow(QMainWindow):
             self.progressBarOneFileDialog.done(200)
         self.progressBarDialog.reset()
         self.progressBarDialog.done(200)
-        self.update_actions_status(self.cur_path)
+        self._update_actions_status(self.cur_path)
         self._update_image()
 
     def _reject_folder_encrypt(self):
@@ -291,14 +291,19 @@ class MainWindow(QMainWindow):
 
     # SLOTS: Fit image
     def _change_fit(self):
+        """Change fit (resize) mode"""
         self.fit_in_view = not self.fit_in_view
         self._update_image(lazily=False)
         self.ui.graphicsView.reset_zoomed()
         self._update_action_fit_status()
 
+    # SLOTS: toolBar behaviour (buttons availability)
     def _update_action_fit_status(self):
-        nothing_to_fit = self.ui.graphicsView.sceneRect().width() > self.ui.graphicsView.rect().width() or \
-                         self.ui.graphicsView.sceneRect().height() > self.ui.graphicsView.rect().height()
+        """Update fit button"""
+        width_not_fitted = self.ui.graphicsView.sceneRect().width() > self.ui.graphicsView.rect().width()
+        height_not_fitted = self.ui.graphicsView.sceneRect().height() > self.ui.graphicsView.rect().height()
+        nothing_to_fit = width_not_fitted or height_not_fitted
+
         if self.ui.graphicsView.zoomed():
             nothing_to_fit = False
         if gettype(self.cur_path) not in ['image', 'aes']:
@@ -317,7 +322,7 @@ class MainWindow(QMainWindow):
             self.ui.actionChangeFit.setDisabled(True)
 
     def _update_actions_visible(self):
-        """Update actions visibility by settings"""
+        """Update actions buttons visibility by settings"""
         self.ui.actionRotateLeft.setVisible(self.db['action_rotate_left'])
         self.ui.actionRotateRight.setVisible(self.db['action_rotate_right'])
         self.ui.actionDelete.setVisible(self.db['action_delete'])
@@ -371,8 +376,8 @@ class MainWindow(QMainWindow):
             self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
             self.ui.actionEncrypt.mode = 'encrypt'
 
-    def update_actions_status(self, path):
-        """Update all actions statuses"""
+    def _update_actions_status(self, path: str):
+        """Update all toolBar actions statuses"""
         self.ui.actionRotateLeft.setEnabled(is_rotatable(path))
         self.ui.actionRotateRight.setEnabled(is_rotatable(path))
         self.ui.actionFullscreen.setEnabled(gettype(path) == 'image')
@@ -382,7 +387,9 @@ class MainWindow(QMainWindow):
         self._update_actions_visible()
         self._update_actions_crypt(path)
 
+    # IMAGES: Image actions and changes
     def _read_image(self, path):
+        """Return QPixmap of image"""
         try:
             img_reader = QImageReader(path)
             if img_reader.format() == 'svg':
@@ -403,6 +410,7 @@ class MainWindow(QMainWindow):
             return None
 
     def _runtime_decrypt(self, path):
+        """Return QPixmap of runtime decrypted image"""
         try:
             file_bytes = decrypt_runtime(path, self.cipher)
             ba = QByteArray(file_bytes)
@@ -424,6 +432,7 @@ class MainWindow(QMainWindow):
             return None
 
     def _update_image(self, lazily=False):
+        """Update showing image"""
         if not lazily:
             if gettype(self.cur_path) == 'image':
                 self.image = self._read_image(self.cur_path)
@@ -453,6 +462,11 @@ class MainWindow(QMainWindow):
             self.scene.setSceneRect(0, 0, image.width(), image.height())
             self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
 
+    def resizeEvent(self, event):
+        self._update_image(lazily=True)
+        self._update_action_fit_status()
+
+    # ACTIONS: Actions from toolBar
     def _rotate_left(self):
         rotate_file_left(self.cur_path)
         self._update_image()
@@ -465,32 +479,10 @@ class MainWindow(QMainWindow):
         delete_path(self.cur_path)
         self._update_image()
 
-    def _copy_to_target(self):
-        if not self.cur_path and self.cur_path != 'sample.path':
-            UserMessage("Select file first", "Info")
-            return
-        if not self.db['copy_to_target']:
-            UserMessage("Copy to target disabled!", "Info")
-            return
-        if not self.db['copy_to_target_path']:
-            UserMessage("Target path is empty!\nSelect target path in settings", "Error")
-            return
-        if not os.path.exists(self.db['copy_to_target_path']):
-            UserMessage("Target path doesn't exist!\nCreate it ot select another target path in settings", "Error")
-            return
-        try:
-            copy_path(self.cur_path, self.db['copy_to_target_path'])
-        except Exception as e:
-            UserMessage(str(e), "Error")
-
-    def resizeEvent(self, event):
-        self._update_image(lazily=True)
-        self._update_action_fit_status()
-
     def _select_item(self, cur, prev):
         self.cur_path = self.file_sys.filePath(cur)
         self.prev_path = self.file_sys.filePath(prev)
-        self.update_actions_status(self.cur_path)
+        self._update_actions_status(self.cur_path)
         self._update_image()
 
     def _open_folder(self):
@@ -512,3 +504,21 @@ class MainWindow(QMainWindow):
             self.ui.filesTree.change_root(self.root_path)
         else:
             self._open_folder()
+
+    def _copy_to_target(self):
+        if not self.cur_path and self.cur_path != 'sample.path':
+            UserMessage("Select file first", "Info")
+            return
+        if not self.db['copy_to_target']:
+            UserMessage("Copy to target disabled!", "Info")
+            return
+        if not self.db['copy_to_target_path']:
+            UserMessage("Target path is empty!\nSelect target path in settings", "Error")
+            return
+        if not os.path.exists(self.db['copy_to_target_path']):
+            UserMessage("Target path doesn't exist!\nCreate it ot select another target path in settings", "Error")
+            return
+        try:
+            copy_path(self.cur_path, self.db['copy_to_target_path'])
+        except Exception as e:
+            UserMessage(str(e), "Error")
