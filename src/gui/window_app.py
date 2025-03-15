@@ -480,7 +480,10 @@ class MainWindow(QMainWindow):
     def _open_last_folder(self):
         last_path = self.db['last_path']
         if last_path:
-            self.root_path = last_path
-            self.ui.filesTree.change_root(self.root_path)
+            if os.path.exists(last_path) and os.path.isdir(last_path):
+                self.root_path = last_path
+                self.ui.filesTree.change_root(self.root_path)
+            else:
+                self._open_folder()
         else:
             self._open_folder()
