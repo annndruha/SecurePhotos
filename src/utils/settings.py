@@ -8,23 +8,35 @@ class DBJsonFile:
         self._version = 'v1'
         self._load()
 
+    def _load_defaults(self):
+        self.store = {
+            "action_rotate_left": True,
+            "action_rotate_right": True,
+            "action_delete": True,
+            "action_fit_view": True,
+            "action_fullscreen": True,
+            "action_encrypt_decrypt": True,
+            "copy_to_target": False,
+        }
+
     def _load(self):
         if os.path.exists(self.filename):
             with open(self.filename, 'r', encoding='utf-8') as f:
                 try:
                     self.store = json.load(f)[self._version]
                 except KeyError:
-                    self.store = {}
+                    self._load_defaults()
                 except json.JSONDecodeError:
-                    self.store = {}
+                    self._load_defaults()
         else:
-            self.store = {self._version: {}}
+            self._load_defaults()
 
     def _save(self):
         dirs, filename = os.path.split(self.filename)
         os.makedirs(dirs, exist_ok=True)
         with open(self.filename, "w", encoding="utf-8") as f:
-            json.dump({self._version: self.store}, f, indent=4, ensure_ascii=False)
+            v_store = {self._version: self.store}
+            json.dump(v_store, f, indent=4, ensure_ascii=False)
 
     def __getitem__(self, key: str):
         key = str(key)

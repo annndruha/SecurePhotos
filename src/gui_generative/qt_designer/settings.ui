@@ -125,7 +125,7 @@
      <item row="1" column="2">
       <widget class="QLabel" name="labelTarget">
        <property name="text">
-        <string>Copy traget path</string>
+        <string>Copy target path</string>
        </property>
       </widget>
      </item>

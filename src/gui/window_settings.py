@@ -33,7 +33,7 @@ class SettingsDialog(QtWidgets.QDialog):
         parent.db['action_fullscreen'] = self.ui.checkFullscreen.isChecked()
         parent.db['action_encrypt_decrypt'] = self.ui.checkEncrypt.isChecked()
         parent.db['copy_to_target'] = self.ui.enableCopyToTarget.isChecked()
-        if self.ui.labelTarget.text() != 'Copy to target path':
+        if self.ui.labelTarget.text().strip() != 'Copy target path':
             parent.db['copy_to_target_path'] = self.ui.labelTarget.text()
         parent.update_actions_status(parent.cur_path)
 
@@ -50,6 +50,8 @@ class SettingsDialog(QtWidgets.QDialog):
         self.ui.selectCopyFolder.setEnabled(parent.db['copy_to_target'])
         if 'copy_to_target_path' in parent.db:
             self.ui.labelTarget.setText(str(parent.db['copy_to_target_path']))
+        else:
+            self.ui.labelTarget.setText('Copy target path')
 
     def _select_target_folder(self):
         folder_dialog = QFileDialog()

@@ -113,7 +113,7 @@ class Ui_SettingsDialog(object):
         self.checkEncrypt.setText(_translate("SettingsDialog", "Show Encrypt/Decrypt actions"))
         self.label_2.setText(_translate("SettingsDialog", "Additional features"))
         self.enableCopyToTarget.setText(_translate("SettingsDialog", "Enable copy to target button"))
-        self.labelTarget.setText(_translate("SettingsDialog", "Copy traget path"))
+        self.labelTarget.setText(_translate("SettingsDialog", "Copy target path"))
         self.selectCopyFolder.setText(_translate("SettingsDialog", "Select target"))
         self.pushButton_apply.setText(_translate("SettingsDialog", "Apply"))
         self.pushButton_cancel.setText(_translate("SettingsDialog", "Cancel"))

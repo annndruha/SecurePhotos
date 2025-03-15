@@ -148,8 +148,8 @@ class MainWindow(QMainWindow):
         self.ui.graphicsView.zoomedSignal.connect(self._update_fit_status)
 
         self.showMaximized()
-        self._open_last_folder()
         self.update_actions_status('sample.path')
+        self._open_last_folder()
 
     # ===SLOTS===
     def _change_fullscreen(self):
@@ -451,10 +451,10 @@ class MainWindow(QMainWindow):
             UserMessage("Copy to target disabled!", "Info")
             return
         if not self.db['copy_to_target_path']:
-            UserMessage("Target path is empty!\n Setup it in settings.", "Error")
+            UserMessage("Target path is empty!\nSelect target path in settings", "Error")
             return
         if not os.path.exists(self.db['copy_to_target_path']):
-            UserMessage("Target path doesn't exist!", "Error")
+            UserMessage("Target path doesn't exist!\nCreate it ot select another target path in settings", "Error")
             return
         if not os.path.isdir(self.cur_path):
             shutil.copy(self.cur_path, self.db['copy_to_target_path'])
@@ -483,6 +483,8 @@ class MainWindow(QMainWindow):
 
     def _open_last_folder(self):
         last_path = self.db['last_path']
-        if last_path is not None:
+        if last_path:
             self.root_path = last_path
             self.ui.filesTree.change_root(self.root_path)
+        else:
+            self._open_folder()
