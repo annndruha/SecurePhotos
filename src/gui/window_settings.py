@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QFileDialog
 
 from src.gui_generative.ui_settings import Ui_SettingsDialog
 from src.utils.utils import resource_path as rp
+from src.utils.utils import about
 
 
 class SettingsDialog(QtWidgets.QDialog):
@@ -45,6 +46,7 @@ class SettingsDialog(QtWidgets.QDialog):
             self.ui.labelTarget.setText(str(parent.db['copy_to_target_path']))
         else:
             self.ui.labelTarget.setText('Copy target path')
+        self.ui.label_about.setText(about())
 
     def _select_target_folder(self):
         folder_dialog = QFileDialog()

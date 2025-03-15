@@ -9,8 +9,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import PYQT_VERSION_STR, QT_VERSION_STR
 
 from src.gui.window_app import MainWindow
-
-__version__ = "3.0.6"
+from src.version import __version__
 
 
 def except_hook(exc_type, exc_value, exc_tb):

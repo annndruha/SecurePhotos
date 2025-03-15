@@ -4,7 +4,30 @@ import shutil
 import stat
 import sys
 
+import Crypto
+import PIL
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import PYQT_VERSION_STR, QT_VERSION_STR
 from PIL import Image
+
+from src.version import __version__
+
+
+def about():
+    info = f"""
+    SecurePhotos: {__version__}
+    App code: https://github.com/annndruha/SecurePhotos
+    
+    Python: {sys.version}
+    Crypto: {Crypto.__version__}
+    PIL: {PIL.__version__}
+    Qt: {QT_VERSION_STR}
+    PyQt5: {PYQT_VERSION_STR}
+    
+    Autor: https://github.com/annndruha
+    Report problem: https://github.com/annndruha/SecurePhotos/issues
+    """
+    return info
 
 
 def rotate_file_right(img_path):
