@@ -4,7 +4,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
 from src.gui_generative.ui_settings import Ui_SettingsDialog
-from src.utils.utils import About
+from src.utils.about import About
 from src.utils.utils import resource_path as rp
 
 
