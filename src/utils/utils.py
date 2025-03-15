@@ -1,8 +1,8 @@
-import os
-import sys
-import stat
-import shutil
 import glob
+import os
+import shutil
+import stat
+import sys
 
 from PIL import Image
 

@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QIcon, QPixmap, QImageReader
+from PyQt5.QtGui import QIcon, QImageReader, QPixmap
 
 from src.utils.utils import resource_path as rp
 
@@ -29,7 +29,6 @@ class SPIcon:
         self.file_zip = QIcon(rp("src/img/icons/file_zip.svg"))
         self.folder = QIcon(rp("src/img/icons/folder.svg"))
         self.folder.addFile(rp("src/img/icons/folder_open.svg"), state=self.folder.On)
-
         self.copy = QIcon(rp("src/img/icons/copy.svg"))
         self.open = QIcon(rp("src/img/icons/open_in.svg"))
 

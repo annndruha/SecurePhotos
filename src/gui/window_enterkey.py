@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QPalette, QColor
+from PyQt5.QtGui import QColor, QIcon, QPalette
 from PyQt5.QtWidgets import QLineEdit
 
 from src.gui_generative.ui_enterkey import Ui_EnterKey

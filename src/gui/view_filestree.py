@@ -2,12 +2,10 @@ import os
 import shutil
 import webbrowser
 
-from PyQt5.QtCore import QFileInfo, Qt, QEvent
-from PyQt5.QtWidgets import (QWidget,
-                             QTreeView,
-                             QFileSystemModel,
-                             QApplication,
-                             QFileIconProvider, QVBoxLayout, QSizePolicy, QMenu)
+from PyQt5.QtCore import QEvent, QFileInfo, Qt
+from PyQt5.QtWidgets import (QApplication, QFileIconProvider, QFileSystemModel,
+                             QMenu, QSizePolicy, QTreeView, QVBoxLayout,
+                             QWidget)
 
 from src.gui.icons import SPIcon
 

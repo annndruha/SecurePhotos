@@ -1,41 +1,31 @@
-import os
 import ctypes
+import os
 import platform
 import shutil
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import QByteArray, QBuffer, QItemSelectionModel, QSize
-from PyQt5.QtGui import QPixmap, QImageReader
-from PyQt5.QtWidgets import (QMainWindow,
-                             QFileSystemModel,
-                             QGraphicsScene,
-                             QFileDialog)
+from PyQt5.QtCore import QBuffer, QByteArray, QItemSelectionModel, QSize
+from PyQt5.QtGui import QImageReader, QPixmap
+from PyQt5.QtWidgets import (QFileDialog, QFileSystemModel, QGraphicsScene,
+                             QMainWindow)
 
-from src.gui_generative.ui_mainwindow import Ui_MainWindow
-
-from src.gui.view_filestree import gettype, is_rotatable, TitleBarWidget
-from src.gui.window_usermessage import UserMessage
+from src.gui.icons import SPIcon, SPPlaceholder
+from src.gui.view_filestree import TitleBarWidget, gettype, is_rotatable
 from src.gui.window_enterkey import EnterKeyDialog
 from src.gui.window_folderencrypt import FolderEncrypt
+from src.gui.window_graphicsview import FullScreen
 from src.gui.window_progressbar import ProgressBarDialog
 from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
-from src.gui.window_graphicsview import FullScreen
 from src.gui.window_settings import SettingsDialog
-
+from src.gui.window_usermessage import UserMessage
+from src.gui_generative.ui_mainwindow import Ui_MainWindow
 from src.utils.aes import AESCipher, DecryptException
-from src.utils.crypt_utils import (encrypt_file,
-                                   decrypt_file,
-                                   encrypt_folder_each_file,
-                                   encrypt_folder_to_one_file,
-                                   decrypt_folder,
-                                   decrypt_folder_file,
-                                   decrypt_runtime,
-                                   EmptyCipher)
-from src.utils.utils import (rotate_file_right,
-                             rotate_file_left,
-                             delete_path)
+from src.utils.crypt_utils import (EmptyCipher, decrypt_file, decrypt_folder,
+                                   decrypt_folder_file, decrypt_runtime,
+                                   encrypt_file, encrypt_folder_each_file,
+                                   encrypt_folder_to_one_file)
 from src.utils.settings import DBJsonFile
-from src.gui.icons import SPIcon, SPPlaceholder
+from src.utils.utils import delete_path, rotate_file_left, rotate_file_right
 
 
 def crypt_errors(func):

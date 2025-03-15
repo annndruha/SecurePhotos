@@ -1,17 +1,10 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QPalette, QColor
-from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtWidgets import (QMainWindow,
-                             QFileSystemModel,
-                             QGraphicsScene,
-                             QFileDialog)
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QFileDialog
 
 from src.gui_generative.ui_settings import Ui_SettingsDialog
 from src.utils.utils import resource_path as rp
-
-
-# from src.gui.window_app import MainWindow
 
 
 class SettingsDialog(QtWidgets.QDialog):
@@ -60,4 +53,3 @@ class SettingsDialog(QtWidgets.QDialog):
     def _disable_enable_target(self):
         self.ui.labelTarget.setEnabled(self.ui.enableCopyToTarget.isChecked())
         self.ui.selectCopyFolder.setEnabled(self.ui.enableCopyToTarget.isChecked())
-

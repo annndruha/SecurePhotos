@@ -1,14 +1,14 @@
-import glob
-import os
-import stat
 import argparse
+import glob
 import logging
+import os
 import shutil
+import stat
 
-from src.utils.aes import AESCipher
-from src.utils.utils import get_folder_size
 from src.gui.window_progressbar import ProgressBarDialog
 from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
+from src.utils.aes import AESCipher
+from src.utils.utils import get_folder_size
 
 CRYPT_EXTENSION = '.aes'
 CRYPT_FOLDER_EXTENSION = '.aes_zip'

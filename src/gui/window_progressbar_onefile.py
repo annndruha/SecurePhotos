@@ -3,9 +3,10 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
 
-from src.gui_generative.ui_progressbar_onefile import Ui_ProgressBarOneFileDialog
-from src.utils.utils import size_to_text
+from src.gui_generative.ui_progressbar_onefile import \
+    Ui_ProgressBarOneFileDialog
 from src.utils.utils import resource_path as rp
+from src.utils.utils import size_to_text
 
 
 class ProgressBarOneFileDialog(QtWidgets.QDialog):
