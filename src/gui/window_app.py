@@ -1,4 +1,5 @@
 import ctypes
+import logging
 import os
 import platform
 import shutil
@@ -446,8 +447,15 @@ class MainWindow(QMainWindow):
         if not os.path.exists(self.db['copy_to_target_path']):
             UserMessage("Target path doesn't exist!\nCreate it ot select another target path in settings", "Error")
             return
-        if not os.path.isdir(self.cur_path):
-            shutil.copy(self.cur_path, self.db['copy_to_target_path'])
+        try:
+            if os.path.isdir(self.cur_path):
+                target_folder = str(os.path.join(self.db['copy_to_target_path'], os.path.basename(self.cur_path)))
+                shutil.copytree(self.cur_path, target_folder, dirs_exist_ok=True)
+            else:
+                shutil.copy(self.cur_path, self.db['copy_to_target_path'])
+        except Exception as e:
+            logging.exception(e)
+            UserMessage(str(e), "Error")
 
     def resizeEvent(self, event):
         self._update_image(lazily=True)
