@@ -33,7 +33,6 @@ pip install -r requirements.txt
 python -m src
 ```
 
-
 ### Algorithm:
 ![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/docs/encrypt_scheme.drawio.svg)
 
