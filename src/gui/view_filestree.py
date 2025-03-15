@@ -1,5 +1,4 @@
 import os
-import shutil
 import webbrowser
 
 from PyQt5.QtCore import QEvent, QFileInfo, Qt
@@ -104,26 +103,12 @@ class FilesTree(QTreeView):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.customContextMenuRequested.connect(self._open_files_tree_context)
 
-    #     self.file_model.directoryLoaded.connect(self.on_directory_loaded)
-    #
-    # def on_directory_loaded(self, rootpath):
-    #     idx = self.file_model.index(rootpath)
-    #     self.selectionModel().clearSelection()
-    #     if self.file_model.rowCount(idx) > 0:
-    #         index = self.file_model.index(0, 0, idx)
-    #         self.selectionModel().setCurrentIndex(index, self.selectionModel().SelectionFlag.Select)
-
     def change_root(self, rootpath):
         self.file_model.set_header_name(rootpath)
         self.file_model.setRootPath(rootpath)
         self.setRootIndex(self.file_model.index(rootpath))
 
         self.selectionModel()
-        # self.selectionModel().currentChanged.emit(self.selectionModel().currentIndex()
-        # self.selectionModel().currentIndex())
-        # idx = self.selectionModel().currentIndex()
-        # flag = self.selectionModel().SelectionFlag.Select
-        # self.selectionModel().setCurrentIndex(idx, flag)
 
     def _open_files_tree_context(self, position):
         cur = self.selectionModel().currentIndex()
