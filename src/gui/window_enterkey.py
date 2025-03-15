@@ -27,6 +27,7 @@ class EnterKeyDialog(QtWidgets.QDialog):
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
     def _recalc_hash(self):
+        """SLOT for recalc hash while user typing password"""
         if self.ui.keyField.text() != '':
             dummy_cipher = AESCipher(self.ui.keyField.text())
             _hash = dummy_cipher.hash()[-4:]
@@ -39,6 +40,7 @@ class EnterKeyDialog(QtWidgets.QDialog):
             self.ui.hash_field.setPalette(self.palette_neutral)
 
     def _compare_key(self):
+        """Compare password hashes and update visible status"""
         dummy_cipher1 = AESCipher(self.ui.keyField.text())
         dummy_cipher2 = AESCipher(self.ui.keyRepeat.text())
         if (dummy_cipher1.hash() == dummy_cipher2.hash()) or self.ui.keyRepeat.text() == '':
@@ -50,6 +52,7 @@ class EnterKeyDialog(QtWidgets.QDialog):
             self.ui.hash_field.setPalette(self.palette_not_ok)
 
     def reset(self):
+        """Clear fields"""
         self.ui.keyField.setText('')
         self.ui.keyRepeat.setText('')
         self.ui.hash_field.setPalette(self.palette_neutral)

@@ -58,13 +58,21 @@ def delete_path(path):
         pass
 
 
+def copy_path(src_path, dest_path):
+    if os.path.isdir(src_path):
+        target_folder = str(os.path.join(dest_path, os.path.basename(src_path)))
+        shutil.copytree(src_path, target_folder, dirs_exist_ok=True)
+    else:
+        shutil.copy(src_path, dest_path)
+
+
 # https://stackoverflow.com/a/7675014/12627677
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
-    except Exception:
+    except AttributeError:
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)

@@ -80,7 +80,7 @@ class Ui_ProgressBarOneFileDialog(object):
         self.progress_text.setText(_translate("ProgressBarOneFileDialog", "Archiving a folder"))
         self.label_3.setText(_translate("ProgressBarOneFileDialog", "Calculating size"))
         self.label.setText(_translate("ProgressBarOneFileDialog", "Encryption archive"))
-        self.label_2.setText(_translate("ProgressBarOneFileDialog", "Deleting folder"))
+        self.label_2.setText(_translate("ProgressBarOneFileDialog", "Delete original folder"))
         self.label_size.setText(_translate("ProgressBarOneFileDialog", "Waiting"))
         self.label_archiving.setText(_translate("ProgressBarOneFileDialog", "Waiting"))
         self.label_encryption.setText(_translate("ProgressBarOneFileDialog", "Waiting"))

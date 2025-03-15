@@ -40,13 +40,8 @@ class SPPlaceholder:
     with correct paths for python and .exe
     """
     def __init__(self):
-        self.try_another_key = QPixmap.fromImage(
-            QImageReader(rp('src/img/placeholders/try_another_key.png')).read())
-        self.broken_image = QPixmap.fromImage(
-            QImageReader(rp('src/img/placeholders/broken_image.png')).read())
-        self.encrypted = QPixmap.fromImage(
-            QImageReader(rp('src/img/placeholders/encrypted.png')).read())
-        self.video = QPixmap.fromImage(
-            QImageReader(rp('src/img/placeholders/video.png')).read())
-        self.nothing_to_show = QPixmap.fromImage(
-            QImageReader(rp('src/img/placeholders/nothing_to_show.png')).read())
+        self.try_another_key = QPixmap.fromImage(QImageReader(rp('src/img/placeholders/try_another_key.png')).read())
+        self.broken_image = QPixmap.fromImage(QImageReader(rp('src/img/placeholders/broken_image.png')).read())
+        self.encrypted = QPixmap.fromImage(QImageReader(rp('src/img/placeholders/encrypted.png')).read())
+        self.video = QPixmap.fromImage(QImageReader(rp('src/img/placeholders/video.png')).read())
+        self.nothing_to_show = QPixmap.fromImage(QImageReader(rp('src/img/placeholders/nothing_to_show.png')).read())

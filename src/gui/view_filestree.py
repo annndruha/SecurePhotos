@@ -1,10 +1,12 @@
 import os
 import webbrowser
+from pathlib import Path
 
 from PyQt5.QtCore import QEvent, QFileInfo, Qt
 from PyQt5.QtWidgets import (QApplication, QFileIconProvider, QFileSystemModel,
                              QMenu, QSizePolicy, QTreeView, QVBoxLayout,
                              QWidget)
+from PyQt5.QtGui import QIcon
 
 from src.gui.icons import SPIcon
 
@@ -15,32 +17,38 @@ SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xp
                  'video': ['mkv', 'mp4', 'avi', 'mov', 'webm'],
                  'zip': ['rar', 'zip'],
                  'aes_zip': ['aes_zip']}
+ROTATABLE_FORMATS = ['bmp', 'jpg', 'jpeg', 'png']
 
 
-def is_rotatable(fullpath):
-    try:
-        ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
-    except Exception:
+def is_rotatable(fullpath: str) -> bool:
+    if not fullpath:
         return False
-    if ext in ['bmp', 'jpg', 'jpeg', 'png']:
+    try:
+        ext = Path(fullpath).suffix.replace('.', '').lower()
+    except (AttributeError, NotImplementedError):
+        return False
+    if ext in ROTATABLE_FORMATS:
         return True
     return False
 
 
-def gettype(fullpath):
+def gettype(fullpath: str) -> str | None:
     if fullpath is None:
         return None
     if os.path.isdir(fullpath):
         return 'folder'
-    ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
-    for key in SUPPORTED_EXT.keys():
-        if ext in SUPPORTED_EXT[key]:
+    try:
+        ext = Path(fullpath).suffix.replace('.', '').lower()
+    except (AttributeError, NotImplementedError):
+        return None
+    for key, ext_list in SUPPORTED_EXT.items():
+        if ext in ext_list:
             return key
     return 'file'
 
 
 class IconProvider(QFileIconProvider):
-    def icon(self, parameter):
+    def icon(self, parameter) -> QIcon:
         if isinstance(parameter, QFileInfo):
             if parameter.isDir():
                 return self.sp_icon.folder
@@ -93,9 +101,9 @@ class FilesTree(QTreeView):
         super().__init__(parent)
         self.file_model = ProxyQFileSystemModel()
         self.sp_icon = SPIcon()
-        icon_provide = IconProvider()
-        icon_provide.sp_icon = self.sp_icon
-        self.file_model.setIconProvider(icon_provide)
+        icon_provider = IconProvider()
+        icon_provider.sp_icon = self.sp_icon
+        self.file_model.setIconProvider(icon_provider)
         self.setModel(self.file_model)
         self.hideColumn(1)
         self.hideColumn(2)
@@ -107,7 +115,6 @@ class FilesTree(QTreeView):
         self.file_model.set_header_name(rootpath)
         self.file_model.setRootPath(rootpath)
         self.setRootIndex(self.file_model.index(rootpath))
-
         self.selectionModel()
 
     def _open_files_tree_context(self, position):
