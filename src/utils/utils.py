@@ -19,13 +19,13 @@ def write_file(path: str, data: bytes) -> None:
         f.write(data)
 
 
-def rotate_file_right(img_path):
+def rotate_file_right(img_path: str):
     img = Image.open(img_path)
     img = img.rotate(-90, expand=True)
     img.save(img_path)
 
 
-def rotate_file_left(img_path):
+def rotate_file_left(img_path: str):
     img = Image.open(img_path)
     img = img.rotate(90, expand=True)
     img.save(img_path)
@@ -39,7 +39,7 @@ def make_dir_writable(function, path, exception):
     function(path)
 
 
-def get_folder_size(path) -> float:
+def get_folder_size(path: str) -> float:
     if not os.path.isdir(path):
         raise ValueError(f'Given path not a dir: {path}')
     res = 0
@@ -50,7 +50,7 @@ def get_folder_size(path) -> float:
     return res
 
 
-def size_to_text(size):
+def size_to_text(size: int) -> str:
     for unit in ("B", "K", "M", "G", "T"):
         if size < 1024:
             break
@@ -58,7 +58,7 @@ def size_to_text(size):
     return f"{size:.1f}{unit}"
 
 
-def delete_path(path):
+def delete_path(path: str):
     if path is None:
         return
     try:
@@ -70,7 +70,7 @@ def delete_path(path):
         pass
 
 
-def copy_path(src_path, dest_path):
+def copy_path(src_path: str, dest_path: str):
     if os.path.isdir(src_path):
         target_folder = str(os.path.join(dest_path, os.path.basename(src_path)))
         shutil.copytree(src_path, target_folder, dirs_exist_ok=True)
@@ -79,7 +79,7 @@ def copy_path(src_path, dest_path):
 
 
 # https://stackoverflow.com/a/7675014/12627677
-def resource_path(relative_path):
+def resource_path(relative_path: str):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS

@@ -3,12 +3,14 @@ import os
 
 
 class DBJsonFile:
+    """Local settings in json format"""
     def __init__(self):
         self.filename = os.path.join(os.path.expanduser("~"), '.SecurePhotos', 'config.json')
         self._version = 'v1'
         self._load()
 
     def _load_defaults(self):
+        """Default settings"""
         self.store = {
             "action_rotate_left": True,
             "action_rotate_right": True,
@@ -20,6 +22,7 @@ class DBJsonFile:
         }
 
     def _load(self):
+        """Load from file if available"""
         if os.path.exists(self.filename):
             with open(self.filename, 'r', encoding='utf-8') as f:
                 try:
@@ -32,6 +35,7 @@ class DBJsonFile:
             self._load_defaults()
 
     def _save(self):
+        """Save after changed"""
         dirs, filename = os.path.split(self.filename)
         os.makedirs(dirs, exist_ok=True)
         with open(self.filename, "w", encoding="utf-8") as f:
@@ -39,12 +43,14 @@ class DBJsonFile:
             json.dump(v_store, f, indent=4, ensure_ascii=False)
 
     def __getitem__(self, key: str):
+        """Get settings value"""
         key = str(key)
         if key not in self.store:
             return False
         return self.store[key]
 
     def __setitem__(self, key: str, value):
+        """Set in settings and update file"""
         key = str(key)
         self.store[key] = value
         self._save()
