@@ -1,12 +1,14 @@
 import os
 import webbrowser
+from pathlib import Path
 
 from PyQt5.QtCore import QEvent, QFileInfo, Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QApplication, QFileIconProvider, QFileSystemModel,
                              QMenu, QSizePolicy, QTreeView, QVBoxLayout,
                              QWidget)
 
-from src.gui.icons import SPIcon
+from src.gui.icons import Icons
 
 SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xpm', 'svg'],
                  'aes': ['aes'],
@@ -15,45 +17,54 @@ SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xp
                  'video': ['mkv', 'mp4', 'avi', 'mov', 'webm'],
                  'zip': ['rar', 'zip'],
                  'aes_zip': ['aes_zip']}
+ROTATABLE_FORMATS = ['bmp', 'jpg', 'jpeg', 'png']
 
 
-def is_rotatable(fullpath):
-    try:
-        ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
-    except Exception:
+def is_rotatable(fullpath: str) -> bool:
+    if not fullpath:
         return False
-    if ext in ['bmp', 'jpg', 'jpeg', 'png']:
+    try:
+        ext = Path(fullpath).suffix.replace('.', '').lower()
+    except (AttributeError, NotImplementedError):
+        return False
+    if ext in ROTATABLE_FORMATS:
         return True
     return False
 
 
-def gettype(fullpath):
-    if fullpath is None:
+def gettype(fullpath: str) -> str | None:
+    # Return None for not existing paths
+    if fullpath is None or not os.path.exists(fullpath):
         return None
     if os.path.isdir(fullpath):
         return 'folder'
-    ext = os.path.splitext(os.path.basename(fullpath))[1].replace('.', '').lower()
-    for key in SUPPORTED_EXT.keys():
-        if ext in SUPPORTED_EXT[key]:
+    try:
+        ext = Path(fullpath).suffix.replace('.', '').lower()
+    except (AttributeError, NotImplementedError):
+        return None
+
+    # Return file-type
+    for key, ext_list in SUPPORTED_EXT.items():
+        if ext in ext_list:
             return key
     return 'file'
 
 
 class IconProvider(QFileIconProvider):
-    def icon(self, parameter):
+    def icon(self, parameter) -> QIcon:
         if isinstance(parameter, QFileInfo):
             if parameter.isDir():
-                return self.sp_icon.folder
+                return self.icons.folder
             if gettype(parameter.absoluteFilePath()) == 'aes':
-                return self.sp_icon.lock
+                return self.icons.lock
             if gettype(parameter.absoluteFilePath()) == 'aes_zip':
-                return self.sp_icon.folder_lock
+                return self.icons.folder_lock
             if gettype(parameter.absoluteFilePath()) == 'image':
-                return self.sp_icon.image
+                return self.icons.image
             if gettype(parameter.absoluteFilePath()) == 'video':
-                return self.sp_icon.movie
+                return self.icons.movie
             if gettype(parameter.absoluteFilePath()) == 'zip':
-                return self.sp_icon.file_zip
+                return self.icons.file_zip
         return super().icon(parameter)
 
 
@@ -92,10 +103,10 @@ class FilesTree(QTreeView):
     def __init__(self, parent):
         super().__init__(parent)
         self.file_model = ProxyQFileSystemModel()
-        self.sp_icon = SPIcon()
-        icon_provide = IconProvider()
-        icon_provide.sp_icon = self.sp_icon
-        self.file_model.setIconProvider(icon_provide)
+        self.icons = Icons()
+        icon_provider = IconProvider()
+        icon_provider.icons = self.icons
+        self.file_model.setIconProvider(icon_provider)
         self.setModel(self.file_model)
         self.hideColumn(1)
         self.hideColumn(2)
@@ -107,7 +118,6 @@ class FilesTree(QTreeView):
         self.file_model.set_header_name(rootpath)
         self.file_model.setRootPath(rootpath)
         self.setRootIndex(self.file_model.index(rootpath))
-
         self.selectionModel()
 
     def _open_files_tree_context(self, position):
@@ -116,16 +126,16 @@ class FilesTree(QTreeView):
         path = QFileSystemModel().filePath(idx)
 
         menu = QMenu()
-        menu.addAction(self.sp_icon.copy, "Copy fullpath")
+        menu.addAction(self.icons.copy, "Copy fullpath")
         if gettype(path) != 'folder':
-            menu.addAction(self.sp_icon.copy, "Copy filename")
+            menu.addAction(self.icons.copy, "Copy filename")
             menu.addSeparator()
-            menu.addAction(self.sp_icon.open, "Show in explorer")
-            menu.addAction(self.sp_icon.open, "Open in associated app")
+            menu.addAction(self.icons.open, "Show in explorer")
+            menu.addAction(self.icons.open, "Open in associated app")
         else:
             menu.addSeparator()
-            menu.addAction(self.sp_icon.open, "Show in explorer")
-            menu.addAction(self.sp_icon.open, "Open in explorer")
+            menu.addAction(self.icons.open, "Show in explorer")
+            menu.addAction(self.icons.open, "Open in explorer")
 
         action = menu.exec_(self.viewport().mapToGlobal(position))
         if action is None:

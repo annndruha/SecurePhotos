@@ -1,36 +1,23 @@
 import glob
 import os
 import shutil
-import stat
 
 from src.gui.window_progressbar import ProgressBarDialog
 from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
 from src.utils.aes import AESCipher
-from src.utils.utils import get_folder_size
+from src.utils.utils import delete_path, get_folder_size, read_file, write_file
 
 CRYPT_EXTENSION = '.aes'
 CRYPT_FOLDER_EXTENSION = '.aes_zip'
-UTF_8 = 'utf-8'
 
 
 class EmptyCipher(Exception):
     pass
 
 
-def read_file(path: str) -> bytes:
-    with open(path, 'rb') as f:
-        byte = f.read()
-        return byte
-
-
-def write_file(path: str, data: bytes) -> None:
-    if os.path.exists(path):
-        raise FileExistsError(path)
-    with open(path, 'wb') as f:
-        f.write(data)
-
-
-def encrypt_file(path: str, cipher: AESCipher, delete_original=False) -> None:
+def encrypt_file(path: str,
+                 cipher: AESCipher,
+                 delete_original=False) -> None:
     if cipher is None:
         raise EmptyCipher
     file_bytes = read_file(path)
@@ -42,7 +29,10 @@ def encrypt_file(path: str, cipher: AESCipher, delete_original=False) -> None:
         delete_path(path)
 
 
-def decrypt_file(path: str, cipher: AESCipher, delete_original=False) -> None:
+def decrypt_file(path: str,
+                 cipher: AESCipher,
+                 delete_original=False) -> None:
+    """Decrypt file, save decrypted on disk, remove encrypted if set"""
     if cipher is None:
         raise EmptyCipher
     file_bytes = read_file(path)
@@ -54,7 +44,9 @@ def decrypt_file(path: str, cipher: AESCipher, delete_original=False) -> None:
         delete_path(path)
 
 
-def decrypt_runtime(path: str, cipher: AESCipher):
+def decrypt_runtime(path: str,
+                    cipher: AESCipher):
+    """Try to decrypt folder in runtime, without write decrypted on disk"""
     if cipher is None:
         raise EmptyCipher
     else:
@@ -63,12 +55,13 @@ def decrypt_runtime(path: str, cipher: AESCipher):
         return decrypted_text
 
 
-def encrypt_folder_each_file(
-        path: str,
-        cipher: AESCipher,
-        progress: ProgressBarDialog,
-        delete_original=False) -> None:
-
+def encrypt_folder_each_file(path: str,
+                             cipher: AESCipher,
+                             progress: ProgressBarDialog,
+                             delete_original=False) -> None:
+    """Encrypt each file in folder separately"""
+    if cipher is None:
+        raise EmptyCipher
     files = glob.glob(os.path.join(path, '**'), recursive=True)
     for i, filepath in enumerate(files):
         progress.set_state(int(i * 100 / len(files)), filepath)
@@ -79,12 +72,13 @@ def encrypt_folder_each_file(
     progress.set_state(100, 'Done')
 
 
-def encrypt_folder_to_one_file(
-                               path: str,
+def encrypt_folder_to_one_file(path: str,
                                cipher: AESCipher,
                                progress_onefile: ProgressBarOneFileDialog,
                                delete_original=False) -> None:
-
+    """Encrypt whole folder to one file"""
+    if cipher is None:
+        raise EmptyCipher
     if os.path.exists(path + '.zip'):
         raise FileExistsError(path + '.zip')
     if os.path.exists(path + '.zip' + CRYPT_EXTENSION):
@@ -114,7 +108,12 @@ def encrypt_folder_to_one_file(
     progress_onefile.set_state('done')
 
 
-def decrypt_folder_file(path: str, cipher: AESCipher, delete_original=False) -> None:
+def decrypt_folder_file(path: str,
+                        cipher: AESCipher,
+                        delete_original=False) -> None:
+    """Decrypt folder as one-file archive"""
+    if cipher is None:
+        raise EmptyCipher
     temp_zip_aes = path.replace(CRYPT_FOLDER_EXTENSION, '.zip' + CRYPT_EXTENSION)
     temp_zip = path.replace(CRYPT_FOLDER_EXTENSION, '.zip')
     out_path = path.replace(CRYPT_FOLDER_EXTENSION, '')
@@ -136,6 +135,11 @@ def decrypt_folder(path: str,
                    cipher: AESCipher,
                    progress: ProgressBarDialog,
                    delete_original=False) -> None:
+    """
+    Decrypt folder file by file. Update progress bar
+    """
+    if cipher is None:
+        raise EmptyCipher
     files = glob.glob(os.path.join(path, '**'), recursive=True)
     for i, filepath in enumerate(files):
         progress.set_state(int(i * 100 / len(files)), filepath)
@@ -144,21 +148,3 @@ def decrypt_folder(path: str,
         if os.path.isfile(filepath) and os.path.splitext(filepath)[1] == CRYPT_EXTENSION:
             decrypt_file(filepath, cipher, delete_original=delete_original)
     progress.set_state(100, 'Done')
-
-
-def make_dir_writable(function, path, exception):
-    """The path on Windows cannot be gracefully removed due to being read-only,
-    so we make the directory writable on a failure and retry the original function.
-    """
-    os.chmod(path, stat.S_IWRITE)
-    function(path)
-
-
-def delete_path(path):
-    try:
-        if os.path.isdir(path):
-            shutil.rmtree(path, onerror=make_dir_writable)
-        else:
-            os.remove(path)
-    except FileNotFoundError:
-        pass

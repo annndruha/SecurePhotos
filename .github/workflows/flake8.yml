@@ -24,5 +24,4 @@ jobs:
         pip install flake8
 
     - name: Lint
-      run: |
-        flake8 --exclude=src/gui_generative/* --max-line-length 120 .
+      run: flake8 .

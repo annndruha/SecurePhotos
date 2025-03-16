@@ -1,11 +1,10 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
+from src.gui.icons import Icons
 from src.gui_generative.ui_settings import Ui_SettingsDialog
 from src.utils.about import About
-from src.utils.utils import resource_path as rp
 
 
 class SettingsDialog(QtWidgets.QDialog):
@@ -13,7 +12,7 @@ class SettingsDialog(QtWidgets.QDialog):
         super(SettingsDialog, self).__init__()
         self.ui = Ui_SettingsDialog()
         self.ui.setupUi(self)
-        self.setWindowIcon(QIcon(rp('src/img/icon.svg')))
+        self.setWindowIcon(Icons.favicon)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.ui.selectCopyFolder.clicked.connect(self._select_target_folder)
         self.ui.enableCopyToTarget.clicked.connect(self._disable_enable_target)
