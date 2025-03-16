@@ -1,0 +1,15 @@
+[flake8]
+max-complexity = 14
+inline-quotes = double
+multiline-quotes = """
+builtins = _
+verbose = 2
+max-line-length = 256
+
+
+exclude =
+          .git,
+          __pycache__,
+          venv,
+          .venv,
+          src/gui_generative

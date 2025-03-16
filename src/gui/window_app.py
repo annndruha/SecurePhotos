@@ -24,7 +24,8 @@ from src.utils.crypt_utils import (EmptyCipher, decrypt_file, decrypt_folder,
                                    encrypt_file, encrypt_folder_each_file,
                                    encrypt_folder_to_one_file)
 from src.utils.settings import DBJsonFile
-from src.utils.utils import delete_path, copy_path, rotate_file_left, rotate_file_right
+from src.utils.utils import (copy_path, delete_path, rotate_file_left,
+                             rotate_file_right)
 
 
 def crypt_errors(func):
@@ -146,7 +147,7 @@ class MainWindow(QMainWindow):
         self.ui.graphicsView.zoomedSignal.connect(self._update_action_fit_status)
 
         self.showMaximized()
-        self._update_actions_status('sample.path')
+        self.update_actions_status('sample.path')
         self._open_last_folder()
 
     # SLOTS: FullScreen
@@ -209,7 +210,7 @@ class MainWindow(QMainWindow):
             self.cipher = AESCipher(self.enterKeyDialog.ui.keyField.text())
         self.enterKeyDialog.reset()
         self.enterKeyDialog.done(200)
-        self._update_actions_status(self.cur_path)
+        self.update_actions_status(self.cur_path)
         self._update_image()
 
     def _reject_enter_key(self):
@@ -256,7 +257,7 @@ class MainWindow(QMainWindow):
             self.progressBarOneFileDialog.done(200)
         self.progressBarDialog.reset()
         self.progressBarDialog.done(200)
-        self._update_actions_status(self.cur_path)
+        self.update_actions_status(self.cur_path)
         self._update_image()
 
     def _reject_folder_encrypt(self):
@@ -375,7 +376,7 @@ class MainWindow(QMainWindow):
             self.ui.actionEncrypt.setIcon(self.icons.lock)
             self.ui.actionEncrypt.mode = 'encrypt'
 
-    def _update_actions_status(self, path: str):
+    def update_actions_status(self, path: str):
         """Update all toolBar actions statuses"""
         self.ui.actionRotateLeft.setEnabled(is_rotatable(path))
         self.ui.actionRotateRight.setEnabled(is_rotatable(path))
@@ -481,7 +482,7 @@ class MainWindow(QMainWindow):
     def _select_item(self, cur, prev):
         self.cur_path = self.file_sys.filePath(cur)
         self.prev_path = self.file_sys.filePath(prev)
-        self._update_actions_status(self.cur_path)
+        self.update_actions_status(self.cur_path)
         self._update_image()
 
     def _open_folder(self):

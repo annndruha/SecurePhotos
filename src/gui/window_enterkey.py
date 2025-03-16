@@ -1,11 +1,11 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor, QIcon, QPalette
+from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtWidgets import QLineEdit
 
+from src.gui.icons import Icons
 from src.gui_generative.ui_enterkey import Ui_EnterKey
 from src.utils.aes import AESCipher
-from src.utils.utils import resource_path as rp
 
 
 class EnterKeyDialog(QtWidgets.QDialog):
@@ -13,7 +13,7 @@ class EnterKeyDialog(QtWidgets.QDialog):
         super(EnterKeyDialog, self).__init__()
         self.ui = Ui_EnterKey()
         self.ui.setupUi(self)
-        self.setWindowIcon(QIcon(rp('src/img/icon.svg')))
+        self.setWindowIcon(Icons.favicon)
         self.ui.keyField.textChanged.connect(self._compare_key)
         self.ui.keyRepeat.textChanged.connect(self._compare_key)
         self.ui.keyField.setEchoMode(QLineEdit.Password)

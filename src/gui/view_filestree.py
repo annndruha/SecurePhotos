@@ -3,10 +3,10 @@ import webbrowser
 from pathlib import Path
 
 from PyQt5.QtCore import QEvent, QFileInfo, Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QApplication, QFileIconProvider, QFileSystemModel,
                              QMenu, QSizePolicy, QTreeView, QVBoxLayout,
                              QWidget)
-from PyQt5.QtGui import QIcon
 
 from src.gui.icons import Icons
 

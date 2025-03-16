@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QBrush, QColor, QIcon
+from PyQt5.QtGui import QBrush, QColor
 
-from src.utils.utils import resource_path as rp
+from src.gui.icons import Icons
 
 
 class GraphicsView(QtWidgets.QGraphicsView):
@@ -50,7 +50,7 @@ class FullScreen(GraphicsView):
         super(FullScreen, self).__init__()
         self.setWindowFlags(Qt.CustomizeWindowHint | Qt.FramelessWindowHint)
         self.setBackgroundBrush(QBrush(QColor('black')))
-        self.setWindowIcon(QIcon(rp('src/img/icon.svg')))
+        self.setWindowIcon(Icons.favicon)
 
     def keyPressEvent(self, event):
         if event.key() == 16777216:

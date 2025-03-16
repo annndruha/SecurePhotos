@@ -1,9 +1,8 @@
-import sys
 import platform
+import sys
 
 import Crypto
 import PIL
-
 from PyQt5.QtCore import PYQT_VERSION_STR, QT_VERSION_STR
 
 from src.version import __version__
