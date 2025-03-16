@@ -24,19 +24,13 @@ SecurePhotos - Gallery for photos with encryption for your photos or any files. 
 * Go to [release section](https://github.com/annndruha/SecurePhotos/releases)
 * Download `SecurePhotos.exe` from release assets
 
-##### Using python:
-Install Python and execute in terminal:
-```bash
-pip install git+https://github.com/annndruha/SecurePhotos
-SecurePhotos
-```
-
 ##### Manual run from sources:
 Install Python and execute in terminal:
 ```bash
 git clone https://github.com/annndruha/SecurePhotos
-pip install -e SecurePhotos
-SecurePhotos
+cd SecurePhotos
+pip install -r requirements.txt
+python -m src
 ```
 
 ### Algorithm:
