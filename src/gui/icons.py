@@ -3,7 +3,8 @@ from PyQt5.QtGui import QIcon, QImageReader, QPixmap
 from src.utils.utils import resource_path as rp
 
 
-class SPIcon:
+class Icons:
+    """Store all icons in RAM for fast rendering in FilesTree etc."""
     def __init__(self):
         self.favicon = QIcon(rp('src/img/icon.svg'))
         self.folder_open = QIcon(rp('src/img/icons/folder_open.svg'))
@@ -33,11 +34,9 @@ class SPIcon:
         self.open = QIcon(rp("src/img/icons/open_in.svg"))
 
 
-class SPPlaceholder:
+class Placeholders:
     """
-    Secure Photos Placeholder
-    class for preload images
-    with correct paths for python and .exe
+    Placeholders images
     """
     def __init__(self):
         self.try_another_key = QPixmap.fromImage(QImageReader(rp('src/img/placeholders/try_another_key.png')).read())

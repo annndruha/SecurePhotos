@@ -5,6 +5,7 @@ from src.utils.utils import resource_path as rp
 
 
 class UserMessage(QtWidgets.QMessageBox):
+    """Info or error message window"""
     def __init__(self, text, level="Critical"):
         super(UserMessage, self).__init__()
         self.setWindowIcon(QIcon(rp('src/img/icon.svg')))

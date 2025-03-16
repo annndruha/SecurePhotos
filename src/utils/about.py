@@ -1,4 +1,5 @@
 import sys
+import platform
 
 import Crypto
 import PIL
@@ -16,11 +17,11 @@ class About:
     @property
     def info(self):
         return f"""
-                SecurePhotos: <a href="https://github.com/annndruha/SecurePhotos/releases">{__version__}</a>
-                <p>
-                <a href="https://github.com/annndruha/SecurePhotos">Source code</a>
+                SecurePhotos: {self.__version__} <b><a href="https://github.com/annndruha/SecurePhotos/releases">Check new releases</a></b>
                 <p>
                 Autor: <a href="https://github.com/annndruha">@annndruha</a>
+                <p>
+                Source code <a href="https://github.com/annndruha/SecurePhotos">on GitHub</a>
                 <p>
                 <h4>
                 <a href="https://github.com/annndruha/SecurePhotos/issues">Report problem</a>
@@ -36,13 +37,14 @@ class About:
             f'Crypto: {Crypto.__version__}',
             f'PIL: {PIL.__version__}',
             f'Qt: {QT_VERSION_STR}',
-            f'PyQt5: {PYQT_VERSION_STR}'
+            f'PyQt5: {PYQT_VERSION_STR}',
+            f'Operating system: {platform.platform()}'
         ]
         return versions_list
 
     @property
     def system_info(self):
-        return '<p>'.join(self.versions)
+        return '<br>'.join(self.versions)
 
     @property
     def system_info_clipboard(self):

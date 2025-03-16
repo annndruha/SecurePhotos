@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (QApplication, QFileIconProvider, QFileSystemModel,
                              QWidget)
 from PyQt5.QtGui import QIcon
 
-from src.gui.icons import SPIcon
+from src.gui.icons import Icons
 
 SUPPORTED_EXT = {'image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'ppm', 'xbm', 'xpm', 'svg'],
                  'aes': ['aes'],
@@ -33,14 +33,19 @@ def is_rotatable(fullpath: str) -> bool:
 
 
 def gettype(fullpath: str) -> str | None:
-    if fullpath is None:
+    # Return None for not existing paths
+    if fullpath is None or not os.path.exists(fullpath):
         return None
+
     if os.path.isdir(fullpath):
         return 'folder'
+
     try:
         ext = Path(fullpath).suffix.replace('.', '').lower()
     except (AttributeError, NotImplementedError):
         return None
+
+    # Return file-type
     for key, ext_list in SUPPORTED_EXT.items():
         if ext in ext_list:
             return key
@@ -51,17 +56,17 @@ class IconProvider(QFileIconProvider):
     def icon(self, parameter) -> QIcon:
         if isinstance(parameter, QFileInfo):
             if parameter.isDir():
-                return self.sp_icon.folder
+                return self.icons.folder
             if gettype(parameter.absoluteFilePath()) == 'aes':
-                return self.sp_icon.lock
+                return self.icons.lock
             if gettype(parameter.absoluteFilePath()) == 'aes_zip':
-                return self.sp_icon.folder_lock
+                return self.icons.folder_lock
             if gettype(parameter.absoluteFilePath()) == 'image':
-                return self.sp_icon.image
+                return self.icons.image
             if gettype(parameter.absoluteFilePath()) == 'video':
-                return self.sp_icon.movie
+                return self.icons.movie
             if gettype(parameter.absoluteFilePath()) == 'zip':
-                return self.sp_icon.file_zip
+                return self.icons.file_zip
         return super().icon(parameter)
 
 
@@ -100,9 +105,9 @@ class FilesTree(QTreeView):
     def __init__(self, parent):
         super().__init__(parent)
         self.file_model = ProxyQFileSystemModel()
-        self.sp_icon = SPIcon()
+        self.icons = Icons()
         icon_provider = IconProvider()
-        icon_provider.sp_icon = self.sp_icon
+        icon_provider.icons = self.icons
         self.file_model.setIconProvider(icon_provider)
         self.setModel(self.file_model)
         self.hideColumn(1)
@@ -123,16 +128,16 @@ class FilesTree(QTreeView):
         path = QFileSystemModel().filePath(idx)
 
         menu = QMenu()
-        menu.addAction(self.sp_icon.copy, "Copy fullpath")
+        menu.addAction(self.icons.copy, "Copy fullpath")
         if gettype(path) != 'folder':
-            menu.addAction(self.sp_icon.copy, "Copy filename")
+            menu.addAction(self.icons.copy, "Copy filename")
             menu.addSeparator()
-            menu.addAction(self.sp_icon.open, "Show in explorer")
-            menu.addAction(self.sp_icon.open, "Open in associated app")
+            menu.addAction(self.icons.open, "Show in explorer")
+            menu.addAction(self.icons.open, "Open in associated app")
         else:
             menu.addSeparator()
-            menu.addAction(self.sp_icon.open, "Show in explorer")
-            menu.addAction(self.sp_icon.open, "Open in explorer")
+            menu.addAction(self.icons.open, "Show in explorer")
+            menu.addAction(self.icons.open, "Open in explorer")
 
         action = menu.exec_(self.viewport().mapToGlobal(position))
         if action is None:

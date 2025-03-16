@@ -1,7 +1,6 @@
 import ctypes
 import os
 import platform
-import shutil
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import QBuffer, QByteArray, QItemSelectionModel, QSize
@@ -9,7 +8,7 @@ from PyQt5.QtGui import QImageReader, QPixmap
 from PyQt5.QtWidgets import (QFileDialog, QFileSystemModel, QGraphicsScene,
                              QMainWindow)
 
-from src.gui.icons import SPIcon, SPPlaceholder
+from src.gui.icons import Icons, Placeholders
 from src.gui.view_filestree import TitleBarWidget, gettype, is_rotatable
 from src.gui.window_enterkey import EnterKeyDialog
 from src.gui.window_folderencrypt import FolderEncryptDialog
@@ -76,26 +75,26 @@ class MainWindow(QMainWindow):
         self.file_sys = QFileSystemModel()
 
         # === IMAGE RESOURCES ===
-        self.sp_icon = SPIcon()
-        self.sp_placeholder = SPPlaceholder()
+        self.icons = Icons()
+        self.placeholders = Placeholders()
 
         # === APP ICON ===
         if platform.uname()[0] == "Windows":
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('annndruha.SecurePhotos')
-        self.setWindowIcon(self.sp_icon.favicon)
+        self.setWindowIcon(self.icons.favicon)
 
         # === TOOLBAR ICONS ===
-        self.ui.actionOpenFolder.setIcon(self.sp_icon.folder_open)
-        self.ui.actionSettings.setIcon(self.sp_icon.settings)
-        self.ui.actionRotateLeft.setIcon(self.sp_icon.rotate_left)
-        self.ui.actionRotateRight.setIcon(self.sp_icon.rotate_right)
-        self.ui.actionDelete.setIcon(self.sp_icon.delete)
-        self.ui.actionChangeFit.setIcon(self.sp_icon.zoom_none)
-        self.ui.actionFullscreen.setIcon(self.sp_icon.open_full)
-        self.ui.actionEnterKey.setIcon(self.sp_icon.key)
-        self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
-        self.ui.actionFolderDecrypt.setIcon(self.sp_icon.folder_lock_open)
-        self.ui.actionCopyToTarget.setIcon(self.sp_icon.copy)
+        self.ui.actionOpenFolder.setIcon(self.icons.folder_open)
+        self.ui.actionSettings.setIcon(self.icons.settings)
+        self.ui.actionRotateLeft.setIcon(self.icons.rotate_left)
+        self.ui.actionRotateRight.setIcon(self.icons.rotate_right)
+        self.ui.actionDelete.setIcon(self.icons.delete)
+        self.ui.actionChangeFit.setIcon(self.icons.zoom_none)
+        self.ui.actionFullscreen.setIcon(self.icons.open_full)
+        self.ui.actionEnterKey.setIcon(self.icons.key)
+        self.ui.actionEncrypt.setIcon(self.icons.lock)
+        self.ui.actionFolderDecrypt.setIcon(self.icons.folder_lock_open)
+        self.ui.actionCopyToTarget.setIcon(self.icons.copy)
         self.ui.toolBar.setStyleSheet("QToolBar { border-style: none; }")
 
         # ===CONNECTS===
@@ -157,12 +156,12 @@ class MainWindow(QMainWindow):
             self.fs.show()
             self.fs.showFullScreen()
             self.fs.update_image()
-            self.ui.actionFullscreen.setIcon(self.sp_icon.close_full)
+            self.ui.actionFullscreen.setIcon(self.icons.close_full)
             self.ui.actionFullscreen.setText('Window')
         else:
             self.fs.showNormal()
             self.fs.close()
-            self.ui.actionFullscreen.setIcon(self.sp_icon.open_full)
+            self.ui.actionFullscreen.setIcon(self.icons.open_full)
             self.ui.actionFullscreen.setText('Fullscreen')
 
     def _fullscreen_next(self):
@@ -311,14 +310,14 @@ class MainWindow(QMainWindow):
         if self.fit_in_view and not nothing_to_fit:
             self.ui.actionChangeFit.setEnabled(True)
             self.ui.actionChangeFit.setText('Fit view')
-            self.ui.actionChangeFit.setIcon(self.sp_icon.zoom_in)
+            self.ui.actionChangeFit.setIcon(self.icons.zoom_in)
         elif not self.fit_in_view and not nothing_to_fit:
             self.ui.actionChangeFit.setEnabled(True)
             self.ui.actionChangeFit.setText('Fit view')
-            self.ui.actionChangeFit.setIcon(self.sp_icon.zoom_out)
+            self.ui.actionChangeFit.setIcon(self.icons.zoom_out)
         else:
             self.ui.actionChangeFit.setText("Fit view")
-            self.ui.actionChangeFit.setIcon(self.sp_icon.zoom_none)
+            self.ui.actionChangeFit.setIcon(self.icons.zoom_none)
             self.ui.actionChangeFit.setDisabled(True)
 
     def _update_actions_visible(self):
@@ -345,19 +344,19 @@ class MainWindow(QMainWindow):
         if self.cipher is None:
             self.ui.actionEncrypt.setText('Need key')
             self.ui.actionEncrypt.setDisabled(True)
-            self.ui.actionEncrypt.setIcon(self.sp_icon.not_locked)
+            self.ui.actionEncrypt.setIcon(self.icons.not_locked)
             self.ui.actionEncrypt.mode = 'disable'
             return
 
         if gettype(path) is None:
             self.ui.actionEncrypt.setText('Select file first')
             self.ui.actionEncrypt.setDisabled(True)
-            self.ui.actionEncrypt.setIcon(self.sp_icon.not_locked)
+            self.ui.actionEncrypt.setIcon(self.icons.not_locked)
             self.ui.actionEncrypt.mode = 'disable'
         elif gettype(path) == 'folder':
             self.ui.actionEncrypt.setText('Encrypt folder')
             self.ui.actionEncrypt.setEnabled(True)
-            self.ui.actionEncrypt.setIcon(self.sp_icon.folder_lock)
+            self.ui.actionEncrypt.setIcon(self.icons.folder_lock)
             self.ui.actionEncrypt.mode = 'folder'
             if self.db['action_encrypt_decrypt']:
                 self.ui.actionFolderDecrypt.setVisible(True)
@@ -368,12 +367,12 @@ class MainWindow(QMainWindow):
         elif gettype(path) == 'aes':
             self.ui.actionEncrypt.setText('Decrypt on disk')
             self.ui.actionEncrypt.setEnabled(True)
-            self.ui.actionEncrypt.setIcon(self.sp_icon.lock_open)
+            self.ui.actionEncrypt.setIcon(self.icons.lock_open)
             self.ui.actionEncrypt.mode = 'decrypt'
         else:
             self.ui.actionEncrypt.setText('Encrypt on disk')
             self.ui.actionEncrypt.setEnabled(True)
-            self.ui.actionEncrypt.setIcon(self.sp_icon.lock)
+            self.ui.actionEncrypt.setIcon(self.icons.lock)
             self.ui.actionEncrypt.mode = 'encrypt'
 
     def _update_actions_status(self, path: str):
@@ -403,7 +402,7 @@ class MainWindow(QMainWindow):
             if img_reader.error() != 0:
                 self.ui.actionRotateRight.setDisabled(True)
                 self.ui.actionRotateLeft.setDisabled(True)
-                return self.sp_placeholder.broken_image
+                return self.placeholders.broken_image
             else:
                 return QPixmap.fromImage(image)
         except FileNotFoundError:
@@ -421,13 +420,13 @@ class MainWindow(QMainWindow):
             img_reader.setAutoTransform(True)
             qimage = img_reader.read()
             if img_reader.error() != 0:
-                return self.sp_placeholder.try_another_key
+                return self.placeholders.try_another_key
             else:
                 return QPixmap.fromImage(qimage)
         except EmptyCipher:
-            return self.sp_placeholder.encrypted
+            return self.placeholders.encrypted
         except DecryptException:
-            return self.sp_placeholder.try_another_key
+            return self.placeholders.try_another_key
         except FileNotFoundError:
             return None
 
@@ -439,9 +438,9 @@ class MainWindow(QMainWindow):
             elif gettype(self.cur_path) == 'aes':
                 self.image = self._runtime_decrypt(self.cur_path)
             elif gettype(self.cur_path) == 'aes_zip':
-                self.image = self.sp_placeholder.encrypted
+                self.image = self.placeholders.encrypted
             elif gettype(self.cur_path) == 'video':
-                self.image = self.sp_placeholder.video
+                self.image = self.placeholders.video
             else:
                 self.image = None
 
@@ -456,7 +455,7 @@ class MainWindow(QMainWindow):
                 self.ui.graphicsView.resetTransform()
             self._update_action_fit_status()
         else:
-            image = self.sp_placeholder.nothing_to_show
+            image = self.placeholders.nothing_to_show
             self.scene.clear()
             self.scene.addPixmap(image)
             self.scene.setSceneRect(0, 0, image.width(), image.height())
