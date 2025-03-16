@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SecurePhotos"
+authors = [
+    {name = "Annndruha", email = "annndruha.github@gmail.com"}
+]
+description = "Gallery for photos with encryption for your photos or any files. Also, it's faster than windows default gallery!"
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = []
+license = {text = "Proprientary"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "Pillow",
+    "pycryptodome",
+    "PyQt5",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = ["pyinstaller"]
+
+[project.urls]
+Homepage = "https://github.com/annndruha/SecurePhotos"
+Documentation = "https://github.com/annndruha/SecurePhotos"
+Repository = "https://github.com/annndruha/SecurePhotos"
+Issues = "https://github.com/annndruha/SecurePhotos/issues"
+Changelog = "https://github.com/annndruha/SecurePhotos/releases"
+
+[project.scripts]
+SecurePhotos = "src.__main__:main"
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.setuptools.package-data]
+"src.img" = ["**"]
+
+[tool.setuptools.dynamic]
+version = {attr = "src.version.__version__"}

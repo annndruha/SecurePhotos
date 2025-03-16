@@ -24,9 +24,13 @@ def except_hook(exc_type, exc_value, exc_tb):
     QtWidgets.QApplication.quit()
 
 
-if __name__ == '__main__':
+def main():
     sys.excepthook = except_hook
     app = QtWidgets.QApplication(sys.argv)
     application = MainWindow(About().__version__)
     application.show()
     app.exec()
+
+
+if __name__ == '__main__':
+    main()
