@@ -5,7 +5,7 @@ import shutil
 from src.gui.window_progressbar import ProgressBarDialog
 from src.gui.window_progressbar_onefile import ProgressBarOneFileDialog
 from src.utils.aes import AESCipher
-from src.utils.utils import get_folder_size, delete_path, read_file, write_file
+from src.utils.utils import delete_path, get_folder_size, read_file, write_file
 
 CRYPT_EXTENSION = '.aes'
 CRYPT_FOLDER_EXTENSION = '.aes_zip'
