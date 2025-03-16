@@ -479,7 +479,7 @@ class MainWindow(QMainWindow):
         delete_path(self.cur_path)
         self._update_image()
 
-    def _select_item(self, cur, prev):
+    def _select_item(self, cur, _):
         self.cur_path = self.file_sys.filePath(cur)
         self.update_actions_status(self.cur_path)
         self._update_image()
