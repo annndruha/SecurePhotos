@@ -36,10 +36,8 @@ def gettype(fullpath: str) -> str | None:
     # Return None for not existing paths
     if fullpath is None or not os.path.exists(fullpath):
         return None
-
     if os.path.isdir(fullpath):
         return 'folder'
-
     try:
         ext = Path(fullpath).suffix.replace('.', '').lower()
     except (AttributeError, NotImplementedError):

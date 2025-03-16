@@ -380,7 +380,7 @@ class MainWindow(QMainWindow):
         """Update all toolBar actions statuses"""
         self.ui.actionRotateLeft.setEnabled(is_rotatable(path))
         self.ui.actionRotateRight.setEnabled(is_rotatable(path))
-        self.ui.actionFullscreen.setEnabled(gettype(path) == 'image')
+        self.ui.actionFullscreen.setEnabled(gettype(path) in ['image', 'aes'])
         self.ui.actionDelete.setEnabled(gettype(path) is not None and path != 'sample.path')
         # Update complex status logic
         self._update_action_fit_status()
