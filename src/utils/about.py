@@ -15,18 +15,14 @@ class About:
 
     @property
     def info(self):
-        return f"""
+        info = f"""
                 SecurePhotos: {self.__version__} <b><a href="https://github.com/annndruha/SecurePhotos/releases">Check new releases</a></b>
-                <p>
-                Autor: <a href="https://github.com/annndruha">@annndruha</a>
-                <p>
-                Source code <a href="https://github.com/annndruha/SecurePhotos">on GitHub</a>
-                <p>
-                <h4>
-                <a href="https://github.com/annndruha/SecurePhotos/issues">Report problem</a>
-                </h4>
+                <p>Autor: <a href="https://github.com/annndruha">@annndruha</a>
+                <p>Source code <a href="https://github.com/annndruha/SecurePhotos">on GitHub</a>
+                <p><h4><a href="https://github.com/annndruha/SecurePhotos/issues">Report problem</a></h4>
                 <hr>
                 """
+        return info
 
     @property
     def versions(self):

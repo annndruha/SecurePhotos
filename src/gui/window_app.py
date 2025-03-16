@@ -481,7 +481,6 @@ class MainWindow(QMainWindow):
 
     def _select_item(self, cur, prev):
         self.cur_path = self.file_sys.filePath(cur)
-        self.prev_path = self.file_sys.filePath(prev)
         self.update_actions_status(self.cur_path)
         self._update_image()
 
@@ -493,7 +492,6 @@ class MainWindow(QMainWindow):
         self.db['last_path'] = str(self.root_path)
         self.ui.filesTree.change_root(self.root_path)
         self.cur_path = None
-        self.prev_path = None
         self.image = None
         self._update_image()
 

@@ -7,6 +7,18 @@ import sys
 from PIL import Image
 
 
+def read_file(path: str) -> bytes:
+    with open(path, 'rb') as f:
+        return f.read()
+
+
+def write_file(path: str, data: bytes) -> None:
+    if os.path.exists(path):
+        raise FileExistsError(path)
+    with open(path, 'wb') as f:
+        f.write(data)
+
+
 def rotate_file_right(img_path):
     img = Image.open(img_path)
     img = img.rotate(-90, expand=True)
