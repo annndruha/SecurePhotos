@@ -17,12 +17,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
 ]
-dependencies = [
-    "Pillow",
-    "pycryptodome",
-    "PyQt5",
-]
-dynamic = ["version"]
+dynamic = ["dependencies", "optional-dependencies"]
 
 [project.optional-dependencies]
 dev = ["pyinstaller"]
@@ -45,3 +40,5 @@ packages = ["src"]
 
 [tool.setuptools.dynamic]
 version = {attr = "src.version.__version__"}
+dependencies = {file = ["requirements.txt"]}
+optional-dependencies = {dev = { file = ["requirements-dev.txt"] }}
