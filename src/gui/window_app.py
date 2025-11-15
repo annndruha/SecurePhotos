@@ -56,6 +56,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(f"SecurePhotos v{version}")
 
         self.image = None
+        self.image_info = ""
         self.cipher = None
         self.cur_path = None
         self.full_screen = False
@@ -118,33 +119,34 @@ class MainWindow(QMainWindow):
         # settingsDialog buttons
         self.settingsDialog.ui.pushButton_cancel.clicked.connect(self._reject_settings)
         self.settingsDialog.ui.pushButton_apply.clicked.connect(self._apply_settings)
-        self.settingsDialog.rejected.connect(self._reject_settings)
+        self.settingsDialog.rejected.connect(self._reject_settings)  # noqa
         self._reject_settings()
 
         # enterKeyDialog buttons
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
-        self.enterKeyDialog.rejected.connect(self._reject_enter_key)
+        self.enterKeyDialog.rejected.connect(self._reject_enter_key)  # noqa
 
         # folderEncryptDialog buttons
         self.folderEncryptDialog.ui.pushButton_cancel.clicked.connect(self._reject_folder_encrypt)
         self.folderEncryptDialog.ui.pushButton_apply.clicked.connect(self._apply_folder_encrypt)
-        self.folderEncryptDialog.rejected.connect(self._reject_folder_encrypt)
+        self.folderEncryptDialog.rejected.connect(self._reject_folder_encrypt)  # noqa
 
         # progressBarDialog buttons
         self.progressBarDialog.ui.pushButton_abort.clicked.connect(self._abort_folder_crypt)
-        self.progressBarDialog.rejected.connect(self._abort_folder_crypt)
+        self.progressBarDialog.rejected.connect(self._abort_folder_crypt)  # noqa
 
         # progressBarOneFileDialog buttons
         self.progressBarOneFileDialog.ui.pushButton_ok.clicked.connect(self._done_onefile)
         self.progressBarOneFileDialog.ui.pushButton_abort.clicked.connect(self._abort_onefile)
-        self.progressBarOneFileDialog.rejected.connect(self._abort_onefile)
+        self.progressBarOneFileDialog.rejected.connect(self._abort_onefile)  # noqa
 
         self.fs.escapeSignal.connect(self._change_fullscreen)
         self.fs.nextSignal.connect(self._fullscreen_next)
         self.fs.prevSignal.connect(self._fullscreen_prev)
 
         self.ui.graphicsView.zoomedSignal.connect(self._update_action_fit_status)
+        self.ui.graphicsView.mouseMoveSignal.connect(self._update_coordinates)
 
         self.showMaximized()
         self.update_actions_status('sample.path')
@@ -216,6 +218,17 @@ class MainWindow(QMainWindow):
     def _reject_enter_key(self):
         self.enterKeyDialog.reset()
         self.enterKeyDialog.done(200)
+
+    # SLOTS: Mouse position
+    def _update_coordinates(self, x, y):
+        text = f"Mouse: (x={x}, y={y})" if x >= 0 and y >= 0 else "Mouse: ---"
+        self.ui.mouse_cords.setText(self.image_info + text)
+
+    def _update_mouse_text_img_size(self):
+        """Update base text on mouse coordinates label"""
+        self.image_info = f"depth={self.image.depth()}, "
+        self.image_info += f"width={self.image.width()}, height={self.image.height()}\n"
+        self.ui.mouse_cords.setText(self.image_info)
 
     # SLOTS: Encrypt and Decrypt one file or folder
     @crypt_errors
@@ -332,6 +345,7 @@ class MainWindow(QMainWindow):
         self.ui.actionEncrypt.setVisible(self.db['action_encrypt_decrypt'])
         self.ui.actionEnterKey.setVisible(self.db['action_encrypt_decrypt'])
         self.ui.actionCopyToTarget.setVisible(self.db['copy_to_target'])
+        self.ui.mouse_cords.setVisible(self.db['show_mouse_coordinates'])
 
     def _update_actions_crypt(self, path):
         """
@@ -388,7 +402,7 @@ class MainWindow(QMainWindow):
         self._update_actions_crypt(path)
 
     # IMAGES: Image actions and changes
-    def _read_image(self, path):
+    def _read_image(self, path) -> QPixmap | None:
         """Return QPixmap of image"""
         try:
             img_reader = QImageReader(path)
@@ -448,10 +462,12 @@ class MainWindow(QMainWindow):
         if self.image is not None:
             self.scene.clear()
             self.scene.addPixmap(self.image)
+            self._update_mouse_text_img_size()
+
             self.scene.setSceneRect(0, 0, self.image.width(), self.image.height())
             if self.fit_in_view or (self.ui.graphicsView.sceneRect().width() > self.ui.graphicsView.rect().width() or
                                     self.ui.graphicsView.sceneRect().height() > self.ui.graphicsView.rect().height()):
-                self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
+                self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)  # noqa
             else:
                 self.ui.graphicsView.resetTransform()
             self._update_action_fit_status()
@@ -460,7 +476,7 @@ class MainWindow(QMainWindow):
             self.scene.clear()
             self.scene.addPixmap(image)
             self.scene.setSceneRect(0, 0, image.width(), image.height())
-            self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
+            self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)  # noqa
 
     def resizeEvent(self, event):
         self._update_image(lazily=True)

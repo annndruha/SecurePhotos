@@ -73,7 +73,7 @@ class ProxyQFileSystemModel(QFileSystemModel):
         super().__init__()
         self.column_name = 'Name'
 
-    def headerData(self, section, orientation, role):
+    def headerData(self, section, orientation, role):  # noqa
         if section == 0 and role == Qt.DisplayRole:
             return self.column_name
         else:
@@ -112,7 +112,7 @@ class FilesTree(QTreeView):
         self.hideColumn(2)
         self.hideColumn(3)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.customContextMenuRequested.connect(self._open_files_tree_context)
+        self.customContextMenuRequested.connect(self._open_files_tree_context)  # noqa
 
     def change_root(self, rootpath):
         self.file_model.set_header_name(rootpath)
@@ -142,10 +142,10 @@ class FilesTree(QTreeView):
             return
         if action.text() == "Copy fullpath":
             cb = QApplication.clipboard()
-            cb.setText(QFileSystemModel().filePath(idx), mode=cb.Clipboard)
+            cb.setText(QFileSystemModel().filePath(idx), mode=cb.Clipboard)  # noqa
         elif action.text() == "Copy filename":
             cb = QApplication.clipboard()
-            cb.setText(os.path.basename(QFileSystemModel().filePath(idx)), mode=cb.Clipboard)
+            cb.setText(os.path.basename(QFileSystemModel().filePath(idx)), mode=cb.Clipboard)  # noqa
         elif action.text() == "Show in explorer":
             webbrowser.open(os.path.split(path)[0], new=2)
         elif action.text() == "Open in associated app":

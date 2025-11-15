@@ -52,7 +52,18 @@
      <number>5</number>
     </property>
     <item>
-     <widget class="GraphicsView" name="graphicsView" native="true"/>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="mouse_cords">
+        <property name="text">
+         <string>Mosue cords</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="GraphicsView" name="graphicsView" native="true"/>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -111,7 +122,7 @@
      <property name="spacing">
       <number>5</number>
      </property>
-     <item row="0" column="0">
+     <item row="0" column="1">
       <widget class="FilesTree" name="filesTree">
        <column>
         <property name="text">

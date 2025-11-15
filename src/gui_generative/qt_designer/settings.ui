@@ -25,7 +25,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_1">
       <attribute name="title">
@@ -114,24 +114,34 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="2">
+         <item row="2" column="2">
+          <widget class="QLabel" name="labelTarget">
+           <property name="text">
+            <string>Target path</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
           <widget class="QCheckBox" name="enableCopyToTarget">
            <property name="text">
             <string>Enable copy to target button</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
-          <widget class="QLabel" name="labelTarget">
-           <property name="text">
-            <string>Copy target path</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3">
+         <item row="1" column="3">
           <widget class="QPushButton" name="selectCopyFolder">
            <property name="text">
             <string>Select target</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QCheckBox" name="checkMouseCoords">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>Show mouse coordinates</string>
            </property>
           </widget>
          </item>

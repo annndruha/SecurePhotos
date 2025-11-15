@@ -29,6 +29,8 @@ class SettingsDialog(QtWidgets.QDialog):
         parent.db['action_fullscreen'] = self.ui.checkFullscreen.isChecked()
         parent.db['action_fullscreen'] = self.ui.checkFullscreen.isChecked()
         parent.db['action_encrypt_decrypt'] = self.ui.checkEncrypt.isChecked()
+
+        parent.db['show_mouse_coordinates'] = self.ui.checkMouseCoords.isChecked()
         parent.db['copy_to_target'] = self.ui.enableCopyToTarget.isChecked()
         if self.ui.labelTarget.text().strip() != 'Copy target path':
             parent.db['copy_to_target_path'] = self.ui.labelTarget.text()
@@ -42,6 +44,8 @@ class SettingsDialog(QtWidgets.QDialog):
         self.ui.checkFullscreen.setChecked(parent.db['action_fullscreen'])
         self.ui.checkFullscreen.setChecked(parent.db['action_fullscreen'])
         self.ui.checkEncrypt.setChecked(parent.db['action_encrypt_decrypt'])
+
+        self.ui.checkMouseCoords.setChecked(parent.db['show_mouse_coordinates'])
         self.ui.enableCopyToTarget.setChecked(parent.db['copy_to_target'])
         self.ui.labelTarget.setEnabled(parent.db['copy_to_target'])
         self.ui.selectCopyFolder.setEnabled(parent.db['copy_to_target'])
@@ -62,4 +66,4 @@ class SettingsDialog(QtWidgets.QDialog):
     @staticmethod
     def _copy_info_to_clipboard():
         cb = QApplication.clipboard()
-        cb.setText(About().system_info_clipboard, mode=cb.Clipboard)
+        cb.setText(About().system_info_clipboard, mode=cb.Clipboard)  # noqa

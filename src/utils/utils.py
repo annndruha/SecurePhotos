@@ -31,7 +31,7 @@ def rotate_file_left(img_path: str):
     img.save(img_path)
 
 
-def make_dir_writable(function, path, exception):
+def make_dir_writable(function, path, exception):  # noqa:
     """The path on Windows cannot be gracefully removed due to being read-only,
     so we make the directory writable on a failure and retry the original function.
     """
@@ -83,7 +83,7 @@ def resource_path(relative_path: str):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
+        base_path = sys._MEIPASS  # noqa:
     except AttributeError:
         base_path = os.path.abspath(".")
 

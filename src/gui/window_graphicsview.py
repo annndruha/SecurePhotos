@@ -1,12 +1,14 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QBrush, QColor
+from PyQt5.QtWidgets import QGraphicsPixmapItem
 
 from src.gui.icons import Icons
 
 
 class GraphicsView(QtWidgets.QGraphicsView):
     zoomedSignal = QtCore.pyqtSignal()
+    mouseMoveSignal = QtCore.pyqtSignal(int, int)
 
     def __init__(self, parent=None):
         super(GraphicsView, self).__init__(parent)
@@ -16,6 +18,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
         self.__zoomed = False
+        self.setMouseTracking(True)
 
     def zoomed(self):
         return self.__zoomed
@@ -39,6 +42,30 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.translate(delta.x(), delta.y())
         self.__zoomed = True
         self.zoomedSignal.emit()
+
+    def mouseMoveEvent(self, event):
+        if not self.scene().items():
+            return
+        pixmap = self.scene().items()[0]
+        if not isinstance(pixmap, QGraphicsPixmapItem):
+            return
+
+        # Get mouse position in scene coordinates
+        scene_pos = self.mapToScene(event.pos())
+
+        # Convert scene coordinates to local Pixmap coordinates
+        item_pos = self.scene().items()[0].mapFromScene(scene_pos)
+
+        image_width = pixmap.pixmap().width()
+        image_height = pixmap.pixmap().height()
+
+        # Check if inside image bounds
+        if 0 <= item_pos.x() < image_width and 0 <= item_pos.y() < image_height:
+            self.mouseMoveSignal.emit(int(item_pos.x()), int(item_pos.y()))
+        else:
+            self.mouseMoveSignal.emit(-1, -1)
+
+        super().mouseMoveEvent(event)
 
 
 class FullScreen(GraphicsView):
