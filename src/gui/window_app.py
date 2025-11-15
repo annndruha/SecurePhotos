@@ -221,10 +221,8 @@ class MainWindow(QMainWindow):
 
     # SLOTS: Mouse position
     def _update_coordinates(self, x, y):
-        if x >= 0 and y >= 0:
-            self.ui.mouse_cords.setText(f"{self.image_info}Mouse: (x={x}, y={y})")
-        else:
-            self.ui.mouse_cords.setText(f"{self.image_info}Mouse: ---")
+        text = f"Mouse: (x={x}, y={y})" if x >= 0 and y >= 0 else "Mouse: ---"
+        self.ui.mouse_cords.setText(self.image_info + text)
 
     def _update_mouse_text_img_size(self):
         """Update base text on mouse coordinates label"""
