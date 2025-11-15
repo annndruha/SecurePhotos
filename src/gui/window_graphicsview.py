@@ -8,6 +8,7 @@ from src.gui.icons import Icons
 
 class GraphicsView(QtWidgets.QGraphicsView):
     zoomedSignal = QtCore.pyqtSignal()
+    mouseMoveSignal = QtCore.pyqtSignal(int, int)
 
     def __init__(self, parent=None):
         super(GraphicsView, self).__init__(parent)
@@ -61,8 +62,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         # Check if inside image bounds
         if 0 <= item_pos.x() < image_width and 0 <= item_pos.y() < image_height:
             print(f"Mouse in image coordinates: ({int(item_pos.x())}, {int(item_pos.y())})")
+            self.mouseMoveSignal.emit(int(item_pos.x()), int(item_pos.y()))
         else:
-            print('---')
+            self.mouseMoveSignal.emit(-1, -1)
 
         super().mouseMoveEvent(event)
 

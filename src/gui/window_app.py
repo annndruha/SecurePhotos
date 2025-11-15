@@ -145,6 +145,7 @@ class MainWindow(QMainWindow):
         self.fs.prevSignal.connect(self._fullscreen_prev)
 
         self.ui.graphicsView.zoomedSignal.connect(self._update_action_fit_status)
+        self.ui.graphicsView.mouseMoveSignal.connect(self._update_coordinates)
 
         self.showMaximized()
         self.update_actions_status('sample.path')
@@ -216,6 +217,13 @@ class MainWindow(QMainWindow):
     def _reject_enter_key(self):
         self.enterKeyDialog.reset()
         self.enterKeyDialog.done(200)
+
+    #
+    def _update_coordinates(self, x, y):
+        if x >= 0 and y >= 0:
+            self.ui.mouse_cords.setText(f"Position: ({x}, {y})")
+        else:
+            self.ui.mouse_cords.setText("Position: ---")
 
     # SLOTS: Encrypt and Decrypt one file or folder
     @crypt_errors
