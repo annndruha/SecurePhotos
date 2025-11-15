@@ -66,4 +66,4 @@ class SettingsDialog(QtWidgets.QDialog):
     @staticmethod
     def _copy_info_to_clipboard():
         cb = QApplication.clipboard()
-        cb.setText(About().system_info_clipboard, mode=cb.Clipboard)
+        cb.setText(About().system_info_clipboard, mode=cb.Clipboard)  # noqa

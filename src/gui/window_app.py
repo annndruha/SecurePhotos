@@ -119,27 +119,27 @@ class MainWindow(QMainWindow):
         # settingsDialog buttons
         self.settingsDialog.ui.pushButton_cancel.clicked.connect(self._reject_settings)
         self.settingsDialog.ui.pushButton_apply.clicked.connect(self._apply_settings)
-        self.settingsDialog.rejected.connect(self._reject_settings)
+        self.settingsDialog.rejected.connect(self._reject_settings)  # noqa
         self._reject_settings()
 
         # enterKeyDialog buttons
         self.enterKeyDialog.ui.pushButton_cancel.clicked.connect(self._reject_enter_key)
         self.enterKeyDialog.ui.pushButton_apply.clicked.connect(self._apply_enter_key)
-        self.enterKeyDialog.rejected.connect(self._reject_enter_key)
+        self.enterKeyDialog.rejected.connect(self._reject_enter_key)  # noqa
 
         # folderEncryptDialog buttons
         self.folderEncryptDialog.ui.pushButton_cancel.clicked.connect(self._reject_folder_encrypt)
         self.folderEncryptDialog.ui.pushButton_apply.clicked.connect(self._apply_folder_encrypt)
-        self.folderEncryptDialog.rejected.connect(self._reject_folder_encrypt)
+        self.folderEncryptDialog.rejected.connect(self._reject_folder_encrypt)  # noqa
 
         # progressBarDialog buttons
         self.progressBarDialog.ui.pushButton_abort.clicked.connect(self._abort_folder_crypt)
-        self.progressBarDialog.rejected.connect(self._abort_folder_crypt)
+        self.progressBarDialog.rejected.connect(self._abort_folder_crypt)  # noqa
 
         # progressBarOneFileDialog buttons
         self.progressBarOneFileDialog.ui.pushButton_ok.clicked.connect(self._done_onefile)
         self.progressBarOneFileDialog.ui.pushButton_abort.clicked.connect(self._abort_onefile)
-        self.progressBarOneFileDialog.rejected.connect(self._abort_onefile)
+        self.progressBarOneFileDialog.rejected.connect(self._abort_onefile)  # noqa
 
         self.fs.escapeSignal.connect(self._change_fullscreen)
         self.fs.nextSignal.connect(self._fullscreen_next)
@@ -467,7 +467,7 @@ class MainWindow(QMainWindow):
             self.scene.setSceneRect(0, 0, self.image.width(), self.image.height())
             if self.fit_in_view or (self.ui.graphicsView.sceneRect().width() > self.ui.graphicsView.rect().width() or
                                     self.ui.graphicsView.sceneRect().height() > self.ui.graphicsView.rect().height()):
-                self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
+                self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)  # noqa
             else:
                 self.ui.graphicsView.resetTransform()
             self._update_action_fit_status()
@@ -476,7 +476,7 @@ class MainWindow(QMainWindow):
             self.scene.clear()
             self.scene.addPixmap(image)
             self.scene.setSceneRect(0, 0, image.width(), image.height())
-            self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
+            self.ui.graphicsView.fitInView(self.scene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)  # noqa
 
     def resizeEvent(self, event):
         self._update_image(lazily=True)
