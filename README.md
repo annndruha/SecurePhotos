@@ -2,7 +2,7 @@
 
 ![version](https://img.shields.io/github/v/release/Annndruha/SecurePhotos)
 [![GitHub license](https://img.shields.io/github/license/Annndruha/SecurePhotos.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/LICENSE)
-[![python lint](https://github.com/Annndruha/SecurePhotos/actions/workflows/pylint.yml/badge.svg)](https://github.com/Annndruha/SecurePhotos/blob/master/.github/workflows/pylint.yml)
+[![python lint](https://github.com/Annndruha/SecurePhotos/actions/workflows/flake8.yml/badge.svg)](https://github.com/Annndruha/SecurePhotos/actions/workflows/flake8.yml/badge.svg)
 
 SecurePhotos - Gallery for photos with encryption for your photos or any files. Also, it's faster than windows default gallery!
 
