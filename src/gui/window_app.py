@@ -56,6 +56,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(f"SecurePhotos v{version}")
 
         self.image = None
+        self.image_info = ""
         self.cipher = None
         self.cur_path = None
         self.full_screen = False
@@ -218,12 +219,18 @@ class MainWindow(QMainWindow):
         self.enterKeyDialog.reset()
         self.enterKeyDialog.done(200)
 
-    #
+    # SLOTS: Mouse position
     def _update_coordinates(self, x, y):
         if x >= 0 and y >= 0:
-            self.ui.mouse_cords.setText(f"Position: ({x}, {y})")
+            self.ui.mouse_cords.setText(f"{self.image_info}Mouse: (x={x}, y={y})")
         else:
-            self.ui.mouse_cords.setText("Position: ---")
+            self.ui.mouse_cords.setText(f"{self.image_info}Mouse: ---")
+
+    def _update_mouse_text_img_size(self):
+        """Update base text on mouse coordinates label"""
+        self.image_info = f"depth={self.image.depth()}, "
+        self.image_info += f"width={self.image.width()}, height={self.image.height()}\n"
+        self.ui.mouse_cords.setText(self.image_info)
 
     # SLOTS: Encrypt and Decrypt one file or folder
     @crypt_errors
@@ -340,6 +347,7 @@ class MainWindow(QMainWindow):
         self.ui.actionEncrypt.setVisible(self.db['action_encrypt_decrypt'])
         self.ui.actionEnterKey.setVisible(self.db['action_encrypt_decrypt'])
         self.ui.actionCopyToTarget.setVisible(self.db['copy_to_target'])
+        self.ui.mouse_cords.setVisible(self.db['show_mouse_coordinates'])
 
     def _update_actions_crypt(self, path):
         """
@@ -396,7 +404,7 @@ class MainWindow(QMainWindow):
         self._update_actions_crypt(path)
 
     # IMAGES: Image actions and changes
-    def _read_image(self, path):
+    def _read_image(self, path) -> QPixmap | None:
         """Return QPixmap of image"""
         try:
             img_reader = QImageReader(path)
@@ -456,6 +464,8 @@ class MainWindow(QMainWindow):
         if self.image is not None:
             self.scene.clear()
             self.scene.addPixmap(self.image)
+            self._update_mouse_text_img_size()
+
             self.scene.setSceneRect(0, 0, self.image.width(), self.image.height())
             if self.fit_in_view or (self.ui.graphicsView.sceneRect().width() > self.ui.graphicsView.rect().width() or
                                     self.ui.graphicsView.sceneRect().height() > self.ui.graphicsView.rect().height()):

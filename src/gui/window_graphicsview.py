@@ -61,7 +61,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # Check if inside image bounds
         if 0 <= item_pos.x() < image_width and 0 <= item_pos.y() < image_height:
-            print(f"Mouse in image coordinates: ({int(item_pos.x())}, {int(item_pos.y())})")
             self.mouseMoveSignal.emit(int(item_pos.x()), int(item_pos.y()))
         else:
             self.mouseMoveSignal.emit(-1, -1)
