@@ -34,8 +34,37 @@ python -m src
 ```
 
 ### Algorithm:
-![](https://raw.githubusercontent.com/Annndruha/SecurePhotos/main/docs/encrypt_scheme.drawio.svg)
 
+
+When you click `Encrypt 🔒`:
+
+```mermaid
+
+flowchart TD
+    PW["Password<br/>Not stored in RAM or anywhere"] --> SHA[SHA-256]
+    SHA --> HASH["Password HASH<br/>Stored in RAM (while open)"]
+    
+    DATA["Image/video file on disk<br/>(png | jpg | mp4 | mkv | etc.)"] --> BYTES["Bytes"]
+    BYTES --> PADDING["Padding up to block size 16"]
+
+    subgraph AES-256
+        HASH --> CHIPPER
+        PADDING --> CHIPPER["Ciphertext"]
+    end
+
+    CHIPPER --> H["Encrypted image or folder on disk<br/>with ext (.aes/.aes_zip)"]
+    AES-256 --> I["Delete old file<br/>or folder"]
+    style PW fill:#e6e6fa
+    style SHA fill:#e6e6fa
+    style DATA fill:#b3d9ff
+    style BYTES fill:#b3d9ff
+    style PADDING fill:#b3d9ff
+    style HASH fill:#e6e6fa
+    style CHIPPER fill:#fffc5e
+    style H fill:#ccffcc
+    style I fill:#ffcccc
+    
+```
 
 ### Contact
 Feel free to report bugs and suggest improvements on [annndruha.github@gmail.com](mailto:annndruha.github@gmail.com)
