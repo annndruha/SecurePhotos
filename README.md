@@ -41,19 +41,19 @@ When you click `Encrypt 🔒`:
 ```mermaid
 
 flowchart TD
-    PW["Password<br/>Not stored in RAM or anywhere"] --> SHA[SHA-256]
-    SHA --> HASH["Password HASH<br/>Stored in RAM (while open)"]
+    PW("Password<br/>Not stored in RAM or anywhere") --> SHA[UTF-8 to SHA-256]
+    SHA --> HASH("Password HASH<br/>Stored in RAM (while open)")
     
-    DATA["Image/video file on disk<br/>(png | jpg | mp4 | mkv | etc.)"] --> BYTES["Bytes"]
-    BYTES --> PADDING["Padding up to block size 16"]
+    DATA("Image/video file on disk<br/>(png | jpg | mp4 | mkv | etc.)") --> BYTES("Bytes")
+    BYTES --> PADDING["Padding up to block size 16 bytes"]
 
-    subgraph AES-256
+    subgraph AES-256 [AES-256 with CBC]
         HASH --> CHIPPER
-        PADDING --> CHIPPER["Ciphertext"]
+        PADDING --> CHIPPER("Ciphertext")
     end
 
-    CHIPPER --> NEW_FILE["Encrypted image or folder on disk<br/>with ext (.aes/.aes_zip)"]
-    NEW_FILE --> DELETE_FILE["Delete old file<br/>or folder"]
+    CHIPPER --> NEW_FILE("Encrypted image or folder on disk<br/>with ext (.aes/.aes_zip)")
+    NEW_FILE --> DELETE_FILE("Delete old file<br/>or folder")
     
     style PW fill:#e6e6fa
     style SHA fill:#e6e6fa
