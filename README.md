@@ -52,8 +52,9 @@ flowchart TD
         PADDING --> CHIPPER["Ciphertext"]
     end
 
-    CHIPPER --> H["Encrypted image or folder on disk<br/>with ext (.aes/.aes_zip)"]
-    AES-256 --> I["Delete old file<br/>or folder"]
+    CHIPPER --> NEW_FILE["Encrypted image or folder on disk<br/>with ext (.aes/.aes_zip)"]
+    NEW_FILE --> DELETE_FILE["Delete old file<br/>or folder"]
+    
     style PW fill:#e6e6fa
     style SHA fill:#e6e6fa
     style DATA fill:#b3d9ff
@@ -61,8 +62,8 @@ flowchart TD
     style PADDING fill:#b3d9ff
     style HASH fill:#e6e6fa
     style CHIPPER fill:#fffc5e
-    style H fill:#ccffcc
-    style I fill:#ffcccc
+    style NEW_FILE fill:#ccffcc
+    style DELETE_FILE fill:#ffcccc
     
 ```
 
