@@ -36,7 +36,7 @@ def crypt_errors(func):
         except EmptyCipher:
             UserMessage("No key!")
         except DecryptException:
-            UserMessage("Decrypt error, file probably broken!")
+            UserMessage("Validation failed. Try legacy mode.")
         except FileNotFoundError:
             return None
         except FileExistsError as err:
