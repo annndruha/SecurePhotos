@@ -52,7 +52,7 @@ class AESCipher:
         data = self.__pad(data)
         iv = Random.new().read(AES.block_size)
         aes = AES.new(self.__hash, AES.MODE_CBC, iv)
-        return iv + aes.encrypt(data)
+        return self.__hash[:16] + iv + aes.encrypt(data)
 
     def decrypt(self, data: bytes) -> bytes:
         """
@@ -61,6 +61,10 @@ class AESCipher:
         :param data: Data to be decrypted.
         :return: Decrypted data
         """
+        if len(data) >= 16 and data[:16] == self.__hash[:16]:
+            data = data[16:]
+        else:
+            raise DecryptException("Validation failed. Try legacy mode.")
         try:
             iv = data[:AES.block_size]
             aes = AES.new(self.__hash, AES.MODE_CBC, iv)
